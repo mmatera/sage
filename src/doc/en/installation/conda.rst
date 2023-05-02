@@ -152,7 +152,7 @@ Here we assume that you are using a git checkout.
   - Install the build prerequisites and the Sage library::
 
       $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-conf ./pkgs/sage-setup
-      $ pip install --no-build-isolation -v -v --editable ./src
+      $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable ./src
 
   - Verify that Sage has been installed::
 
@@ -173,7 +173,7 @@ suffices to restart Sage.
 
 After editing any Cython files, rebuild the Sage library using::
 
-  $ pip install --no-build-isolation -v -v --editable src
+  $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable src
 
 In order to update the conda environment later, you can run::
 
