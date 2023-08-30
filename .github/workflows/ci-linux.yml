@@ -50,4 +50,4 @@ jobs:
       tox_packages_factors: >-
           ["standard-sitepackages"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      max_parallel: 10
+      max_parallel: 30
