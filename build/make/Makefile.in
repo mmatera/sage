@@ -244,6 +244,7 @@ inst_python3_venv = $(SAGE_VENV)/$(SPKG_INST_RELDIR)/python3_venv-$(subst /,-,$(
 
 $(inst_python3_venv):
 	$(PYTHON_FOR_VENV) $(SAGE_ROOT)/build/bin/sage-venv $(SAGE_VENV_FLAGS) "$(SAGE_VENV)"
+	mkdir -p $(SAGE_VENV)/$(SPKG_INST_RELDIR)
 	touch $@
 endif
 
