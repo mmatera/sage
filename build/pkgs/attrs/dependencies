@@ -1,4 +1,4 @@
-$(PYTHON) | $(PYTHON_TOOLCHAIN) trove_classifiers typing_extensions tomli setuptools pluggy pathspec packaging editables setuptools_scm hatchling hatch_vcs hatch_fancy_pypi_readme
+ | $(PYTHON_TOOLCHAIN) trove_classifiers typing_extensions tomli setuptools pluggy pathspec packaging editables setuptools_scm hatchling hatch_vcs hatch_fancy_pypi_readme  $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
