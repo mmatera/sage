@@ -144,6 +144,7 @@ Here we assume that you are using a git checkout.
       $ ./bootstrap
       $ ./configure --with-python=$CONDA_PREFIX/bin/python             \
                     --prefix=$CONDA_PREFIX                             \
+                    --enable-system-site-packages                      \
                     $(for pkg in $(./sage -package list :standard:     \
                                      --exclude rpy2                    \
                                      --has-file spkg-configure.m4      \
