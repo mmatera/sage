@@ -83,9 +83,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           python-version: ${{ matrix.python }}
-          mamba-version: "*"
-          channels: conda-forge,defaults
-          channel-priority: strict
+          condarc-file: condarc.yml
           activate-environment: sage-build
           environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}.yml
 
