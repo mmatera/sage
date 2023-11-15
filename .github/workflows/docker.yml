@@ -80,7 +80,7 @@ on:
         type: boolean
       timeout:
         description: 'Elapsed time (seconds) at which to kill the build'
-        default: 20000
+        default: 300
         type: number
       #
       # Publishing to GitHub Packages
