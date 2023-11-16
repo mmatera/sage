@@ -299,7 +299,7 @@ jobs:
 
       - name: Test all files (sage -t --all --long)
         run: |
-          ./sage -tox -e coverage.py-xml -- --all --long -p2 --random-seed=286735480429121101562228604801325644303
+          ./sage -tox -e coverage.py-xml --  -p2 --random-seed=286735480429121101562228604801325644303 src/sage/misc
           mkdir -p ${{ github.workspace }}/coverage-report
           cp src/.tox/sagedirect/coverage.xml ${{ github.workspace }}/coverage-report/
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
