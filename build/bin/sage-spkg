@@ -337,7 +337,7 @@ else
     PKG_NAME="${PKG_BASE}-${PKG_VER}"
 fi
 PKG_BASE_VER=`echo $PKG_VER | sed 's/\.p[0-9][0-9]*$//'`
-PKG_NAME_UPSTREAM=`lookup_param tarball "$PKG_SCRIPTS/checksums.ini" | sed "s/VERSION/$PKG_BASE_VER/"`
+PKG_NAME_UPSTREAM=`lookup_param tarball "$PKG_SCRIPTS/checksums.ini"`
 
 # Set the $SAGE_DESTDIR variable to be passed to the spkg-install
 # script (the script itself could set this, but better to standardize
@@ -392,11 +392,11 @@ ensure_pkg_src() { ###############################################
 if [ ! -f "$PKG_SRC" ]; then
     if [ -n "$PKG_NAME_UPSTREAM" ]; then
         # This is the new-style package way of downloading the tarball
-        if ! sage-download-file $SAGE_DOWNLOAD_FILE_OPTIONS "$PKG_NAME_UPSTREAM"; then
-            error_msg "Error downloading $PKG_NAME_UPSTREAM"
+        PKG_SRC=$(sage-package download $SAGE_DOWNLOAD_FILE_OPTIONS $PKG_BASE)
+        if [ $? != 0 ]; then
+            error_msg "Error downloading tarball of $PKG_BASE"
             exit 1
         fi
-        PKG_SRC="$SAGE_DISTFILES/$PKG_NAME_UPSTREAM"
     else
         echo >&2 "Error: Installing old-style SPKGs is no longer supported"
         exit 1
