@@ -1,1 +1,1 @@
-gnumake-tokenpool
+git+https://github.com/milahu/gnumake-tokenpool.git@refs/pull/4/head#egg=gnumake_tokenpool
