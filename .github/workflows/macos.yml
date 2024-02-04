@@ -25,14 +25,8 @@ on:
         description: 'Stringified JSON object'
         default: >-
           [["11",     "xcode_13.2.1", "homebrew-macos-usrlocal-minimal"],
-           ["12",     "",             "homebrew-macos-usrlocal-minimal"],
-           ["12",     "",             "homebrew-macos-usrlocal-standard"],
-           ["12",     "",             "homebrew-macos-usrlocal-python3_xcode-standard"],
-           ["12",     "",             "homebrew-macos-usrlocal-maximal"],
            ["13",     "xcode_15.0",   "homebrew-macos-usrlocal-standard"],
            ["14",     "",             "homebrew-macos-opthomebrew-standard"],
-           ["latest", "",             "conda-forge-macos-minimal"],
-           ["latest", "",             "conda-forge-macos-standard"],
            ["14",     "",             "conda-forge-macos-minimal"],
            ["14",     "",             "conda-forge-macos-standard"]]
         type: string
