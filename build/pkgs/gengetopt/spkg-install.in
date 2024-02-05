@@ -4,4 +4,5 @@ cd src
 # documentation, which currently (due to a bug) tries to invoke the
 # "makeinfo" program.
 cd src
+cp "$SAGE_ROOT"/config/config.* build-aux/
 sdh_make_install
