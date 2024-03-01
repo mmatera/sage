@@ -18,6 +18,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 
 
+
 class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
     """
     The category of finite dimensional modules with a distinguished basis
@@ -573,6 +574,17 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             return dense_free_module.element_class(dense_free_module,
                                                    self.dense_coefficient_list(order),
                                                    coerce=True, copy=False)
+
+    class Homsets(HomsetsCategory):
+
+        def extra_super_categories(self):
+            """
+            EXAMPLES::
+
+                sage: Modules(ZZ).WithBasis().FiniteDimensional().Homsets().extra_super_categories()
+                [Category of finite dimensional modules with basis over Integer Ring]
+            """
+            return [FiniteDimensionalModulesWithBasis(self.base_category().base_ring())]
 
     class MorphismMethods:
         def matrix(self, base_ring=None, side="left"):
