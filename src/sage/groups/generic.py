@@ -117,10 +117,11 @@ Some examples in the group of points of an elliptic curve over a finite field:
 
 from copy import copy
 
+from sage.arith.misc import integer_ceil, integer_floor, xlcm
+from sage.arith.srange import xsrange
 from sage.misc.misc_c import prod
 import sage.rings.integer_ring as integer_ring
 import sage.rings.integer
-from sage.arith.srange import xsrange
 
 #
 # Lists of names (as strings) which the user may use to identify one
@@ -169,9 +170,11 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
         sage: E = EllipticCurve('389a1')
         sage: P = E(-1,1)
         sage: multiple(P, 10, '+')
-        (645656132358737542773209599489/22817025904944891235367494656 : 525532176124281192881231818644174845702936831/3446581505217248068297884384990762467229696 : 1)
+        (645656132358737542773209599489/22817025904944891235367494656 :
+         525532176124281192881231818644174845702936831/3446581505217248068297884384990762467229696 : 1)
         sage: multiple(P, -10, '+')
-        (645656132358737542773209599489/22817025904944891235367494656 : -528978757629498440949529703029165608170166527/3446581505217248068297884384990762467229696 : 1)
+        (645656132358737542773209599489/22817025904944891235367494656 :
+         -528978757629498440949529703029165608170166527/3446581505217248068297884384990762467229696 : 1)
     """
     from operator import inv, mul, neg, add
 
@@ -180,7 +183,7 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
         inverse = inv
         op = mul
     elif operation in addition_names:
-        identity = a.parent()(0)
+        identity = a.parent().zero()
         inverse = neg
         op = add
     else:
@@ -327,18 +330,19 @@ class multiples:
             self.op = mul
         elif operation in addition_names:
             if P0 is None:
-                P0 = P.parent()(0)
+                P0 = P.parent().zero()
             self.op = add
         else:
-            self.op = op
             if P0 is None:
                 raise ValueError("P0 must be supplied when operation is neither addition nor multiplication")
             if op is None:
                 raise ValueError("op() must both be supplied when operation is neither addition nor multiplication")
+            self.op = op
 
         self.P = copy(P)
         self.Q = copy(P0)
-        assert self.P is not None and self.Q is not None
+        if self.P is None or self.Q is None:
+            raise ValueError("P and Q must not be None")
         self.i = 0
         self.bound = n
         self.indexed = indexed
@@ -440,7 +444,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     This will return a multiple of the order of P::
 
-        sage: bsgs(P, P.parent()(0), Hasse_bounds(F.order()), operation='+')            # needs sage.rings.finite_rings sage.schemes
+        sage: bsgs(P, P.parent().zero(), Hasse_bounds(F.order()), operation='+')            # needs sage.rings.finite_rings sage.schemes
         69327408
 
     AUTHOR:
@@ -456,7 +460,8 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         inverse = inv
         op = mul
     elif operation in addition_names:
-        identity = a.parent()(0)
+        # Should this be replaced with .zero()? With an extra AttributeError handler?
+        identity = a.parent().zero()
         inverse = neg
         op = add
     else:
@@ -467,7 +472,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     if lb < 0 or ub < lb:
         raise ValueError("bsgs() requires 0<=lb<=ub")
 
-    if a.is_zero() and not b.is_zero():
+    if a == identity and b != identity:
         raise ValueError("no solution in bsgs()")
 
     ran = 1 + ub - lb   # the length of the interval
@@ -477,7 +482,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     if ran < 30:    # use simple search for small ranges
         d = c
-#        for i,d in multiples(a,ran,c,indexed=True,operation=operation):
+        # for i,d in multiples(a,ran,c,indexed=True,operation=operation):
         for i0 in range(ran):
             i = lb + i0
             if identity == d:        # identity == b^(-1)*a^i, so return i
@@ -486,7 +491,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         raise ValueError("no solution in bsgs()")
 
     m = ran.isqrt() + 1  # we need sqrt(ran) rounded up
-    table = dict()       # will hold pairs (a^(lb+i),lb+i) for i in range(m)
+    table = {}       # will hold pairs (a^(lb+i),lb+i) for i in range(m)
 
     d = c
     for i0 in xsrange(m):
@@ -550,10 +555,10 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
 
     It also works with matrices::
 
-        sage: A = matrix(GF(50021), [[10577, 23999, 28893],                             # needs sage.rings.finite_rings
+        sage: A = matrix(GF(50021), [[10577, 23999, 28893],                             # needs sage.modules sage.rings.finite_rings
         ....:                        [14601, 41019, 30188],
         ....:                        [3081, 736, 27092]])
-        sage: discrete_log_rho(A^1234567, A)                                            # needs sage.rings.finite_rings
+        sage: discrete_log_rho(A^1234567, A)                                            # needs sage.modules sage.rings.finite_rings
         1234567
 
     Beware, the order must be prime::
@@ -748,7 +753,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         ...
         ValueError: no discrete log of 2 found to base 1
 
-    See :trac:`2356`::
+    See :issue:`2356`::
 
         sage: F.<w> = GF(121)                                                           # needs sage.rings.finite_rings
         sage: v = w^120                                                                 # needs sage.rings.finite_rings
@@ -1006,7 +1011,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
 
     This will return a multiple of the order of P::
 
-        sage: discrete_log_lambda(P.parent()(0), P, Hasse_bounds(F.order()),            # needs sage.rings.finite_rings sage.schemes
+        sage: discrete_log_lambda(P.parent().zero(), P, Hasse_bounds(F.order()),            # needs sage.rings.finite_rings sage.schemes
         ....:                     operation='+')
         69327408
 
@@ -1041,7 +1046,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
     width = Integer(ub - lb)
     N = width.isqrt() + 1
 
-    M = dict()
+    M = {}
     for s in range(10):  # to avoid infinite loops
         # random walk function setup
         k = 0
@@ -1060,7 +1065,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
             c += r
         if mut:
             H.set_immutable()
-        mem = set([H])
+        mem = {H}
         # second random walk
         H = a
         d = 0
@@ -1179,14 +1184,18 @@ def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
 # 2. order_from_bounds: finds the order given an interval containing a
 # multiple of the order
 #
+# 3. has_order: check if the order is exactly equal to a given integer
+#
 ################################################################
 
 
 def order_from_multiple(P, m, plist=None, factorization=None, check=True,
-                        operation='+'):
+                        operation='+', identity=None, inverse=None, op=None):
     r"""
     Generic function to find order of a group element given a multiple
     of its order.
+
+    See :meth:`bsgs` for full explanation of the inputs.
 
     INPUT:
 
@@ -1197,9 +1206,12 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
       really is a multiple of the order;
     - ``factorization`` -- the factorization of ``m``, or ``None`` in which
       case this function will need to factor ``m``;
-    - ``plist`` -- a list of the prime factors of ``m``, or ``None`` - kept for compatibility only,
+    - ``plist`` -- a list of the prime factors of ``m``, or ``None``. Kept for compatibility only,
       prefer the use of ``factorization``;
-    - ``operation`` -- string: ``'+'`` (default) or ``'*'``.
+    - ``operation`` -- string: ``'+'`` (default), ``'*'`` or ``None``;
+    - ``identity`` -- the identity element of the group;
+    - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``;
+    - ``op()`` - function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group.
 
     .. note::
 
@@ -1234,7 +1246,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         sage: order_from_multiple(w, 230, operation='*')
         23
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.modules sage.rings.finite_rings
         sage: F = GF(2^1279,'a')
         sage: n = F.cardinality() - 1  # Mersenne prime
         sage: order_from_multiple(F.random_element(), n,
@@ -1251,16 +1263,25 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
     if operation in multiplication_names:
         identity = P.parent().one()
     elif operation in addition_names:
-        identity = P.parent()(0)
+        identity = P.parent().zero()
     else:
-        raise ValueError("unknown group operation")
+        if identity is None or inverse is None or op is None:
+            raise ValueError("identity, inverse and operation must all be specified")
+
+    def _multiple(A, B):
+        return multiple(A,
+                        B,
+                        operation=operation,
+                        identity=identity,
+                        inverse=inverse,
+                        op=op)
 
     if P == identity:
         return Z.one()
 
     M = Z(m)
-    if check:
-        assert multiple(P, M, operation=operation) == identity
+    if check and _multiple(P, M) != identity:
+        raise ValueError(f"The order of P(={P}) does not divide {M}")
 
     if factorization:
         F = factorization
@@ -1289,7 +1310,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
             p, e = L[0]
             e0 = 0
             while (Q != identity) and (e0 < e - 1):
-                Q = multiple(Q, p, operation=operation)
+                Q = _multiple(Q, p)
                 e0 += 1
             if Q != identity:
                 e0 += 1
@@ -1308,12 +1329,8 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
             L2 = L[k:]
             # recursive calls
             o1 = _order_from_multiple_helper(
-                multiple(Q, prod([p**e for p, e in L2]), operation),
-                L1,
-                sum_left)
-            o2 = _order_from_multiple_helper(multiple(Q, o1, operation),
-                                             L2,
-                                             S - sum_left)
+                _multiple(Q, prod([p**e for p, e in L2])), L1, sum_left)
+            o2 = _order_from_multiple_helper(_multiple(Q, o1), L2, S - sum_left)
             return o1 * o2
 
     return _order_from_multiple_helper(P, F, sage.functions.log.log(float(M)))
@@ -1385,7 +1402,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
         identity = P.parent().one()
     elif operation in addition_names:
         op = add
-        identity = P.parent()(0)
+        identity = P.parent().zero()
     else:
         if op is None:
             raise ValueError("operation and identity must be specified")
@@ -1396,8 +1413,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     if d > 1:
         Q = multiple(P, d, operation=operation)
         lb, ub = bounds
-        bounds = (sage.arith.all.integer_ceil(lb / d),
-                  sage.arith.all.integer_floor(ub / d))
+        bounds = (integer_ceil(lb / d), integer_floor(ub / d))
 
     # Use generic bsgs to find  n=d*m with lb<=n<=ub and n*P=0
 
@@ -1406,6 +1422,114 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     # Now use the order_from_multiple() function to finish the job:
 
     return order_from_multiple(P, m, operation=operation, check=False)
+
+
+def has_order(P, n, operation='+'):
+    r"""
+    Generic function to test if a group element `P` has order
+    exactly equal to a given positive integer `n`.
+
+    INPUT:
+
+    - ``P`` -- group element with respect to the specified ``operation``
+    - ``n`` -- positive integer, or its :class:`~sage.structure.factorization.Factorization`
+    - ``operation`` -- string, either ``'+'`` (default) or ``'*'``
+
+    EXAMPLES::
+
+        sage: from sage.groups.generic import has_order
+        sage: E.<P> = EllipticCurve(GF(71), [5,5])
+        sage: P.order()
+        57
+        sage: has_order(P, 57)
+        True
+        sage: has_order(P, factor(57))
+        True
+        sage: has_order(P, 19)
+        False
+        sage: has_order(3*P, 19)
+        True
+        sage: has_order(3*P, 57)
+        False
+
+    ::
+
+        sage: R = Zmod(14981)
+        sage: g = R(321)
+        sage: g.multiplicative_order()
+        42
+        sage: has_order(g, 42, operation='*')
+        True
+        sage: has_order(g, factor(42), operation='*')
+        True
+        sage: has_order(g, 70, operation='*')
+        False
+
+    TESTS::
+
+        sage: ns = [randrange(1,10**5) for _ in range(randrange(1,5))]
+        sage: A = AdditiveAbelianGroup(ns)
+        sage: from sage.groups.generic import has_order
+        sage: el = A.random_element()
+        sage: o = el.order()
+        sage: has_order(el, o)
+        True
+        sage: has_order(el, o.factor())
+        True
+        sage: not_o = ZZ(randrange(100*o))
+        sage: not_o += (not_o == o)
+        sage: has_order(el, not_o)
+        False
+
+    Check for :issue:`37102`::
+
+        sage: from sage.groups.generic import has_order
+        sage: x = Mod(9, 24)
+        sage: has_order(x, 0)
+        False
+        sage: has_order(x, -8)
+        False
+
+    .. NOTE::
+
+        In some cases, order *testing* can be much faster than
+        *computing* the order using :func:`order_from_multiple`.
+    """
+    if isinstance(n, sage.rings.integer.Integer):
+        if n <= 0:
+            return False
+        n = n.factor()
+
+    G = P.parent()
+    if operation in addition_names:
+        isid = lambda el: not el
+        mult = lambda el, n: multiple(el, n, operation='+')
+    elif operation in multiplication_names:
+        isid = lambda el: el.is_one()
+        mult = multiple
+    else:
+        raise ValueError('unknown group operation')
+
+    def _rec(Q, fn):
+        if not fn:
+            return isid(Q)
+
+        if len(fn) == 1:
+            p, k = fn[0]
+            for _ in range(k):
+                if isid(Q):
+                    return False
+                Q = mult(Q, p)
+            return isid(Q)
+
+        fl = fn[::2]
+        fr = fn[1::2]
+        l = prod(p**k for p, k in fl)
+        r = prod(p**k for p, k in fr)
+        L, R = mult(Q, r), mult(Q, l)
+        return _rec(L, fl) and _rec(R, fr)
+
+    return _rec(P, n)
 
 
 def merge_points(P1, P2, operation='+',
@@ -1471,14 +1595,14 @@ def merge_points(P1, P2, operation='+',
         identity = g1.parent().one()
     elif operation in addition_names:
         op = add
-        identity = g1.parent()(0)
+        identity = g1.parent().zero()
     else:
         if op is None:
             raise ValueError("operation and identity must be specified")
 
     if check:
-        assert multiple(g1, n1, operation=operation) == identity
-        assert multiple(g2, n2, operation=operation) == identity
+        if multiple(g1, n1, operation=operation) != identity or multiple(g2, n2, operation=operation) != identity:
+            raise ValueError("the orders provided do not divide the orders of the points provided")
 
     # trivial cases
     if n1.divides(n2):
@@ -1486,7 +1610,7 @@ def merge_points(P1, P2, operation='+',
     if n2.divides(n1):
         return (g1, n1)
 
-    m, k1, k2 = sage.arith.all.xlcm(n1, n2)
+    m, k1, k2 = xlcm(n1, n2)
     m1 = n1 // k1
     m2 = n2 // k2
     g1 = multiple(g1, m1, operation=operation)
@@ -1546,14 +1670,14 @@ def structure_description(G, latex=False):
         sage: D4.structure_description()                                                # needs sage.groups
         'D4'
 
-    Works for finitely presented groups (:trac:`17573`)::
+    Works for finitely presented groups (:issue:`17573`)::
 
         sage: F.<x, y> = FreeGroup()                                                    # needs sage.groups
         sage: G = F / [x^2*y^-1, x^3*y^2, x*y*x^-1*y^-1]                                # needs sage.groups
         sage: G.structure_description()                                                 # needs sage.groups
         'C7'
 
-    And matrix groups (:trac:`17573`)::
+    And matrix groups (:issue:`17573`)::
 
         sage: groups.matrix.GL(4,2).structure_description()                             # needs sage.libs.gap sage.modules
         'A8'

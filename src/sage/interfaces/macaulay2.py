@@ -239,7 +239,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
     def __reduce__(self):
         """
-        Used in serializing an Macaulay2 interface.
+        Used in serializing a Macaulay2 interface.
 
         EXAMPLES::
 
@@ -285,7 +285,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
         r"""
         TESTS:
 
-        Check that evaluating using a file gives the same result as without (:trac:`25903`)::
+        Check that evaluating using a file gives the same result as without (:issue:`25903`)::
 
             sage: from sage.interfaces.macaulay2 import remove_output_labels
             sage: s1 = macaulay2._eval_line_using_file('ZZ^2')  # indirect doctest, optional - macaulay2
@@ -438,7 +438,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
         TESTS:
 
         Check that internal expect variables do not acquire their global
-        variable name and that ``use`` is invoked (:trac:`28303`)::
+        variable name and that ``use`` is invoked (:issue:`28303`)::
 
             sage: # optional - macaulay2
             sage: R = macaulay2('QQ[x, y]')  # indirect doctest
@@ -766,7 +766,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
         TESTS:
 
         Check that help also works for Macaulay2 keywords and variables
-        (:trac:`28565`)::
+        (:issue:`28565`)::
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
@@ -958,7 +958,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
             Sequence
             sage: str(macaulay2('1..25'))
             (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25)
-            sage: macaulay2.options.after_print = False  # optional - macaulay2
+            sage: macaulay2.options.after_print = False
         """
         from sage.typeset.ascii_art import empty_ascii_art
         P = self.parent()
@@ -1184,7 +1184,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
 
         TESTS:
 
-        Check that :trac:`28705` is fixed::
+        Check that :issue:`28705` is fixed::
 
             sage: # optional - macaulay2
             sage: t = macaulay2(True); t
@@ -1241,7 +1241,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         deprecation(27848, 'The function `structure_sheaf` is deprecated. Use `self.sheaf()` instead.')
         return self.parent()('OO_%s' % self.name())
 
-    def substitute(self, *args, **kwds):
+    def subs(self, *args, **kwds):
         """
         Note that we have to override the substitute method so that we get
         the default one from Macaulay2 instead of the one provided by Element.
@@ -1259,8 +1259,6 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
 
         """
         return self.__getattr__("substitute")(*args, **kwds)
-
-    subs = substitute
 
     def _tab_completion(self):
         """
@@ -1746,7 +1744,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
 
         TESTS:
 
-        Check that degenerate matrix dimensions are preserved (:trac:`28591`)::
+        Check that degenerate matrix dimensions are preserved (:issue:`28591`)::
 
             sage: m = macaulay2('matrix {{},{}}')  # optional - macaulay2
             sage: matrix(ZZ, m).dimensions()  # optional - macaulay2
@@ -1788,7 +1786,7 @@ class Macaulay2Function(ExpectFunction):
         TESTS:
 
         Check that detex is disabled, so that the output does not get
-        reformatted (:trac:`28565`)::
+        reformatted (:issue:`28565`)::
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
@@ -1826,7 +1824,7 @@ class Macaulay2FunctionElement(FunctionElement):
         """
         TESTS:
 
-        Since :trac:`28565`, the help output includes all documentation nodes
+        Since :issue:`28565`, the help output includes all documentation nodes
         that can take ``self._obj`` as first argument. This also checks that
         detex is disabled, so that the output does not get reformatted. ::
 

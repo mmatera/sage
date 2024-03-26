@@ -94,7 +94,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.rational_field import QQ
-from sage.rings.ring import Ring
+from sage.categories.fields import Fields
 from sage.structure.factorization import Factorization
 from sage.structure.formal_sum import FormalSum
 
@@ -168,8 +168,8 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             raise TypeError("group must be a congruence subgroup")
 
         sign = int(sign)
-        if not isinstance(base_ring, Ring) and base_ring.is_field():
-            raise TypeError("base_ring must be a commutative ring")
+        if base_ring not in Fields():
+            raise TypeError("base_ring must be a field")
 
         if character is None and arithgroup.is_Gamma0(group):
             character = TrivialCharacter(group.level(), base_ring)
@@ -1439,7 +1439,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             [ 0  0 -1  3 -1 -1  1]
             [ 0 -1 -1  1  0  1 -1]
 
-        Check that :trac:`13198` is fixed::
+        Check that :issue:`13198` is fixed::
 
             sage: M22 = ModularSymbols(Gamma1(22), sign=1)
             sage: M2 = ModularSymbols(Gamma1(2))
@@ -2071,7 +2071,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             sage: [e(d) for d in [0..6]]
             [0, 1, 0, 1, 0, -1, 0]
 
-        We test that the sign issue at :trac:`8620` is fixed::
+        We test that the sign issue at :issue:`8620` is fixed::
 
             sage: M = Newforms(Gamma1(13),names = 'a')[0].modular_symbols(sign=0)
             sage: M.diamond_bracket_operator(4).matrix()
@@ -2260,7 +2260,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         # The attribute _mod2term is set by self.compute_presentation().
         # It is a list of pairs (n, c), such that the ith element of the list
         # is equivalent to c times the n-th basis Manin symbol.
-        G = set([i for i, _ in self._mod2term])
+        G = {i for i, _ in self._mod2term}
 
         # Now G is a set of integer i such that these integers gives
         # indices of Manin symbols that together generate the integral
@@ -2983,7 +2983,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
             self._hecke_matrices = {}
         except KeyError:
             pass
-        tm = verbose("Computing Hecke operator T_%s" % p)
+        tm = verbose(f"Computing Hecke operator T_{p}")
 
         H = heilbronn.HeilbronnCremona(p)
         # H = heilbronn.HeilbronnMerel(p)
@@ -3150,7 +3150,7 @@ class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
 
         sage: ModularSymbols(Gamma1(7),3)
         Modular Symbols space of dimension 8 for Gamma_1(7) of weight 3 with sign 0 over Rational Field
-        """
+    """
 
     def __init__(self, level, weight, sign, F, custom_init=None, category=None):
         r"""

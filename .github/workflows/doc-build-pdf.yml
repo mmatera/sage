@@ -29,9 +29,20 @@ jobs:
 
       - name: Merge CI fixes from sagemath/sage
         run: |
-          .ci/merge-fixes.sh
+          mkdir -p upstream
+          .ci/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
         env:
           GH_TOKEN: ${{ github.token }}
+          SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
+      - name: Store CI fixes in upstream artifact
+        run: |
+          if git format-patch --stdout test_base > ci_fixes.patch; then
+            cp ci_fixes.patch upstream/
+          fi
+      - uses: actions/upload-artifact@v3
+        with:
+          path: upstream
+          name: upstream
 
       - name: Start container
         run: |
@@ -45,7 +56,7 @@ jobs:
           export PATH="build/bin:$PATH"
           eval $(sage-print-system-package-command auto update)
           eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
-          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive)
+          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive texlive_luatex free_fonts xindy)
         shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
       - name: Add prebuilt tree as a worktree

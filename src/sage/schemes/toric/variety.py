@@ -1,5 +1,4 @@
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs
-# -*- coding: utf-8 -*-
 r"""
 Toric varieties
 
@@ -709,9 +708,9 @@ class ToricVariety_field(AmbientSpace):
             if coordinate not in base_field:
                 raise TypeError("coordinate %s is not an element of %s"
                                 % (coordinate, base_field))
-        zero_positions = set(position
-                            for position, coordinate in enumerate(coordinates)
-                            if coordinate == 0)
+        zero_positions = {position
+                          for position, coordinate in enumerate(coordinates)
+                          if coordinate == 0}
         if not zero_positions:
             return True
         for i in range(n - self._torus_factor_dim, n):
@@ -861,7 +860,7 @@ class ToricVariety_field(AmbientSpace):
               s - t
               Defn: Defined on coordinates by sending [s : t : x : y] to
                     [t : t : x : y]
-         """
+        """
         from sage.schemes.toric.homset import SchemeHomset_toric_variety
         return SchemeHomset_toric_variety(*args, **kwds)
 
@@ -1183,7 +1182,7 @@ class ToricVariety_field(AmbientSpace):
             sage: P1xP1.inject_coefficients()
             Defining a, b
 
-        We check that we can use names ``a`` and ``b``, :trac:`10498` is fixed::
+        We check that we can use names ``a`` and ``b``, :issue:`10498` is fixed::
 
             sage: a + b
             a + b
@@ -1928,8 +1927,8 @@ class ToricVariety_field(AmbientSpace):
         TESTS:
 
         The cohomology ring is a circular reference that is
-        potentially troublesome on unpickling, see :trac:`15050`
-        and :trac:`15149` ::
+        potentially troublesome on unpickling, see :issue:`15050`
+        and :issue:`15149` ::
 
             sage: # needs sage.libs.singular
             sage: variety = toric_varieties.P(1)
@@ -2377,7 +2376,7 @@ class ToricVariety_field(AmbientSpace):
 
         TESTS:
 
-        We check that the issue :trac:`12812` is resolved::
+        We check that the issue :issue:`12812` is resolved::
 
             sage: sum(dP6.divisor(i) for i in range(3))
             V(x) + V(u) + V(y)
@@ -2731,7 +2730,7 @@ class ToricVariety_field(AmbientSpace):
         star_rays = set()
         for star_cone in cone.star_generators():
             star_rays.update(star_cone.rays())
-        ray_map = dict( (ray, self._orbit_closure_projection(cone, ray)) for ray in star_rays)
+        ray_map = {ray: self._orbit_closure_projection(cone, ray) for ray in star_rays}
         from sage.schemes.toric.morphism import SchemeMorphism_orbit_closure_toric_variety
         orbit_closure._embedding_morphism = \
             SchemeMorphism_orbit_closure_toric_variety(orbit_closure.Hom(self), cone, ray_map)

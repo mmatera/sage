@@ -27,6 +27,7 @@ from sage.misc.superseded import deprecation
 from sage.typeset.ascii_art import AsciiArt, empty_ascii_art, ascii_art
 from sage.typeset.unicode_art import UnicodeArt, empty_unicode_art, unicode_art
 from sage.data_structures.blas_dict cimport add, negate, scal, axpy
+from sage.categories.modules import _Fields
 
 
 cdef class IndexedFreeModuleElement(ModuleElement):
@@ -145,7 +146,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         .. TODO::
 
             It would be desirable to make the hash value depend on the
-            hash value of the parent. See :trac:`15959`.
+            hash value of the parent. See :issue:`15959`.
         """
         if not self._hash_set:
             self._hash = hash(frozenset(self._monomial_coefficients.items()))
@@ -168,7 +169,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         r"""
         For unpickling old ``CombinatorialFreeModuleElement`` classes.
 
-        See :trac:`22632` and ``register_unpickle_override`` below.
+        See :issue:`22632` and ``register_unpickle_override`` below.
 
         EXAMPLES::
 
@@ -432,7 +433,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                ├┤      └┘       └┘       └┴┘
                └┘
 
-        The following test failed before :trac:`26850`::
+        The following test failed before :issue:`26850`::
 
             sage: unicode_art([M.zero()])  # indirect doctest                           # needs sage.combinat
             [ 0 ]
@@ -618,7 +619,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         Equality testing can be a bit tricky when the order of terms
         can vary because their indices are incomparable with
-        ``cmp``. The following test did fail before :trac:`12489` ::
+        ``cmp``. The following test did fail before :issue:`12489` ::
 
             sage: # needs sage.combinat
             sage: F = CombinatorialFreeModule(QQ, Subsets([1,2,3]))
@@ -797,7 +798,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         .. NOTE::
 
-            :trac:`13406`: the current implementation has been optimized, at
+            :issue:`13406`: the current implementation has been optimized, at
             the price of breaking the encapsulation for FreeModule
             elements creation, with the following use case as metric,
             on a 2008' Macbook Pro::
@@ -867,7 +868,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             None
 
         This also works when a coercion of the coefficient is needed, for
-        example with polynomials or fraction fields (:trac:`8832`)::
+        example with polynomials or fraction fields (:issue:`8832`)::
 
             sage: P.<q> = QQ['q']
             sage: V = CombinatorialFreeModule(P, Permutations())
@@ -958,6 +959,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand type(s) for /: 'str' and 'CombinatorialFreeModule_with_category.element_class'
+
+            sage: L = LazyPowerSeriesRing(QQ, 't')
+            sage: t = L.gen()
+            sage: F = algebras.Free(L, ['A', 'B'])
+            sage: A, B = F.gens()
+            sage: f = t*A + t**2*B/2
         """
         if not isinstance(left, IndexedFreeModuleElement):
             return NotImplemented
@@ -966,7 +973,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         F = self._parent
         B = self.base_ring()
         D = self._monomial_coefficients
-        if not B.is_field():
+        if B not in _Fields:
             return type(self)(F, {k: c._divide_if_possible(x)
                                   for k, c in D.items()})
 

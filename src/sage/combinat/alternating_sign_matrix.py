@@ -106,7 +106,7 @@ class AlternatingSignMatrix(Element,
 
         TESTS:
 
-        Check that :trac:`22032` is fixed::
+        Check that :issue:`22032` is fixed::
 
             sage: AlternatingSignMatrix([])
             []
@@ -944,7 +944,7 @@ class AlternatingSignMatrix(Element,
             [[1, 1, 2], [2, 3], [3]]
             sage: parent(t)
             Semistandard tableaux
-            """
+        """
         from sage.combinat.tableau import SemistandardTableau
         mt = self.to_monotone_triangle()
         ssyt = [[0]*(len(mt) - j) for j in range(len(mt))]

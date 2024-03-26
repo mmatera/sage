@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Dyck Words
 
@@ -3697,7 +3696,7 @@ class DyckWords_size(DyckWords):
         r"""
         TESTS:
 
-        Check that :trac:`18244` is fixed::
+        Check that :issue:`18244` is fixed::
 
             sage: DyckWords(13r, 8r).cardinality()
             87210

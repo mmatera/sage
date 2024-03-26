@@ -146,6 +146,8 @@ class EuclideanGroup(AffineGroup):
         True
         sage: G = EuclideanGroup(2, GF(5)); G
         Euclidean Group of degree 2 over Finite Field of size 5
+
+        sage: # needs sage.libs.gap (for gens)
         sage: TestSuite(G).run()
 
     REFERENCES:
@@ -168,7 +170,7 @@ class EuclideanGroup(AffineGroup):
 
         OUTPUT:
 
-        The return value is ignored. You must raise a ``TypeError`` if
+        The return value is ignored. You must raise a :class:`TypeError` if
         the input does not define a valid group element.
 
         TESTS::

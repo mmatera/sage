@@ -243,7 +243,7 @@ def _isomorphisms(E, F):
 
     TESTS:
 
-    Check that :trac:`32632` is fixed::
+    Check that :issue:`32632` is fixed::
 
         sage: z8 = GF(2^8).gen()
         sage: E1 = EllipticCurve([z8, z8, z8, z8, z8])
@@ -443,7 +443,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         TESTS:
 
-        Check for :trac:`33215`::
+        Check for :issue:`33215`::
 
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
             sage: E = EllipticCurve(GF(71^2), [5,5])                                    # needs sage.rings.finite_rings
@@ -454,7 +454,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
               To:   Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 71^2
               Via:  (u,r,s,t) = (1, 69, 68, 2)
 
-        Test for :trac:`33312`::
+        Test for :issue:`33312`::
 
             sage: type(iso.degree())                                                    # needs sage.rings.finite_rings
             <class 'sage.rings.integer.Integer'>
@@ -611,7 +611,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         Q = baseWI.__call__(self, P)
         return self._codomain.base_extend(k).point(Q)
 
-    def __call__(self, P):
+    def _call_(self, P):
         r"""
         Call function for WeierstrassIsomorphism class.
 
@@ -648,6 +648,24 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             432
             sage: E(i(P))._order
             432
+
+        Check that the isomorphism cannot be evaluated on points outside
+        its domain (see :issue:`35799`)::
+
+            sage: # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: f = E.automorphisms()[0]
+            sage: EE = EllipticCurve(GF(101), [5,5])
+            sage: P = EE.lift_x(2)
+            sage: P in f.domain()
+            False
+            sage: f(P)
+            Traceback (most recent call last):
+            ...
+            TypeError: (2 : 15 : 1) fails to convert into the map's
+            domain Elliptic Curve defined by y^2 = x^3 + x + 1 over
+            Finite Field of size 101, but a `pushforward` method is
+            not properly implemented
         """
         if P[2] == 0:
             return self._codomain(0)
@@ -780,7 +798,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         TESTS:
 
-        Check for :trac:`34811`::
+        Check for :issue:`34811`::
 
             sage: iso.rational_maps()[0].parent()
             Fraction Field of Multivariate Polynomial Ring in x, y over Rational Field
@@ -811,7 +829,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         TESTS:
 
-        Check for :trac:`34811`::
+        Check for :issue:`34811`::
 
             sage: iso.x_rational_map().parent()
             Fraction Field of Univariate Polynomial Ring in x over Rational Field
@@ -848,21 +866,6 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             Univariate Polynomial Ring in x over Rational Field
         """
         return self._poly_ring(1)
-
-    def is_separable(self):
-        r"""
-        Determine whether or not this isogeny is separable.
-
-        Since :class:`WeierstrassIsomorphism` only implements
-        isomorphisms, this method always returns ``True``.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(GF(31337), [0,1])                                   # needs sage.rings.finite_rings
-            sage: {f.is_separable() for f in E.automorphisms()}                         # needs sage.rings.finite_rings
-            {True}
-        """
-        return True
 
     def dual(self):
         """
@@ -956,6 +959,119 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         """
         return self.u
 
+    def inseparable_degree(self):
+        r"""
+        Return the inseparable degree of this Weierstrass isomorphism.
+
+        For isomorphisms, this method always returns one.
+
+        TESTS::
+
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: WeierstrassIsomorphism.inseparable_degree(None)
+            1
+        """
+        return Integer(1)
+
+    def is_identity(self):
+        r"""
+        Check if this Weierstrass isomorphism is the identity.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: p = 97
+            sage: Fp = GF(p)
+            sage: E = EllipticCurve(Fp, [1, 28])
+            sage: ws = WeierstrassIsomorphism(E, None, E)
+            sage: ws.is_identity()
+            False
+
+        ::
+
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: p = 97
+            sage: Fp = GF(p)
+            sage: E = EllipticCurve(Fp, [1, 28])
+            sage: ws = WeierstrassIsomorphism(E, (1, 0, 0, 0), None)
+            sage: ws.is_identity()
+            True
+        """
+        return self.tuple() == (1, 0, 0, 0)
+
+    def order(self):
+        r"""
+        Compute the order of this Weierstrass isomorphism if it is an automorphism.
+
+        A :class:`ValueError` is raised if the domain is not equal to the codomain.
+
+        A :class:`NotImplementedError` is raised if the order of the automorphism is not 1, 2, 3, 4 or 6.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import *
+            sage: p = 97
+            sage: Fp = GF(p)
+            sage: E = EllipticCurve(Fp, [1, 28])
+            sage: ws = WeierstrassIsomorphism(E, None, E)
+            sage: ws.order()
+            2
+
+        TESTS::
+
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import *
+            sage: p = 97
+            sage: Fp = GF(p)
+            sage: E = EllipticCurve(Fp, [1, 28])
+            sage: ws = WeierstrassIsomorphism(E, None, E)
+            sage: ws.order()
+            2
+            sage: E1 = EllipticCurve(Fp, [1, 69])
+            sage: ws = E.isomorphism_to(E1)
+            sage: ws.order()
+            Traceback (most recent call last):
+            ...
+            ValueError: the domain is different from the codomain
+
+        ::
+
+            sage: E = EllipticCurve_from_j(Fp(0))
+            sage: ws = WeierstrassIsomorphism(E, (Fp(36), 0, 0, 0), None)
+            sage: ws.order()
+            6
+            sage: ws2 = ws*ws
+            sage: ws2.order()
+            3
+            sage: F2_bar = GF(2).algebraic_closure()
+            sage: E = EllipticCurve_from_j(F2_bar(0))
+            sage: ws = WeierstrassIsomorphism(E, None, E)
+            sage: ws.order()
+            3
+        """
+        # Check if it is an actual endomorphism
+        if self._domain != self._codomain:
+            raise ValueError("the domain is different from the codomain")
+
+        if self.is_identity():
+            return Integer(1)
+
+        ws2 = WeierstrassIsomorphism._composition_impl(self, self)
+        if ws2.is_identity():
+            return Integer(2)
+
+        ws3 = WeierstrassIsomorphism._composition_impl(self, ws2)
+        if ws3.is_identity():
+            return Integer(3)
+
+        ws4 = WeierstrassIsomorphism._composition_impl(ws2, ws2)
+        if ws4.is_identity():
+            return Integer(4)
+
+        ws6 = WeierstrassIsomorphism._composition_impl(ws2, ws4)
+        if ws6.is_identity():
+            return Integer(6)
+
+        raise NotImplementedError("the order of the endomorphism is not 1, 2, 3, 4 or 6")
 
 def identity_morphism(E):
     r"""

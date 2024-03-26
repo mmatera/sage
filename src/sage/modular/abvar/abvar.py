@@ -944,7 +944,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         When the intersection is infinite, the output is ``(G, A)``, where
         ``G`` surjects onto the component group. This choice of ``G`` is not
-        canonical (see :trac:`26189`). In this following example, ``B`` is a
+        canonical (see :issue:`26189`). In this following example, ``B`` is a
         subvariety of ``J``::
 
             sage: d1 = J0(11).degeneracy_map(22, 1)
@@ -1074,7 +1074,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         TESTS:
 
-        This exposed a bug in HNF (see :trac:`4527`)::
+        This exposed a bug in HNF (see :issue:`4527`)::
 
             sage: A = J0(206).new_subvariety().decomposition()[3] ; A # long time
             Simple abelian subvariety 206d(1,206) of dimension 4 of J0(206)
@@ -1410,7 +1410,7 @@ class ModularAbelianVariety_abstract(Parent):
             True
 
         Quotienting by the identity should return the original variety and the
-        identity morphism. :trac:`6392` ::
+        identity morphism. :issue:`6392` ::
 
             sage: J = J0(22)
             sage: G = J.zero_subgroup()
@@ -2060,8 +2060,8 @@ class ModularAbelianVariety_abstract(Parent):
             if none_if_not_known:
                 return None
             level = LCM([f.level() for f in self.newform_decomposition('a')])
-            groups = sorted(set([f.group() for f in
-                                 self.newform_decomposition('a')]))
+            groups = sorted({f.group() for f in
+                                 self.newform_decomposition('a')})
             if len(groups) == 1:
                 groups = groups[0]
             self.__newform_level = level, groups
@@ -3106,7 +3106,7 @@ class ModularAbelianVariety_abstract(Parent):
             Finite subgroup with invariants [5] over QQ of Abelian variety J0(33) of dimension 3
 
         This method gives a way of changing the ambient abelian variety of a
-        finite subgroup. This caused an issue in :trac:`6392` but should be
+        finite subgroup. This caused an issue in :issue:`6392` but should be
         fixed now. ::
 
             sage: A, B = J0(43)
@@ -3870,7 +3870,7 @@ class ModularAbelianVariety_abstract(Parent):
         if not isinstance(other, ModularAbelianVariety_abstract):
             raise TypeError("other must be an abelian variety")
         D = self.decomposition()
-        C = set([A.newform_label() for A in other.decomposition()])
+        C = {A.newform_label() for A in other.decomposition()}
         Z = []
         for X in D:
             lbl = X.newform_label()
@@ -4899,7 +4899,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
                 else:
                     raise NotImplementedError("Atkin-Lehner at p must act as a scalar")
         else:
-            mul_primes = sorted(set([p] + [q for q in prime_range(2, 2 * self.dimension() + 2)]))
+            mul_primes = sorted(set([p] + list(prime_range(2, 2 * self.dimension() + 2))))
         div = Integer(div)
         mul = Integer(mul)
         mul_primes = tuple(mul_primes)
@@ -5146,7 +5146,7 @@ def simple_factorization_of_modsym_space(M, simple=True):
 
     TESTS:
 
-    Check that :trac:`21799` is fixed::
+    Check that :issue:`21799` is fixed::
 
         sage: JH(28, [15]).decomposition()
         [

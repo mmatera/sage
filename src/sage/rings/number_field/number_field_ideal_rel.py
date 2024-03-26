@@ -1,13 +1,5 @@
 r"""
-Relative Number Field Ideals
-
-AUTHORS:
-
-- Steven Sivek (2005-05-16)
-
-- William Stein (2007-09-06)
-
-- Nick Alexander (2009-01)
+Ideals of relative number fields
 
 EXAMPLES::
 
@@ -22,6 +14,13 @@ EXAMPLES::
     Fractional ideal ((1/2*b + 2)*a - 1/2*b + 2)
     sage: K.fractional_ideal(G).absolute_norm().factor()
     7^2
+
+AUTHORS:
+
+- Steven Sivek (2005-05-16)
+- William Stein (2007-09-06)
+- Nick Alexander (2009-01)
+
 """
 
 #*****************************************************************************
@@ -272,7 +271,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
@@ -405,7 +404,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             815730721
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
@@ -524,7 +523,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             True
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
@@ -755,7 +754,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K.<c> = F.extension(Y^2 - (1 + a)*(a + b)*a*b)
             sage: [I.residue_class_degree() for I in K.ideal(c).prime_factors()]
             [1, 2]
-         """
+        """
         if self.is_prime():
             return self.absolute_ideal().residue_class_degree()
         raise ValueError("the ideal (= %s) is not prime" % self)
@@ -872,7 +871,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             Traceback (most recent call last):
             ...
             ValueError: p (= Fractional ideal (5)) must be a prime
-         """
+        """
         if p == 0:
             raise ValueError("p (= %s) must be nonzero" % p)
         if not isinstance(p, NumberFieldFractionalIdeal):

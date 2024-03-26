@@ -255,7 +255,7 @@ class Magmas(Category_singleton):
 
                 The use of this shorthand should be reserved for casual
                 interactive use or when there is no risk of ambiguity.
-                """
+            """
             from sage.categories.additive_magmas import AdditiveMagmas
             if self.is_subcategory(AdditiveMagmas()):
                 raise ValueError("FinitelyGenerated is ambiguous for {}.\nPlease use explicitly one of the FinitelyGeneratedAsXXX methods".format(self))
@@ -323,7 +323,7 @@ class Magmas(Category_singleton):
 
             This axiom is in fact only meaningful for
             :class:`semigroups <Semigroups>`. This stub definition is
-            here as a workaround for :trac:`20515`, in order to define
+            here as a workaround for :issue:`20515`, in order to define
             the `J`-trivial axiom as the intersection of the `L` and
             `R`-trivial axioms.
 
@@ -438,7 +438,7 @@ class Magmas(Category_singleton):
             def extra_super_categories(self):
                 r"""
                 Implement the fact that a Cartesian product of commutative
-                additive magmas is still an commutative additive magmas.
+                additive magmas is still a commutative additive magmas.
 
                 EXAMPLES::
 

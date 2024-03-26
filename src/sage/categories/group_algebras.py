@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Group Algebras
 
@@ -10,13 +9,13 @@ AUTHOR:
 
 - David Loeffler (2008-08-24): initial version
 - Martin Raum (2009-08): update to use new coercion model -- see
-  :trac:`6670`.
+  :issue:`6670`.
 - John Palmieri (2011-07): more updates to coercion, categories, etc.,
   group algebras constructed using CombinatorialFreeModule -- see
-  :trac:`6670`.
+  :issue:`6670`.
 - Nicolas M. Thiéry (2010-2017), Travis Scrimshaw (2017):
   generalization to a covariant functorial construction for
-  monoid algebras, and beyond -- see e.g. :trac:`18700`.
+  monoid algebras, and beyond -- see e.g. :issue:`18700`.
 """
 
 #*****************************************************************************
@@ -40,7 +39,7 @@ class GroupAlgebras(AlgebrasCategory):
         sage: C = Groups().Algebras(ZZ); C
         Category of group algebras over Integer Ring
         sage: C.super_categories()
-        [Category of hopf algebras with basis over Integer Ring,
+        [Category of Hopf algebras with basis over Integer Ring,
          Category of monoid algebras over Integer Ring]
 
     We can also construct this category with::
@@ -92,9 +91,9 @@ class GroupAlgebras(AlgebrasCategory):
 
             sage: C = Groups().Algebras(QQ)
             sage: C.extra_super_categories()
-            [Category of hopf algebras over Rational Field]
+            [Category of Hopf algebras over Rational Field]
             sage: sorted(C.super_categories(), key=str)
-            [Category of hopf algebras with basis over Rational Field,
+            [Category of Hopf algebras with basis over Rational Field,
              Category of monoid algebras over Rational Field]
         """
         from sage.categories.hopf_algebras import HopfAlgebras
@@ -410,7 +409,7 @@ class GroupAlgebras(AlgebrasCategory):
                 4*B[()] + 3*B[(1,2)] + 2*B[(1,2)(3,4)] + 2*B[(1,2,3)] + B[(1,2,3,4)]
 
             The following test fails due to a bug involving combinatorial free modules and
-            the coercion system (see :trac:`28544`)::
+            the coercion system (see :issue:`28544`)::
 
                 sage: # needs sage.groups sage.modules
                 sage: G = PermutationGroup([[(1,2,3),(4,5)], [(3,4)]])

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Hyperbolic Geodesics
 
@@ -622,7 +621,7 @@ class HyperbolicGeodesic(SageObject):
     def ideal_endpoints(self):
         r"""
         Return the ideal endpoints in bounded models.  Raise a
-        ``NotImplementedError`` in models that are not bounded.
+        :class:`NotImplementedError` in models that are not bounded.
 
         EXAMPLES::
 
@@ -660,7 +659,7 @@ class HyperbolicGeodesic(SageObject):
     def complete(self):
         r"""
         Return the geodesic with ideal endpoints in bounded models.  Raise a
-        ``NotImplementedError`` in models that are not bounded.
+        :class:`NotImplementedError` in models that are not bounded.
         In the following examples we represent complete geodesics by a dashed
         line.
 
@@ -817,7 +816,7 @@ class HyperbolicGeodesic(SageObject):
         r"""
         Return the unique hyperbolic geodesic perpendicular to two given
         geodesics, if such a geodesic exists.  If none exists, raise a
-        ``ValueError``.
+        :class:`ValueError`.
 
         INPUT:
 
@@ -1278,7 +1277,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
         r"""
         Return the unique hyperbolic geodesic perpendicular to ``self``
         and ``other``, if such a geodesic exists; otherwise raise a
-        ``ValueError``.
+        :class:`ValueError`.
 
         INPUT:
 
@@ -1593,7 +1592,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
 
         TESTS:
 
-        Check the result is independent of the order (:trac:`29936`)::
+        Check the result is independent of the order (:issue:`29936`)::
 
             sage: def bisector_gets_midpoint(a, b):
             ....:     UHP = HyperbolicPlane().UHP()
@@ -1654,7 +1653,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
 
         TESTS:
 
-        This checks :trac:`20330` so that geodesics defined by symbolic
+        This checks :issue:`20330` so that geodesics defined by symbolic
         expressions do not generate runtime errors. ::
 
             sage: g=HyperbolicPlane().UHP().get_geodesic(-1+I,1+I)
@@ -1673,7 +1672,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: parent(g.midpoint().coordinates())
             Complex Field with 53 bits of precision
 
-        Check that the midpoint is independent of the order (:trac:`29936`)::
+        Check that the midpoint is independent of the order (:issue:`29936`)::
 
             sage: g = UHP.get_geodesic(1+I, 2+0.5*I)
             sage: h = UHP.get_geodesic(2+0.5*I, 1+I)
@@ -2008,7 +2007,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: type(B)
             <class 'sage.matrix.matrix_complex_double_dense.Matrix_complex_double_dense'>
 
-      ::
+        ::
 
             sage: B = g._get_B(SR(1));  B
             [ 1  0]
@@ -2016,7 +2015,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: type(B)
             <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
 
-      ::
+        ::
 
             sage: B = g._get_B(complex(1));  B
             [   1.0    0.0]
@@ -2024,7 +2023,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: type(B)
             <class 'sage.matrix.matrix_complex_double_dense.Matrix_complex_double_dense'>
 
-      ::
+        ::
 
             sage: B = g._get_B(QQbar(1+I));  B
             [ 1  0]

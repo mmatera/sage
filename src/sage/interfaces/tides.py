@@ -12,14 +12,14 @@ expression of the differential equation.
 
 ::
 
-    ##########################################################################
+    # ************************************************************************
     #  Copyright (C) 2014 Miguel Marco <mmarco@unizar.es>, Marcos Rodriguez
     #   <marcos@uunizar.es>
     #
     #  Distributed under the terms of the GNU General Public License (GPL):
     #
-    #                  http://www.gnu.org/licenses/
-    ##########################################################################
+    #                  https://www.gnu.org/licenses/
+    # ************************************************************************
 
 AUTHORS:
 
@@ -37,8 +37,10 @@ REFERENCES:
 
 - [TIDES]_
 """
+
 from sage.rings.real_mpfr import RealField
-from sage.calculus.all import symbolic_expression
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.calculus.all", "symbolic_expression")
 from sage.misc.flatten import flatten
 from sage.ext.fast_callable import fast_callable
 from sage.rings.semirings.non_negative_integer_semiring import NN
@@ -436,7 +438,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
         '\ttolrel = 9.9999999999999998e-17 ;\n'
         sage: shutil.rmtree(tempdir)
 
-    Check that issue :trac:`17179` is fixed (handle expressions like `\\pi`)::
+    Check that issue :issue:`17179` is fixed (handle expressions like `\\pi`)::
 
         sage: from sage.interfaces.tides import genfiles_mintides
         sage: import os
@@ -470,7 +472,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
     remove_repeated(l1, l2)
     remove_constants(l1, l2)
     l0 = [str(l) for l in l1]
-    #generate the corresponding c lines
+    # generate the corresponding c lines
 
     l3 = []
     var = f[0].arguments()
@@ -717,7 +719,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
         '\tmp_tides_delta(function_iteration, NULL, nvar, npar, nfun, v, p, tini, dt, nipt, tolrel, tolabs, NULL, fd);\n'
         sage: shutil.rmtree(tempdir)
 
-    Check that issue :trac:`17179` is fixed (handle expressions like `\\pi`)::
+    Check that issue :issue:`17179` is fixed (handle expressions like `\\pi`)::
 
         sage: from sage.interfaces.tides import genfiles_mpfr
         sage: import os

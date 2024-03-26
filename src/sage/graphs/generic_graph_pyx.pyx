@@ -501,7 +501,7 @@ def length_and_string_from_graph6(s):
 
     INPUT:
 
-    - ``s`` -- a graph6 string describing an binary vector (and encoding its
+    - ``s`` -- a graph6 string describing a binary vector (and encoding its
       length).
 
     EXAMPLES::
@@ -612,6 +612,7 @@ def binary_string_from_dig6(s, n):
     m = "".join(l)
     return m[:n*n]
 
+
 # Exhaustive search in graphs
 
 cdef class SubgraphSearch:
@@ -655,7 +656,7 @@ cdef class SubgraphSearch:
 
         TESTS:
 
-        Test proper initialization and deallocation, see :trac:`14067`.
+        Test proper initialization and deallocation, see :issue:`14067`.
         We intentionally only create the class without doing any
         computations with it::
 
@@ -726,7 +727,7 @@ cdef class SubgraphSearch:
             6
 
         Check that the method is working even when vertices or edges are of
-        incomparable types (see :trac:`35904`)::
+        incomparable types (see :issue:`35904`)::
 
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: G = Graph()
@@ -777,7 +778,7 @@ cdef class SubgraphSearch:
 
         TESTS:
 
-        Check that :trac:`21828` is fixed::
+        Check that :issue:`21828` is fixed::
 
             sage: Poset().is_incomparable_chain_free(1,1)   # indirect doctest          # needs sage.modules
             True
@@ -831,16 +832,16 @@ cdef class SubgraphSearch:
         # whether both are of the same type)
         self.directed = G.is_directed()
 
-        cdef int i, j, k
+        cdef int i, j
 
         # A vertex is said to be busy if it is already part of the partial copy
         # of H in G.
-        self.busy       = <int *>  self.mem.allocarray(self.ng, sizeof(int))
-        self.tmp_array  = <int *>  self.mem.allocarray(self.ng, sizeof(int))
-        self.stack      = <int *>  self.mem.allocarray(self.nh, sizeof(int))
-        self.vertices   = <int *>  self.mem.allocarray(self.nh, sizeof(int))
+        self.busy = <int *> self.mem.allocarray(self.ng, sizeof(int))
+        self.tmp_array = <int *> self.mem.allocarray(self.ng, sizeof(int))
+        self.stack = <int *> self.mem.allocarray(self.nh, sizeof(int))
+        self.vertices = <int *> self.mem.allocarray(self.nh, sizeof(int))
         self.line_h_out = <int **> self.mem.allocarray(self.nh, sizeof(int *))
-        self.line_h_in  = <int **> self.mem.allocarray(self.nh, sizeof(int *)) if self.directed else NULL
+        self.line_h_in = <int **> self.mem.allocarray(self.nh, sizeof(int *)) if self.directed else NULL
 
         self.line_h_out[0] = <int *> self.mem.allocarray(self.nh*self.nh,
                                                          sizeof(int))
@@ -1029,6 +1030,7 @@ cdef inline bint vectors_inferior(int n, int *a, int *b) noexcept:
         if a[i] < b[i]:
             return False
     return True
+
 
 ##############################
 # Further tests. Unit tests for methods, functions, classes defined with cdef.
@@ -1283,7 +1285,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
     TESTS:
 
-    :trac:`10206` -- Hamiltonian cycle in small (di)graphs::
+    :issue:`10206` -- Hamiltonian cycle in small (di)graphs::
 
         sage: for n in range(3):
         ....:     for G in graphs(n):
@@ -1301,7 +1303,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         order 2 and size 1: (False, [0, 1])
         order 2 and size 2: (False, [0, 1])
 
-    :trac:`10206` -- Hamiltonian path in small (di)graphs::
+    :issue:`10206` -- Hamiltonian path in small (di)graphs::
 
         sage: for n in range(3):
         ....:     for G in graphs(n):
@@ -1319,7 +1321,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         order 2 and size 1: (True, [0, 1])
         order 2 and size 2: (True, [0, 1])
 
-    :trac:`10206` -- disconnected graphs::
+    :issue:`10206` -- disconnected graphs::
 
         sage: G = graphs.CompleteGraph(4) + Graph(1)
         sage: fh(G, find_path=False)
@@ -1347,7 +1349,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     find_path = (find_path > 0)
 
     if G.is_clique(induced=False):
-        # We have an hamiltonian path since n >= 2, but we have an hamiltonian
+        # We have a hamiltonian path since n >= 2, but we have a hamiltonian
         # cycle only if n >= 3
         return find_path or n >= 3, list(G)
 

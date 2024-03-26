@@ -190,7 +190,7 @@ series ring.
 AUTHORS:
 
 - Niles Johnson (2010-07): initial code
-- Simon King (2012-08, 2013-02): Use category and coercion framework, :trac:`13412` and :trac:`14084`
+- Simon King (2012-08, 2013-02): Use category and coercion framework, :issue:`13412` and :issue:`14084`
 
 """
 
@@ -204,23 +204,28 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+import sage.misc.latex as latex
 
-from sage.rings.ring import CommutativeRing
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.infinity import infinity
+from sage.rings.multi_power_series_ring_element import MPowerSeries
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.power_series_ring import PowerSeriesRing, PowerSeriesRing_generic, is_PowerSeriesRing
-
-from sage.rings.infinity import infinity
-import sage.misc.latex as latex
+from sage.rings.ring import CommutativeRing
 from sage.structure.nonexact import Nonexact
 
-from sage.rings.multi_power_series_ring_element import MPowerSeries
 from sage.categories.commutative_rings import CommutativeRings
 _CommutativeRings = CommutativeRings()
+
 from sage.categories.integral_domains import IntegralDomains
 _IntegralDomains = IntegralDomains()
+
+try:
+    from sage.rings.laurent_series_ring import LaurentSeriesRing
+except ImportError:
+    LaurentSeriesRing = ()
 
 
 def is_MPowerSeriesRing(x):
@@ -340,7 +345,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         TESTS:
 
-        By :trac:`14084`, the multi-variate power series ring belongs to the
+        By :issue:`14084`, the multi-variate power series ring belongs to the
         category of integral domains, if the base ring does::
 
             sage: P = ZZ[['x','y']]
@@ -731,8 +736,8 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             return False
         if all(v == 0 for v in im_gens):
             return True
-        from .laurent_series_ring import is_LaurentSeriesRing
-        if is_MPowerSeriesRing(codomain) or is_PowerSeriesRing(codomain) or is_LaurentSeriesRing(codomain):
+
+        if is_MPowerSeriesRing(codomain) or is_PowerSeriesRing(codomain) or isinstance(codomain, LaurentSeriesRing):
             try:
                 B = all(v.valuation() > 0 or v.is_nilpotent() for v in im_gens)
             except NotImplementedError:

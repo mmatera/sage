@@ -671,7 +671,7 @@ postscript or svg before printing it::
     somewhat ridiculously slow. This is due to the use of generic code
     that works uniformly in all dimension rather than taylor-made code
     for 2D. Things should improve with the fast interface to the PPL
-    library (see e.g. :trac:`12553`).
+    library (see e.g. :issue:`12553`).
 
 Drawing custom objects on top of a root system plot
 ---------------------------------------------------
@@ -830,7 +830,7 @@ lazy_import("sage.combinat.root_system.root_lattice_realizations",
             "RootLatticeRealizations")
 
 
-class PlotOptions():
+class PlotOptions:
     r"""
     A class for plotting options for root lattice realizations.
 

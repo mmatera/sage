@@ -329,10 +329,11 @@ TESTS::
 ####################################################################################
 
 
-import sage.modules.matrix_morphism as matrix_morphism
 import sage.modules.free_module_morphism as free_module_morphism
-from . import vector_space_homspace
+import sage.modules.matrix_morphism as matrix_morphism
+from sage.modules import vector_space_homspace
 from sage.structure.element import is_Matrix
+
 
 def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     r"""
@@ -692,19 +693,21 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         ArithmeticError: some image of the function is not in the codomain, because
         element [1, 0] is not in free module
     """
-    from sage.matrix.constructor import matrix
-    from sage.modules.module import is_VectorSpace
-    from sage.modules.free_module import VectorSpace
     from sage.categories.homset import Hom
+    from sage.matrix.constructor import matrix
+    from sage.modules.free_module import VectorSpace
+    from sage.modules.module import is_VectorSpace
     try:
-        from sage.modules.vector_callable_symbolic_dense import Vector_callable_symbolic_dense
+        from sage.modules.vector_callable_symbolic_dense import (
+            Vector_callable_symbolic_dense,
+        )
     except ImportError:
         Vector_callable_symbolic_dense = ()
 
     if side not in ['left', 'right']:
-        raise ValueError("side must be 'left' or 'right', not {0}".format(side))
+        raise ValueError("side must be 'left' or 'right', not {}".format(side))
     if not (is_Matrix(arg0) or is_VectorSpace(arg0)):
-        raise TypeError('first argument must be a matrix or a vector space, not {0}'.format(arg0))
+        raise TypeError('first argument must be a matrix or a vector space, not {}'.format(arg0))
     if is_Matrix(arg0):
         R = arg0.base_ring()
         if not R.is_field():
@@ -760,7 +763,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
             msg = 'symbolic function must be linear in all the inputs:\n' + e.args[0]
             raise ValueError(msg)
         # have matrix with respect to standard bases, now consider user bases
-        images = [v*arg2 for v in D.basis()]
+        images = [v * arg2 for v in D.basis()]
         try:
             arg2 = matrix([C.coordinates(C(a)) for a in images])
         except (ArithmeticError, TypeError) as e:
@@ -776,7 +779,8 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     # __init__ will check matrix sizes versus domain/codomain dimensions
     return H(arg2)
 
-def is_VectorSpaceMorphism(x):
+
+def is_VectorSpaceMorphism(x) -> bool:
     r"""
     Returns ``True`` if ``x`` is a vector space morphism (a linear transformation).
 
@@ -856,7 +860,7 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
             <class 'sage.modules.vector_space_morphism.VectorSpaceMorphism'>
         """
         if not vector_space_homspace.is_VectorSpaceHomspace(homspace):
-            raise TypeError('homspace must be a vector space hom space, not {0}'.format(homspace))
+            raise TypeError('homspace must be a vector space hom space, not {}'.format(homspace))
         if isinstance(A, matrix_morphism.MatrixMorphism):
             A = A.matrix()
         if not is_Matrix(A):

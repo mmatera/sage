@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.modules
 r"""
 Cluster algebras
 
@@ -361,12 +362,11 @@ from sage.categories.morphism import SetMorphism
 from sage.categories.rings import Rings
 from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
 from sage.combinat.permutation import Permutation
-from sage.geometry.cone import Cone
-from sage.geometry.fan import Fan
 from sage.graphs.digraph import DiGraph
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.matrix.special import block_matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
@@ -381,6 +381,8 @@ from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 
+lazy_import('sage.geometry.cone', 'Cone')
+lazy_import('sage.geometry.fan', 'Fan')
 
 ##############################################################################
 # Elements of a cluster algebra
@@ -1180,7 +1182,7 @@ class ClusterAlgebraSeed(SageObject):
             sage: S._mutated_F(0, (1, 0))
             u0 + 1
 
-        Check that :trac:`28176` is fixed::
+        Check that :issue:`28176` is fixed::
 
             sage: A = ClusterAlgebra(matrix([[0,2],[-2,0]]))
             sage: S = A.initial_seed()
@@ -1278,7 +1280,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             A Cluster Algebra with cluster variables x0, x1 and no coefficients
             over Integer Ring
 
-        Check that :trac:`28176` is fixed::
+        Check that :issue:`28176` is fixed::
 
             sage: A1 = ClusterAlgebra(['A',2])
             sage: A2 = ClusterAlgebra(['A',2], cluster_variable_prefix='x')
@@ -1501,7 +1503,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             sage: S.cluster_variable(seq2[-1]) == g(A3.cluster_variable((1, -2, 2)))
             True
 
-         Check that :trac:`23654` is fixed::
+         Check that :issue:`23654` is fixed::
 
             sage: A = ClusterAlgebra(['A',2])
             sage: AA = ClusterAlgebra(['A',3])
@@ -1664,8 +1666,8 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             [(0, 1), (1, 0)]
         """
         I = identity_matrix(self._n)
-        self._path_dict = dict((v, []) for v in map(tuple, I.columns()))
-        self._F_poly_dict = dict((v, self._U(1)) for v in self._path_dict)
+        self._path_dict = {v: [] for v in map(tuple, I.columns())}
+        self._F_poly_dict = {v: self._U(1) for v in self._path_dict}
         self.reset_current_seed()
         self.reset_exploring_iterator()
 
@@ -2373,7 +2375,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: A = ClusterAlgebra(['A', 2])
-            sage: A.cluster_fan()
+            sage: A.cluster_fan()                                                       # needs sage.geometry.polyhedron
             Rational polyhedral fan in 2-d lattice N
         """
         seeds = self.seeds(depth=depth, mutating_F=False)
@@ -2441,7 +2443,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             sage: A.mutate_initial([0,1]*10, mutating_F=False)
             A Cluster Algebra with cluster variables x20, x21 and no coefficients over Integer Ring
 
-        Check that :trac:`28176` is fixed::
+        Check that :issue:`28176` is fixed::
 
             sage: A = ClusterAlgebra( matrix(5,[0,1,-1,1,-1]), cluster_variable_names=['p13'], coefficient_names=['p12','p23','p34','p41']); A
             A Cluster Algebra with cluster variable p13 and coefficients p12, p23, p34, p41 over Integer Ring

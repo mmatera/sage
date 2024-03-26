@@ -1,14 +1,14 @@
 r"""
 Hecke modules
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category_types import Category_module
 from sage.categories.homsets import HomsetsCategory
@@ -114,7 +114,7 @@ class HeckeModules(Category_module):
             The sole purpose of this method is to construct the homset
             as a :class:`~sage.modular.hecke.homspace.HeckeModuleHomspace`. If
             ``category`` is specified and is not a subcategory of
-            :class:`HeckeModules`, a ``TypeError`` is raised instead
+            :class:`HeckeModules`, a :class:`TypeError` is raised instead
 
             This method is not meant to be called directly. Please use
             :func:`sage.categories.homset.Hom` instead.
@@ -139,7 +139,7 @@ class HeckeModules(Category_module):
             Fixing :meth:`_test_zero` (``__call__`` should accept a
             function as input) and :meth:`_test_elements*` (modular
             form morphisms elements should inherit from categories) is
-            :trac:`12879`.
+            :issue:`12879`.
 
             TESTS::
 
@@ -170,7 +170,7 @@ class HeckeModules(Category_module):
             TESTS:
 
             Check that Hom sets of Hecke modules are in the correct
-            category (see :trac:`17359`)::
+            category (see :issue:`17359`)::
 
                 sage: HeckeModules(ZZ).Homsets().super_categories()
                 [Category of modules over Integer Ring, Category of homsets]

@@ -212,7 +212,7 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         sphinx_plot(L)
 
 
-    Check that no NaNs are produced (see :trac:`13135`)::
+    Check that no NaNs are produced (see :issue:`13135`)::
 
         sage: any(math.isnan(c) for v in L.vertices() for c in v)
         False
@@ -530,7 +530,8 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
 
     .. PLOT::
 
-        sphinx_plot(list_plot3d([[1, 1, 1], [1, 2, 1], [0, 1, 3], [1, 0, 4]], point_list=True))
+        sphinx_plot(list_plot3d([[1, 1, 1], [1, 2, 1], [0, 1, 3], [1, 0, 4]],
+                                point_list=True))
 
     ::
 

@@ -62,7 +62,7 @@ cdef class _lazy_attribute():
 
         TESTS:
 
-        We check that :trac:`9251` is solved::
+        We check that :issue:`9251` is solved::
 
             sage: Parent.element_class
             <sage.misc.lazy_attribute.lazy_attribute object at 0x...>
@@ -77,7 +77,7 @@ cdef class _lazy_attribute():
 
     def _sage_src_lines_(self):
         r"""
-        Returns the source code location for the wrapped function.
+        Return the source code location for the wrapped function.
 
         EXAMPLES::
 
@@ -87,15 +87,14 @@ cdef class _lazy_attribute():
             sage: src[0]
             'def banner():\n'
             sage: lines
-            89
+            88
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)
 
-
     def __get__(self, a, cls):
         """
-        Implements the attribute access protocol.
+        Implement the attribute access protocol.
 
         EXAMPLES::
 
@@ -142,6 +141,7 @@ cdef class _lazy_attribute():
                 return result
             raise
         return result
+
 
 class lazy_attribute(_lazy_attribute):
     r"""
@@ -345,7 +345,7 @@ class lazy_attribute(_lazy_attribute):
         sage: A().len
         5
 
-    Since :trac:`11115`, extension classes derived from
+    Since :issue:`11115`, extension classes derived from
     :class:`~sage.structure.parent.Parent` can inherit a lazy attribute,
     such as ``element_class``::
 
@@ -509,7 +509,7 @@ class lazy_attribute(_lazy_attribute):
 
 class lazy_class_attribute(lazy_attribute):
     """
-    A lazy class attribute for an class is like a usual class attribute,
+    A lazy class attribute for a class is like a usual class attribute,
     except that, instead of being computed when the class is constructed, it
     is computed on the fly the first time it is accessed, either through the
     class itself or trough on of its objects.

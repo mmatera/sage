@@ -6,22 +6,17 @@
 # distutils: language = c++
 # sage.doctest: needs sage.libs.linbox
 """
-Number field elements (implementation using NTL)
+Elements of number fields (implemented using NTL)
 
 AUTHORS:
 
-- William Stein: version before it got Cython'd
-
-- Joel B. Mohler (2007-03-09): First reimplementation in Cython
-
-- William Stein (2007-09-04): add doctests
-
-- Robert Bradshaw (2007-09-15): specialized classes for relative and
-  absolute elements
-
-- John Cremona (2009-05-15): added support for local and global
-  logarithmic heights.
-
+- William Stein: initial version
+- Joel B. Mohler (2007-03-09): reimplemented in Cython
+- William Stein (2007-09-04): added doctests
+- Robert Bradshaw (2007-09-15): specialized classes for relative and absolute
+  elements
+- John Cremona (2009-05-15): added support for local and global logarithmic
+  heights
 - Robert Harron (2012-08): conjugate() now works for all fields contained in
   CM fields
 
@@ -130,18 +125,20 @@ def _inverse_mod_generic(elt, I):
     function called from each of the ``OrderElement_xxx`` classes, since
     otherwise we'd have to have the same code three times over (there
     is no ``OrderElement_generic`` class - no multiple inheritance). See
-    :trac:`4190`.
+    :issue:`4190`.
 
     EXAMPLES::
 
         sage: x = polygen(ZZ, 'x')
         sage: OE.<w> = EquationOrder(x^3 - x + 2)
         sage: from sage.rings.number_field.number_field_element import _inverse_mod_generic
-        sage: _inverse_mod_generic(w, 13*OE)
+        sage: _inverse_mod_generic(w, 13)
         6*w^2 - 6
     """
     from sage.matrix.constructor import matrix
     R = elt.parent()
+    if not R.is_maximal():
+        raise NotImplementedError('not implemented for non-maximal orders')
     I = R.number_field().fractional_ideal(I)
     if not I.is_integral():
         raise ValueError("inverse is only defined modulo integral ideals")
@@ -353,7 +350,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
           quadratic field elements)
         """
         if check:
-            from .number_field import NumberField_cyclotomic
+            from sage.rings.number_field.number_field import NumberField_cyclotomic
             if not isinstance(self.number_field(), NumberField_cyclotomic) \
                or not isinstance(new_parent, NumberField_cyclotomic):
                 raise TypeError("The field and the new parent field must both be cyclotomic fields.")
@@ -412,7 +409,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             True
 
         This also gets called for unpickling order elements; we check that
-        :trac:`6462` is fixed::
+        :issue:`6462` is fixed::
 
             sage: L = NumberField(x^3 - x - 1,'a'); OL = L.maximal_order(); w = OL.0
             sage: loads(dumps(w)) == w # indirect doctest
@@ -509,7 +506,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: gap(p._gap_init_())
             -3+2*E(8)+E(8)^2
 
-        Check that :trac:`15276` is fixed::
+        Check that :issue:`15276` is fixed::
 
             sage: for n in range(2,20):                                                 # needs sage.libs.gap
             ....:     K = CyclotomicField(n)
@@ -523,7 +520,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             return str(self)
         p = self.polynomial()
         P = self.parent()
-        from .number_field import NumberField_cyclotomic
+        from sage.rings.number_field.number_field import NumberField_cyclotomic
         if isinstance(P, NumberField_cyclotomic):
             n = P._n()
             if n != 2 and n % 4 == 2:
@@ -554,7 +551,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: type(_)
             <class 'sage.libs.gap.element.GapElement_Cyclotomic'>
 
-        Check that :trac:`15276` is fixed::
+        Check that :issue:`15276` is fixed::
 
             sage: for n in range(2,20):                                                 # needs sage.libs.gap
             ....:     K = CyclotomicField(n)
@@ -564,7 +561,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             ....:         t = K.random_element()
             ....:         assert K(libgap(t)) == t, "n = {}  t = {}".format(n,t)
         """
-        from .number_field import NumberField_cyclotomic
+        from sage.rings.number_field.number_field import NumberField_cyclotomic
         P = self.parent()
         if not isinstance(P, NumberField_cyclotomic):
             raise NotImplementedError("libgap conversion is only implemented for cyclotomic fields")
@@ -1003,7 +1000,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             1.2599210498948731647672106072782283506
 
         Number field with a real-valued coercion embedding
-        (:trac:`21105`)::
+        (:issue:`21105`)::
 
             sage: k.<cbrt2> = NumberField(x^3 - 2, embedding=1.26)
             sage: abs(cbrt2)
@@ -1330,7 +1327,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: a.abs(i=1)
             2.41421356237309
 
-        Check that :trac:`16147` is fixed::
+        Check that :issue:`16147` is fixed::
 
             sage: x = polygen(ZZ)
             sage: f = x^3 - x - 1
@@ -1341,7 +1338,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             1.32471795724475
 
         Check that for fields with real coercion embeddings, absolute
-        values are in the same field (:trac:`21105`)::
+        values are in the same field (:issue:`21105`)::
 
             sage: x = polygen(ZZ)
             sage: f = x^3 - x - 1
@@ -1638,7 +1635,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: t and u.norm(K) == -a
             True
 
-        Verify that :trac:`27469` has been fixed::
+        Verify that :issue:`27469` has been fixed::
 
             sage: L.<z24> = CyclotomicField(24); L
             Cyclotomic Field of order 24 and degree 8
@@ -1776,7 +1773,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(x^2 + 1/2)
             sage: L.<b> = K.extension(x^2 - 1/2)
@@ -1829,7 +1826,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: (a^2)._mpfr_(RR)
             -1.00000000000000
 
-        Verify that :trac:`13005` has been fixed::
+        Verify that :issue:`13005` has been fixed::
 
             sage: K.<a> = NumberField(x^2 - 5)
             sage: RR(K(1))
@@ -1991,7 +1988,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             raise ArithmeticError("factorization of 0 is not defined")
 
         K = self.parent()
-        from .order import is_NumberFieldOrder
+        from sage.rings.number_field.order import is_NumberFieldOrder
         if is_NumberFieldOrder(K):
             K = K.number_field()
         fac = K.ideal(self).factor()
@@ -2058,15 +2055,9 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: R = K.maximal_order()
             sage: R(i+1).gcd(2)
             i + 1
-
-        Non-maximal orders are not supported::
-
             sage: R = K.order(2*i)
             sage: R(1).gcd(R(4*i))
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: gcd() for Order in Number Field in i
-            with defining polynomial x^2 + 1 with i = 1*I is not implemented
+            1
 
         The following field has class number 3, but if the ideal
         ``(self, other)`` happens to be principal, this still works::
@@ -2087,7 +2078,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: R(2*a - a^2).gcd(0)
             a
             sage: R(a).gcd(R(2*a)).parent()
-            Maximal Order in Number Field in a with defining polynomial x^3 - 7
+            Maximal Order generated by a in Number Field in a with defining polynomial x^3 - 7
         """
         # gcd(0,0) = 0
         if not self and not other:
@@ -2097,8 +2088,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if R.is_field():
             return R.one()
 
-        from .order import is_NumberFieldOrder
-        if not is_NumberFieldOrder(R) or not R.is_maximal():
+        from sage.rings.number_field.order import is_NumberFieldOrder
+        if not is_NumberFieldOrder(R):
             raise NotImplementedError("gcd() for %r is not implemented" % R)
 
         K = R.number_field()
@@ -2126,7 +2117,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         TESTS:
 
         Check that the output is correct even for numbers that are
-        very close to zero (:trac:`9596`)::
+        very close to zero (:issue:`9596`)::
 
             sage: K.<sqrt2> = QuadraticField(2)
             sage: a = 30122754096401; b = 21300003689580
@@ -2191,7 +2182,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS:
 
-        Test that :trac:`16894` is fixed::
+        Test that :issue:`16894` is fixed::
 
             sage: K.<a> = QuadraticField(22)
             sage: u = K.units()[0]
@@ -2394,7 +2385,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: 2^I                                                                   # needs sage.symbolic
             2^I
 
-        Test :trac:`14895`::
+        Test :issue:`14895`::
 
             sage: K.<sqrt2> = QuadraticField(2)
             sage: 2^sqrt2                                                               # needs sage.symbolic
@@ -2593,7 +2584,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: (a+1/3)*(5*a+2/7)/(a+1/3)
             5*a + 2/7
 
-        For order elements, see :trac:`4190`::
+        For order elements, see :issue:`4190`::
 
             sage: K = NumberField(x^2 - 17, 'a')
             sage: OK = K.ring_of_integers()
@@ -2774,7 +2765,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: (2*I).__invert__()
             -1/2*I
 
-        We check that :trac:`20693` has been resolved, i.e. number
+        We check that :issue:`20693` has been resolved, i.e. number
         field elements with huge denominator can be inverted::
 
             sage: K.<zeta22> = CyclotomicField(22)
@@ -2886,7 +2877,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             raise ValueError("need a real or complex embedding to convert "
                              "a non rational element of a number field "
                              "into an algebraic number")
-        from .number_field import refine_embedding
+        from sage.rings.number_field.number_field import refine_embedding
         emb = refine_embedding(emb, infinity)
         return parent(emb(self))
 
@@ -2967,7 +2958,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             I
 
         Conversely, some elements are too complicated to be written in
-        terms of radicals directly. At least until :trac:`17516` gets
+        terms of radicals directly. At least until :issue:`17516` gets
         addressed. In those cases, the generator might be converted
         and its expression be used to convert other elements. This
         avoids regressions but can lead to fairly complicated
@@ -2983,7 +2974,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS:
 
-        :trac:`33804`::
+        :issue:`33804`::
 
             sage: Pol.<x> = QQ[]
             sage: p = x^8 + x^7 - 9*x^6 - 3*x^5 - 6*x^4 + x^3 - 14*x^2 + 2*x + 2
@@ -2999,7 +2990,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if embedding is None:
             raise TypeError("an embedding into RR or CC must be specified")
 
-        from .number_field import NumberField_cyclotomic
+        from sage.rings.number_field.number_field import NumberField_cyclotomic
         if isinstance(K, NumberField_cyclotomic):
             # solution by radicals may be difficult, but we have a closed form
             from sage.functions.log import exp
@@ -3011,7 +3002,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             gen_image = exp(k*two_pi_i/K._n())
             return self.polynomial()(gen_image)
         else:
-            from .number_field import refine_embedding
+            from sage.rings.number_field.number_field import refine_embedding
             # Convert the embedding to an embedding into AA or QQbar
             embedding = refine_embedding(embedding, infinity)
             a = embedding(self).radical_expression()
@@ -3365,7 +3356,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             True
         """
         if self.__multiplicative_order is None:
-            from .number_field import NumberField_cyclotomic
+            from sage.rings.number_field.number_field import NumberField_cyclotomic
             if self.is_rational():
                 if self.is_one():
                     self.__multiplicative_order = ZZ.one()
@@ -3903,7 +3894,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS:
 
-        Some checks for :trac:`29215`::
+        Some checks for :issue:`29215`::
 
             sage: K = QuadraticField(-5)
             sage: v = QuadraticField(3).ideal(5)
@@ -3923,7 +3914,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             ...
             ValueError: P must be prime
         """
-        from .number_field_ideal import is_NumberFieldIdeal
+        from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
         if not is_NumberFieldIdeal(P):
             if isinstance(P, NumberFieldElement):
                 P = self.number_field().fractional_ideal(P)
@@ -4772,7 +4763,7 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
         otherwise ``'sage'`` is used.  The constant ``TUNE_CHARPOLY_NF``
         should give reasonable performance on all architectures;
         however, if you feel the need to customize it to your own
-        machine, see :trac:`5213` for a tuning script.
+        machine, see :issue:`5213` for a tuning script.
 
         EXAMPLES:
 
@@ -5130,7 +5121,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
         otherwise ``'sage'`` is used.  The constant ``TUNE_CHARPOLY_NF``
         should give reasonable performance on all architectures;
         however, if you feel the need to customize it to your own
-        machine, see :trac:`5213` for a tuning script.
+        machine, see :issue:`5213` for a tuning script.
 
         EXAMPLES::
 
@@ -5230,7 +5221,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         sage: w = O2.1; w
         2*a
         sage: parent(w)
-        Order in Number Field in a with defining polynomial x^2 + 1
+        Order of conductor 2 generated by 2*a in Number Field in a with defining polynomial x^2 + 1
 
         sage: w.absolute_charpoly()
         x^2 + 4
@@ -5308,13 +5299,13 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
 
             sage: x = polygen(ZZ, 'x')
             sage: OE.<w> = EquationOrder(x^3 - x + 2)
-            sage: w.inverse_mod(13*OE)
+            sage: w.inverse_mod(13)
             6*w^2 - 6
-            sage: w * (w.inverse_mod(13)) - 1 in 13*OE
+            sage: w * (w.inverse_mod(13)) - 1 in 13*OE.number_field()
             True
             sage: w.inverse_mod(13).parent() == OE
             True
-            sage: w.inverse_mod(2*OE)
+            sage: w.inverse_mod(2)
             Traceback (most recent call last):
             ...
             ZeroDivisionError: w is not invertible modulo Fractional ideal (2)
@@ -5327,7 +5318,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         Implement inversion, checking that the return value has the right
         parent.
 
-        See :trac:`4190`.
+        See :issue:`4190`.
 
         EXAMPLES::
 
@@ -5403,7 +5394,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         r"""
         Implement division, checking that the result has the right parent.
 
-        See :trac:`4190`.
+        See :issue:`4190`.
 
         EXAMPLES::
 
@@ -5456,7 +5447,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         r"""
         The characteristic polynomial of this order element over its base ring.
 
-        This special implementation works around :trac:`4738`.  At this
+        This special implementation works around :issue:`4738`.  At this
         time the base ring of relative order elements is `\ZZ`; it should
         be the ring of integers of the base field.
 
@@ -5469,8 +5460,8 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
             sage: charpoly(OK.1)
             x^2 + b*x + 1
             sage: charpoly(OK.1).parent()
-            Univariate Polynomial Ring in x over
-             Maximal Order in Number Field in b with defining polynomial x^2 - 3
+            Univariate Polynomial Ring in x over Maximal Order generated by b
+             in Number Field in b with defining polynomial x^2 - 3
             sage: [ charpoly(t) for t in OK.basis() ]
             [x^2 - 2*x + 1, x^2 + b*x + 1, x^2 - x + 1, x^2 + 1]
         """
@@ -5481,7 +5472,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         r"""
         The minimal polynomial of this order element over its base ring.
 
-        This special implementation works around :trac:`4738`.  At this
+        This special implementation works around :issue:`4738`.  At this
         time the base ring of relative order elements is `\ZZ`; it should
         be the ring of integers of the base field.
 
@@ -5494,8 +5485,8 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
             sage: minpoly(OK.1)
             x^2 + b*x + 1
             sage: charpoly(OK.1).parent()
-            Univariate Polynomial Ring in x over
-             Maximal Order in Number Field in b with defining polynomial x^2 - 3
+            Univariate Polynomial Ring in x over Maximal Order generated by b
+             in Number Field in b with defining polynomial x^2 - 3
             sage: _, u, _, v = OK.basis()
             sage: t = 2*u - v; t
             -b

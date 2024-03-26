@@ -148,10 +148,10 @@ from sage.structure.richcmp cimport richcmp
 
 from sage.misc.fpickle import pickle_function, unpickle_function
 
-from .symbols import symbol_table, register_symbol
+from sage.symbolic.symbols import symbol_table, register_symbol
 
 try:
-    from .expression import (
+    from sage.symbolic.expression import (
         call_registered_function, find_registered_function, register_or_update_function,
         get_sfunction_from_hash, get_sfunction_from_serial as get_sfunction_from_serial
     )
@@ -257,9 +257,9 @@ cdef class Function(SageObject):
 
         TESTS:
 
-        After :trac:`9240`, pickling and unpickling of symbolic
+        After :issue:`9240`, pickling and unpickling of symbolic
         functions was broken. We check here that this is fixed
-        (:trac:`11919`)::
+        (:issue:`11919`)::
 
             sage: # needs sage.symbolic
             sage: f = function('f')(x)
@@ -488,14 +488,14 @@ cdef class Function(SageObject):
             [e^x   0]
             [  0  -1]
 
-        Make sure we can pass mpmath arguments (:trac:`13608`)::
+        Make sure we can pass mpmath arguments (:issue:`13608`)::
 
             sage: import mpmath                                                         # needs mpmath
             sage: with mpmath.workprec(128): sin(mpmath.mpc('0.5', '1.2'))              # needs mpmath
             mpc(real='0.86807452059118713192871150787046523179886',
                 imag='1.3246769633571289324095313649562791720086')
 
-        Check that :trac:`10133` is fixed::
+        Check that :issue:`10133` is fixed::
 
             sage: # needs sage.symbolic
             sage: out = sin(0)
@@ -511,7 +511,7 @@ cdef class Function(SageObject):
             sage: (out, parent(out))
             (0, Integer Ring)
 
-        Check that ``real_part`` and ``imag_part`` still works after :trac:`21216`::
+        Check that ``real_part`` and ``imag_part`` still works after :issue:`21216`::
 
             sage: # needs numpy sage.symbolic
             sage: import numpy
@@ -528,7 +528,7 @@ cdef class Function(SageObject):
         # to a numeric type at the end
         symbolic_input = any(isinstance(arg, Expression) for arg in args)
 
-        from .ring import SR
+        from sage.symbolic.ring import SR
 
         if coerce:
             try:
@@ -606,7 +606,7 @@ cdef class Function(SageObject):
             sage: sin.default_variable()                                                # needs sage.symbolic
             x
         """
-        from .ring import SR
+        from sage.symbolic.ring import SR
         return SR.var('x')
 
     def _is_numerical(self, x):
@@ -642,10 +642,11 @@ cdef class Function(SageObject):
             sage: hurwitz_zeta(1/2, b)
             hurwitz_zeta(1/2, [1.500000000 +/- 1.01e-10])
 
-            sage: iv = RIF(1, 1.0001)
-            sage: airy_ai(iv)
+            sage: iv = RIF(1, 1.0001)                                                   # needs sage.rings.real_interval_field
+
+            sage: airy_ai(iv)                                                           # needs sage.rings.real_interval_field
             airy_ai(1.0001?)
-            sage: airy_ai(CIF(iv))
+            sage: airy_ai(CIF(iv))                                                      # needs sage.rings.complex_interval_field
             airy_ai(1.0001?)
         """
         if isinstance(x, (float, complex)):
@@ -1052,7 +1053,7 @@ cdef class BuiltinFunction(Function):
             if (self._preserved_arg
                     and isinstance(args[self._preserved_arg-1], Element)):
                 arg_parent = parent(args[self._preserved_arg-1])
-                from .ring import SR
+                from sage.symbolic.ring import SR
                 if arg_parent is SR:
                     return res
                 from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
@@ -1089,7 +1090,7 @@ cdef class BuiltinFunction(Function):
         """
         TESTS:
 
-        Check if :trac:`13586` is fixed::
+        Check if :issue:`13586` is fixed::
 
             sage: from sage.symbolic.function import BuiltinFunction
             sage: class AFunction(BuiltinFunction):

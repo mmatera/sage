@@ -44,8 +44,8 @@ from sage.libs.pari.all import pari
 from cypari2.gen cimport Gen
 from cypari2.stack cimport clear_stack
 
-from .element_pari_ffelt import FiniteFieldElement_pari_ffelt
-from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
+from sage.rings.finite_rings.element_pari_ffelt import FiniteFieldElement_pari_ffelt
+from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 
 from sage.interfaces.abc import GapElement
 
@@ -114,7 +114,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
     It's modeled on
     :class:`~sage.rings.finite_rings.integer_mod.NativeIntStruct`,
     but includes many functions that were previously included in
-    the parent (see :trac:`12062`).
+    the parent (see :issue:`12062`).
     """
     def __cinit__(self, parent, Py_ssize_t k, modulus):
         """
@@ -163,11 +163,11 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
     def _doctest_for_5340(self):
         r"""
-        Every bug fix should have a doctest.  But :trac:`5340` only happens
+        Every bug fix should have a doctest.  But :issue:`5340` only happens
         when a garbage collection happens between restoring the modulus and
         using it, so it can't be reliably doctested using any of the
         existing Cython functions in this module.  The sole purpose of
-        this method is to doctest the fix for :trac:`5340`.
+        this method is to doctest the fix for :issue:`5340`.
 
         EXAMPLES::
 
@@ -255,7 +255,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         TESTS:
 
-        We check that :trac:`12584` is fixed::
+        We check that :issue:`12584` is fixed::
 
             sage: k(2^63)
             0
@@ -274,7 +274,6 @@ cdef class Cache_ntl_gf2e(Cache_base):
         cdef FiniteField_ntl_gf2eElement x
         cdef FiniteField_ntl_gf2eElement g
         cdef Py_ssize_t i
-        from sage.libs.gap.element import GapElement_FiniteField
 
         if is_IntegerMod(e):
             e = e.lift()
@@ -334,14 +333,18 @@ cdef class Cache_ntl_gf2e(Cache_base):
             # Reduce to pari
             e = e.__pari__()
 
-        elif isinstance(e, GapElement_FiniteField):
-            return e.sage(ring=self._parent)
-
         elif isinstance(e, GapElement):
             from sage.libs.gap.libgap import libgap
             return libgap(e).sage(ring=self._parent)
 
         else:
+            try:
+                from sage.libs.gap.element import GapElement_FiniteField
+            except ImportError:
+                pass
+            else:
+                if isinstance(e, GapElement_FiniteField):
+                    return e.sage(ring=self._parent)
             raise TypeError("unable to coerce %r" % type(e))
 
         cdef GEN t
@@ -393,7 +396,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         TESTS:
 
-        We test that :trac:`17027` is fixed::
+        We test that :issue:`17027` is fixed::
 
             sage: K.<a> = GF(2^16)
             sage: K._cache.fetch_int(0r)
@@ -640,7 +643,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             sage: a.sqrt()^2 == a
             True
 
-        This failed before :trac:`4899`::
+        This failed before :issue:`4899`::
 
             sage: GF(2^16,'a')(1).sqrt()
             1
@@ -1258,7 +1261,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             a^8 + a^7 + a^4 + a + 1
             a^8 + a^7 + a^4 + a + 1
 
-        Big instances used to take a very long time before :trac:`32842`::
+        Big instances used to take a very long time before :issue:`32842`::
 
             sage: g = GF(2^61).gen()
             sage: g.log(g^7)

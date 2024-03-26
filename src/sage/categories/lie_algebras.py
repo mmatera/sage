@@ -77,7 +77,7 @@ class LieAlgebras(Category_over_base_ring):
     .. TODO::
 
         Many of these tests should use Lie algebras that are not the minimal
-        example and need to be added after :trac:`16820` (and :trac:`16823`).
+        example and need to be added after :issue:`16820` (and :issue:`16823`).
     """
     @cached_method
     def super_categories(self):
@@ -108,7 +108,7 @@ class LieAlgebras(Category_over_base_ring):
                 sage: LieAlgebras(QQ).Nilpotent()
                 Category of nilpotent Lie algebras over Rational Field
                 sage: LieAlgebras(QQ).WithBasis().Nilpotent()
-                Category of nilpotent lie algebras with basis over Rational Field
+                Category of nilpotent Lie algebras with basis over Rational Field
             """
             return self._with_axiom("Nilpotent")
 
@@ -345,6 +345,25 @@ class LieAlgebras(Category_over_base_ring):
                 sage: L.universal_enveloping_algebra()  # indirect doctest              # needs sage.combinat sage.modules
                 Multivariate Polynomial Ring in x0, x1, x2 over Rational Field
             """
+
+        def center_universal_enveloping_algebra(self, UEA=None):
+            """
+            Return the center of the universal enveloping algebra of ``self``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, 3, 'x', abelian=True)
+                sage: L.center_universal_enveloping_algebra()
+                Center of Universal enveloping algebra of Abelian Lie algebra on 3 generators (x0, x1, x2)
+                 over Rational Field in the Poincare-Birkhoff-Witt basis
+                sage: PBW = L.pbw_basis()
+                sage: L.center_universal_enveloping_algebra(PBW)
+                Center of Universal enveloping algebra of Abelian Lie algebra on 3 generators (x0, x1, x2)
+                 over Rational Field in the Poincare-Birkhoff-Witt basis
+            """
+            if UEA is not None:
+                return UEA.center()
+            return self.pbw_basis().center()
 
         @abstract_method(optional=True)
         def module(self):
@@ -696,6 +715,64 @@ class LieAlgebras(Category_over_base_ring):
                 sage: G = L.lie_group('G'); G                                           # needs sage.combinat sage.modules sage.symbolic
                 Lie group G of Heisenberg algebra of rank 1 over Rational Field
             """
+
+        def trivial_representation(self):
+            """
+            Return the trivial representation of ``self``.
+
+            EXAMPLES::
+
+                sage: L = lie_algebras.strictly_upper_triangular_matrices(QQ, 4)
+                sage: L.trivial_representation()
+                Trivial representation of Lie algebra of 4-dimensional
+                 strictly upper triangular matrices over Rational Field
+            """
+            from sage.algebras.lie_algebras.representation import TrivialRepresentation
+            return TrivialRepresentation(self)
+
+        def representation(self, f=None, index_set=None, on_basis=False, **kwargs):
+            """
+            Return a representation of ``self``.
+
+            If no arguments are given, then this returns the trivial
+            representation.
+
+            Currently the only implemented method of constructing a
+            representation is by explicitly specifying the action of
+
+            * the elements of ``self`` by matrices;
+            * the basis elements of ``self`` using a ``dict`` or
+              a :func:`Family`;
+            * a function on basis elements (either passed as ``on_basis``
+              or setting ``on_basis=True``).
+
+            INPUT:
+
+            - ``f`` -- the function that defines the action
+            - ``index_set`` -- the index set of the representation
+            - ``on_basis`` -- (optional) see above
+
+            .. SEEALSO::
+
+                :class:`~sage.algebras.lie_algebras.representation.RepresentationByMorphism`
+
+            EXAMPLES::
+
+                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'y':1}})
+                sage: f = {x: Matrix([[1,0],[0,0]]), y: Matrix([[0,1],[0,0]])}
+                sage: L.representation(f)
+                Representation of Lie algebra on 2 generators (x, y) over Rational Field defined by:
+                       [1 0]
+                x |--> [0 0]
+                       [0 1]
+                y |--> [0 0]
+                sage: L.representation()
+                Trivial representation of Lie algebra on 2 generators (x, y) over Rational Field
+            """
+            if f is None and on_basis is False and index_set is None:
+                return self.trivial_representation(**kwargs)
+            from sage.algebras.lie_algebras.representation import RepresentationByMorphism
+            return RepresentationByMorphism(self, f, index_set, on_basis, **kwargs)
 
         def _test_jacobi_identity(self, **options):
             """

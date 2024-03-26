@@ -133,7 +133,7 @@ class Polyhedron_base7(Polyhedron_base6):
         else:
             from sage.geometry.triangulation.point_configuration import PointConfiguration
             A, b = self.affine_hull_projection(as_affine_map=True, orthogonal=True, orthonormal=True, extend=True)
-            pc = PointConfiguration((A(v.vector()) for v in self.Vrep_generator()))
+            pc = PointConfiguration(A(v.vector()) for v in self.Vrep_generator())
 
         barycenters = [sum(self.Vrepresentation(i).vector() for i in simplex)/(self.dim() + 1) for simplex in triangulation]
         volumes = [pc.volume(simplex) for simplex in triangulation]
@@ -660,7 +660,7 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: Q.volume.is_in_cache()
             True
 
-        Induced volumes work with lrs (:trac:`33410`)::
+        Induced volumes work with lrs (:issue:`33410`)::
 
             sage: P = Polyhedron([[0, 0], [1, 1]])
             sage: P.volume(measure='induced', engine='lrs')             # optional - lrslib

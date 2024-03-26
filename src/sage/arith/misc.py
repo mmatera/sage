@@ -375,7 +375,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
         if n >= 100000:
             from warnings import warn
             warn("flint is known to not be accurate for large Bernoulli numbers")
-        from sage.libs.flint.arith import bernoulli_number as flint_bernoulli
+        from sage.libs.flint.arith_sage import bernoulli_number as flint_bernoulli
         return flint_bernoulli(n)
     elif algorithm == 'pari' or algorithm == 'gp':
         from sage.libs.pari.all import pari
@@ -527,7 +527,7 @@ def is_prime(n) -> bool:
 
     TESTS:
 
-    Make sure the warning from :trac:`25046` works as intended::
+    Make sure the warning from :issue:`25046` works as intended::
 
         sage: is_prime(7/1)
         doctest:warning
@@ -543,7 +543,7 @@ def is_prime(n) -> bool:
         False
 
     However, number fields redefine ``.is_prime()`` in an incompatible fashion
-    (cf. :trac:`32340`) and we should not warn::
+    (cf. :issue:`32340`) and we should not warn::
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<i> = NumberField(x^2 + 1)                                              # needs sage.rings.number_field
@@ -863,7 +863,7 @@ def prime_powers(start, stop=None):
 
     TESTS:
 
-    Check that output are always Sage integers (:trac:`922`)::
+    Check that output are always Sage integers (:issue:`922`)::
 
         sage: v = prime_powers(10)                                                      # needs sage.libs.pari
         sage: type(v[0])                                                                # needs sage.libs.pari
@@ -886,7 +886,7 @@ def prime_powers(start, stop=None):
         ...
         TypeError: unable to convert 'bar' to an integer
 
-    Check that long input are accepted (:trac:`17852`)::
+    Check that long input are accepted (:issue:`17852`)::
 
         sage: prime_powers(6l)                                                          # needs sage.libs.pari
         [2, 3, 4, 5]
@@ -1766,7 +1766,7 @@ def gcd(a, b=None, **kwargs):
 
     Note that to take the gcd of `n` elements for `n \not= 2` you must
     put the elements into a list by enclosing them in ``[..]``.  Before
-    :trac:`4988` the following wrongly returned 3 since the third parameter
+    :issue:`4988` the following wrongly returned 3 since the third parameter
     was just ignored::
 
         sage: gcd(3, 6, 2)
@@ -1793,7 +1793,7 @@ def gcd(a, b=None, **kwargs):
     TESTS:
 
     The following shows that indeed coercion takes place before computing
-    the gcd. This behaviour was introduced in :trac:`10771`::
+    the gcd. This behaviour was introduced in :issue:`10771`::
 
         sage: R.<x> = QQ[]
         sage: S.<x> = ZZ[]
@@ -1804,7 +1804,7 @@ def gcd(a, b=None, **kwargs):
         sage: parent(gcd([1/p, q]))
         Fraction Field of Univariate Polynomial Ring in x over Rational Field
 
-    Make sure we try QQ and not merely ZZ (:trac:`13014`)::
+    Make sure we try QQ and not merely ZZ (:issue:`13014`)::
 
         sage: bool(gcd(2/5, 3/7) == gcd(SR(2/5), SR(3/7)))                              # needs sage.symbolic
         True
@@ -2035,7 +2035,7 @@ def xgcd(a, b):
 
     TESTS:
 
-    We check that :trac:`3330` has been fixed::
+    We check that :issue:`3330` has been fixed::
 
         sage: # needs sage.rings.number_field
         sage: R.<a,b> = NumberField(x^2 - 3, 'g').extension(x^2 - 7, 'h')[]
@@ -3293,7 +3293,7 @@ def carmichael_lambda(n):
         ...
         ValueError: Input n must be a positive integer.
 
-    Bug reported in :trac:`8283`::
+    Bug reported in :issue:`8283`::
 
         sage: from sage.arith.misc import carmichael_lambda
         sage: type(carmichael_lambda(16))
@@ -3584,10 +3584,6 @@ def CRT_basis(moduli):
       `a_i` is congruent to 1 modulo `m_i` and to 0 modulo `m_j` for
       `j\not=i`.
 
-    .. note::
-
-       The pairwise coprimality of the input is not checked.
-
     EXAMPLES::
 
         sage: a1 = ZZ(mod(42,5))
@@ -3610,7 +3606,14 @@ def CRT_basis(moduli):
     if n == 0:
         return []
     M = prod(moduli)
-    return [((xgcd(m,M//m)[2])*(M//m)) % M for m in moduli]
+    cs = []
+    for m in moduli:
+        Mm = M // m
+        d, _, v = xgcd(m, Mm)
+        if not d.is_one():
+            raise ValueError('moduli must be coprime')
+        cs.append((v * Mm) % M)
+    return cs
 
 
 def CRT_vectors(X, moduli):
@@ -3693,6 +3696,12 @@ def binomial(x, m, **kwds):
         0
         sage: binomial(RealField()('2.5'), 2)                                           # needs sage.rings.real_mpfr
         1.87500000000000
+        sage: binomial(Zp(5)(99),50)
+        3 + 4*5^3 + 2*5^4 + 4*5^5 + 4*5^6 + 4*5^7 + 4*5^8 + 5^9 + 2*5^10 + 3*5^11 +
+        4*5^12 + 4*5^13 + 2*5^14 + 3*5^15 + 3*5^16 + 4*5^17 + 4*5^18 + 2*5^19 + O(5^20)
+        sage: binomial(Qp(3)(2/3),2)
+        2*3^-2 + 2*3^-1 + 2 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 +
+        2*3^8 + 2*3^9 + 2*3^10 + 2*3^11 + 2*3^12 + 2*3^13 + 2*3^14 + 2*3^15 + 2*3^16 + 2*3^17 + O(3^18)
         sage: n = var('n'); binomial(n, 2)                                              # needs sage.symbolic
         1/2*(n - 1)*n
         sage: n = var('n'); binomial(n, n)                                              # needs sage.symbolic
@@ -3720,11 +3729,11 @@ def binomial(x, m, **kwds):
     TESTS:
 
     We test that certain binomials are very fast (this should be
-    instant) -- see :trac:`3309`::
+    instant) -- see :issue:`3309`::
 
         sage: a = binomial(RR(1140000.78), 23310000)
 
-    We test conversion of arguments to Integers -- see :trac:`6870`::
+    We test conversion of arguments to Integers -- see :issue:`6870`::
 
         sage: binomial(1/2, 1/1)                                                        # needs sage.libs.pari
         1/2
@@ -3735,8 +3744,8 @@ def binomial(x, m, **kwds):
         sage: binomial(3/2, SR(1/1))                                                    # needs sage.symbolic
         3/2
 
-    Some floating point cases -- see :trac:`7562`, :trac:`9633`, and
-    :trac:`12448`::
+    Some floating point cases -- see :issue:`7562`, :issue:`9633`, and
+    :issue:`12448`::
 
         sage: binomial(1., 3)
         0.000000000000000
@@ -3788,6 +3797,27 @@ def binomial(x, m, **kwds):
         sage: n = var('n')                                                              # needs sage.symbolic
         sage: binomial(n,2)                                                             # needs sage.symbolic
         1/2*(n - 1)*n
+
+    Test p-adic numbers::
+
+        sage: binomial(Qp(3)(-1/2),4) # p-adic number with valuation >= 0
+        1 + 3 + 2*3^2 + 3^3 + 2*3^4 + 3^6 + 3^7 + 3^8 + 3^11 + 2*3^14 + 2*3^16 + 2*3^17 + 2*3^19 + O(3^20)
+
+    Check that :issue:`35811` is fixed::
+
+        sage: binomial(Qp(3)(1/3),4) # p-adic number with negative valuation
+        2*3^-5 + 2*3^-4 + 3^-3 + 2*3^-2 + 2*3^-1 + 2 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 +
+        2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + 2*3^10 + 2*3^11 + 2*3^12 + 2*3^13 + 2*3^14 + O(3^15)
+
+        sage: binomial(Qp(3)(1/3),10).parent()
+        3-adic Field with capped relative precision 20
+
+        sage: F.<w>=Qq(9); binomial(w,4) # p-adic extension field
+        (w + 2)*3^-1 + (w + 1) + (2*w + 1)*3 + 2*w*3^2 + (2*w + 2)*3^3 + 2*w*3^4 + (2*w + 2)*3^5 +
+        2*w*3^6 + (2*w + 2)*3^7 + 2*w*3^8 + (2*w + 2)*3^9 + 2*w*3^10 + (2*w + 2)*3^11 + 2*w*3^12 +
+        (2*w + 2)*3^13 + 2*w*3^14 + (2*w + 2)*3^15 + 2*w*3^16 + (2*w + 2)*3^17 + 2*w*3^18 + O(3^19)
+        sage: F.<w>=Qq(9); binomial(w,10).parent()
+        3-adic Unramified Extension Field in w defined by x^2 + 2*x + 2
 
     Invalid inputs::
 
@@ -3869,7 +3899,7 @@ def binomial(x, m, **kwds):
     # case 2: conversion to integers
     try:
         x = ZZ(x)
-    except TypeError:
+    except (TypeError, ValueError):
         pass
     else:
         # Check invertibility of factorial(m) in P
@@ -4351,7 +4381,7 @@ def primitive_root(n, check=True):
         3
 
     We test that various numbers without primitive roots give
-    an error - see :trac:`10836`::
+    an error - see :issue:`10836`::
 
         sage: # needs sage.libs.pari
         sage: primitive_root(15)
@@ -5104,18 +5134,18 @@ def falling_factorial(x, a):
 
     TESTS:
 
-    Check that :trac:`14858` is fixed::
+    Check that :issue:`14858` is fixed::
 
         sage: falling_factorial(-4, SR(2))                                              # needs sage.symbolic
         20
 
-    Check that :trac:`16770` is fixed::
+    Check that :issue:`16770` is fixed::
 
         sage: d = var('d')                                                              # needs sage.symbolic
         sage: parent(falling_factorial(d, 0))                                           # needs sage.symbolic
         Symbolic Ring
 
-    Check that :trac:`20075` is fixed::
+    Check that :issue:`20075` is fixed::
 
         sage: bool(falling_factorial(int(4), int(2)) == falling_factorial(4,2))
         True
@@ -5194,20 +5224,20 @@ def rising_factorial(x, a):
 
     TESTS:
 
-    Check that :trac:`14858` is fixed::
+    Check that :issue:`14858` is fixed::
 
         sage: bool(rising_factorial(-4, 2) ==                                           # needs sage.symbolic
         ....:      rising_factorial(-4, SR(2)) ==
         ....:      rising_factorial(SR(-4), SR(2)))
         True
 
-    Check that :trac:`16770` is fixed::
+    Check that :issue:`16770` is fixed::
 
         sage: d = var('d')                                                              # needs sage.symbolic
         sage: parent(rising_factorial(d, 0))                                            # needs sage.symbolic
         Symbolic Ring
 
-    Check that :trac:`20075` is fixed::
+    Check that :issue:`20075` is fixed::
 
         sage: bool(rising_factorial(int(4), int(2)) == rising_factorial(4,2))
         True
@@ -6076,7 +6106,7 @@ def squarefree_divisors(x):
     TESTS:
 
     Check that the first divisor (i.e. `1`) is a Sage integer (see
-    :trac:`17852`)::
+    :issue:`17852`)::
 
         sage: a = next(squarefree_divisors(14))
         sage: a
@@ -6200,7 +6230,7 @@ def dedekind_sum(p, q, algorithm='default'):
     - :wikipedia:`Dedekind\_sum`
     """
     if algorithm == 'default' or algorithm == 'flint':
-        from sage.libs.flint.arith import dedekind_sum as flint_dedekind_sum
+        from sage.libs.flint.arith_sage import dedekind_sum as flint_dedekind_sum
         return flint_dedekind_sum(p, q)
 
     if algorithm == 'pari':

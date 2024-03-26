@@ -66,12 +66,12 @@ from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 
 from sage.structure.element cimport FieldElement
 from sage.structure.parent cimport Parent
-from .complex_mpfr cimport ComplexNumber
+from sage.rings.complex_mpfr cimport ComplexNumber
 from sage.rings.integer cimport Integer
 cimport sage.rings.real_mpfi as real_mpfi
-from .real_mpfr cimport RealNumber
-from .convert.mpfi cimport mpfi_set_sage
-from .infinity import infinity
+from sage.rings.real_mpfr cimport RealNumber
+from sage.rings.convert.mpfi cimport mpfi_set_sage
+from sage.rings.infinity import infinity
 
 
 def is_ComplexIntervalFieldElement(x):
@@ -290,7 +290,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         Exact and nearly exact points are still visible::
 
-            sage: # needs sage.plot
+            sage: # needs sage.plot sage.symbolic
             sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))
             Graphics object consisting of 6 graphics primitives
 
@@ -1144,7 +1144,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: for x in cpts:
             ....:     assert (x * (~x) - 1).contains_zero()
 
-        Test that the bug reported in :trac:`25414` has been fixed::
+        Test that the bug reported in :issue:`25414` has been fixed::
 
             sage: 1 / CIF(RIF(-1,1),0)
             [.. NaN ..] + [.. NaN ..]*I
@@ -1914,7 +1914,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             0.500000000000000? + 3.39927010637040?*I
         """
         if not self:
-            from .real_mpfi import RIF
+            from sage.rings.real_mpfi import RIF
             return RIF(0).log()
         re = abs(self).log()
         im = self.argument()
@@ -2019,7 +2019,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: CIF(0,2).cos()
             3.762195691083632?
 
-        Check that :trac:`17285` is fixed::
+        Check that :issue:`17285` is fixed::
 
             sage: CIF(cos(2/3))                                                         # needs sage.symbolic
             0.7858872607769480?
@@ -2061,7 +2061,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: CIF(0,2).sin()
             3.626860407847019?*I
 
-        Check that :trac:`17825` is fixed::
+        Check that :issue:`17825` is fixed::
 
             sage: CIF(sin(2/3))                                                         # needs sage.symbolic
             0.618369803069737?
@@ -2263,7 +2263,7 @@ def create_ComplexIntervalFieldElement(s_real, s_imag=None, int pad=0, min_prec=
     TESTS:
 
     Make sure we've rounded up ``log(10,2)`` enough to guarantee
-    sufficient precision (:trac:`10164`).  This is a little tricky
+    sufficient precision (:issue:`10164`).  This is a little tricky
     because at the time of writing, we don't support intervals long
     enough to trip the error.  However, at least we can make sure that
     we either do it correctly or fail noisily::
@@ -2291,6 +2291,6 @@ def create_ComplexIntervalFieldElement(s_real, s_imag=None, int pad=0, min_prec=
     #else:
     #    bits = max(int(math.log(base,2)*len(s_imag)),int(math.log(base,2)*len(s_imag)))
 
-    from .complex_interval_field import ComplexIntervalField
+    from sage.rings.complex_interval_field import ComplexIntervalField
     C = ComplexIntervalField(prec=max(bits+pad, min_prec))
     return ComplexIntervalFieldElement(C, s_real, s_imag)

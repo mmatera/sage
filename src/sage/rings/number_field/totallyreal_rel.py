@@ -1,5 +1,6 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.libs.linbox sage.modules sage.rings.number_field
 r"""
-Enumeration of Totally Real Fields: Relative Extensions
+Enumeration of totally real fields: relative extensions
 
 This module contains functions to enumerate primitive extensions `L / K`, where
 `K` is a given totally real number field, with given degree and small root
@@ -51,7 +52,7 @@ with root discriminant `\le 10`.
     sage: [ f[0] for f in ls ]
     [725, 1125, 1600, 2000, 2225, 2525, 3600, 4225, 4400, 4525, 5125, 5225, 5725, 6125, 7225, 7600, 7625, 8000, 8525, 8725, 9225]
 
-    sage: [NumberField(ZZx(x[1]), 't').is_galois() for x in ls]
+    sage: [NumberField(ZZx(x[1]), 't').is_galois() for x in ls]                         # needs sage.groups
     [False, True, True, True, False, False, True, True, False, False, False, False, False, True, True, False, False, True, False, False, False]
 
 Eight out of 21 such fields are Galois (with Galois group `C_4`
@@ -72,13 +73,13 @@ discriminant `\le 17 \times 10^9`.
 
 TESTS:
 
-Check that :trac:`27646` is fixed::
+Check that :issue:`27646` is fixed::
 
     sage: L = enumerate_totallyreal_fields_all(6,435000) # long time
 
 AUTHORS:
 
-- John Voight (2007-11-03): Initial version.
+- John Voight (2007-11-03): initial version
 """
 
 # ****************************************************************************
@@ -958,7 +959,7 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
     :func:`~sage.rings.number_field.totallyreal.enumerate_totallyreal_fields_prim`
     finds four out of the five (the exception being `x^4 - 6x^2 + 4`).
 
-    The following was fixed in :trac:`13101`::
+    The following was fixed in :issue:`13101`::
 
         sage: enumerate_totallyreal_fields_all(8, 10^6)  # long time (about 2 s)
         []

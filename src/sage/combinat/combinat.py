@@ -378,7 +378,7 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
     - Robert Gerbicz
 
     - Jeroen Demeyer: improved implementation of Dobinski formula with
-      more accurate error estimates (:trac:`17157`)
+      more accurate error estimates (:issue:`17157`)
 
     REFERENCES:
 
@@ -407,8 +407,8 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
         return ZZ(int(ret_mp))
 
     elif algorithm == 'flint':
-        import sage.libs.flint.arith
-        return sage.libs.flint.arith.bell_number(n)
+        import sage.libs.flint.arith_sage
+        return sage.libs.flint.arith_sage.bell_number(n)
 
     elif algorithm == 'gap':
         from sage.libs.gap.libgap import libgap
@@ -576,8 +576,8 @@ def euler_number(n, algorithm='flint') -> Integer:
     if algorithm == 'maxima':
         return ZZ(maxima.euler(n))  # type:ignore
     elif algorithm == 'flint':
-        import sage.libs.flint.arith
-        return sage.libs.flint.arith.euler_number(n)
+        import sage.libs.flint.arith_sage
+        return sage.libs.flint.arith_sage.euler_number(n)
     else:
         raise ValueError("algorithm must be 'flint' or 'maxima'")
 
@@ -906,8 +906,8 @@ def stirling_number1(n, k, algorithm="gap") -> Integer:
         from sage.libs.gap.libgap import libgap
         return libgap.Stirling1(n, k).sage()
     if algorithm == 'flint':
-        import sage.libs.flint.arith
-        return sage.libs.flint.arith.stirling_number_1(n, k)
+        import sage.libs.flint.arith_sage
+        return sage.libs.flint.arith_sage.stirling_number_1(n, k)
     raise ValueError("unknown algorithm: %s" % algorithm)
 
 
@@ -1034,8 +1034,8 @@ def stirling_number2(n, k, algorithm=None) -> Integer:
         from sage.libs.gap.libgap import libgap
         return libgap.Stirling2(n, k).sage()
     if algorithm == 'flint':
-        import sage.libs.flint.arith
-        return sage.libs.flint.arith.stirling_number_2(n, k)
+        import sage.libs.flint.arith_sage
+        return sage.libs.flint.arith_sage.stirling_number_2(n, k)
     if algorithm == 'maxima':
         return ZZ(maxima.stirling2(n, k))  # type:ignore
     raise ValueError("unknown algorithm: %s" % algorithm)
@@ -1175,7 +1175,7 @@ class CombinatorialObject(SageObject):
 
         TESTS:
 
-        Test indirectly that we copy the input (see :trac:`18184`)::
+        Test indirectly that we copy the input (see :issue:`18184`)::
 
             sage: # needs sage.combinat
             sage: L = IntegerListsLex(element_class=Partition)
@@ -1263,7 +1263,7 @@ class CombinatorialObject(SageObject):
             sage: c < c
             False
 
-        Check that :trac:`14065` is fixed::
+        Check that :issue:`14065` is fixed::
 
             sage: from sage.structure.element import Element
             sage: class Foo(CombinatorialObject, Element): pass
@@ -1401,7 +1401,7 @@ class CombinatorialObject(SageObject):
             sage: not c
             True
 
-        Check that :trac:`14065` is fixed::
+        Check that :issue:`14065` is fixed::
 
             sage: from sage.structure.element import Element
             sage: class Foo(CombinatorialObject, Element): pass
@@ -2423,7 +2423,7 @@ class UnionCombinatorialClass(CombinatorialClass):
 class Permutations_CC(CombinatorialClass):
     """
     A testing class for :class:`CombinatorialClass` since :class:`Permutations`
-    no longer inherits from :class:`CombinatorialClass` in :trac:`14772`.
+    no longer inherits from :class:`CombinatorialClass` in :issue:`14772`.
     """
 
     def __init__(self, n):
@@ -2950,7 +2950,7 @@ def bell_polynomial(n: Integer, k: Integer):
 
     TESTS:
 
-    Check that :trac:`18338` is fixed::
+    Check that :issue:`18338` is fixed::
 
         sage: bell_polynomial(0,0).parent()                                             # needs sage.combinat
         Multivariate Polynomial Ring in x over Integer Ring

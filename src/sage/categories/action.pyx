@@ -9,7 +9,7 @@ A group action `G \times S \rightarrow S` is a functor from `G` to Sets.
 .. WARNING::
 
     An :class:`Action` object only keeps a weak reference to the underlying set
-    which is acted upon. This decision was made in :trac:`715` in order to
+    which is acted upon. This decision was made in :issue:`715` in order to
     allow garbage collection within the coercion framework (this is where
     actions are mainly used) and avoid memory leaks.
 
@@ -56,13 +56,13 @@ AUTHOR:
 
 from cpython.tuple cimport PyTuple_GET_ITEM
 
-from .functor cimport Functor
-from .morphism cimport Morphism
-from .map cimport Map
+from sage.categories.functor cimport Functor
+from sage.categories.morphism cimport Morphism
+from sage.categories.map cimport Map
 from sage.structure.element cimport parent
 from sage.structure.parent cimport Parent
 
-from . import homset
+from sage.categories import homset
 from weakref import ref
 
 
@@ -91,7 +91,7 @@ cdef class Action(Functor):
       :class:`Action` itself, but other classes may use it
     """
     def __init__(self, G, S, is_left=True, op=None):
-        from .groupoid import Groupoid
+        from sage.categories.groupoid import Groupoid
         Functor.__init__(self, Groupoid(G), category(S))
         self.G = G
         self.US = ref(S)
@@ -112,7 +112,7 @@ cdef class Action(Functor):
 
         TESTS:
 
-        Check that this action can be pickled (:trac:`29031`)::
+        Check that this action can be pickled (:issue:`29031`)::
 
             sage: P = QQ['x']
             sage: R = (ZZ['x'])['y']
@@ -282,7 +282,7 @@ cdef class Action(Functor):
             sage: A.left_domain() is R
             True
 
-        By :trac:`715`, there is only a weak reference to the underlying set.
+        By :issue:`715`, there is only a weak reference to the underlying set.
         Hence, the underlying set may be garbage collected, even when the
         action is still alive. This may result in a runtime error, as follows::
 
@@ -398,7 +398,7 @@ cdef class InverseAction(Action):
 
         TESTS:
 
-        Check that this action can be pickled (:trac:`29031`)::
+        Check that this action can be pickled (:issue:`29031`)::
 
             sage: # needs sage.modules
             sage: V = QQ^3
@@ -432,7 +432,7 @@ cdef class PrecomposedAction(Action):
 
     EXAMPLES:
 
-    We demonstrate that an example discussed on :trac:`14711` did not become a
+    We demonstrate that an example discussed on :issue:`14711` did not become a
     problem::
 
         sage: # needs sage.modular
@@ -485,7 +485,7 @@ cdef class PrecomposedAction(Action):
 
         TESTS:
 
-        Check that this action can be pickled (:trac:`29031`)::
+        Check that this action can be pickled (:issue:`29031`)::
 
             sage: # needs sage.modular
             sage: E = ModularSymbols(11).2

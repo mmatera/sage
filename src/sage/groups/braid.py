@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Braid groups
 
@@ -52,7 +51,7 @@ AUTHORS:
 - Thierry Monteil: add a ``__hash__`` method consistent with the word
   problem to ensure correct Cayley graph computations.
 - Sebastian Oehms (July and Nov 2018): add other versions for
-  burau_matrix (unitary + simple, see :trac:`25760` and :trac:`26657`)
+  burau_matrix (unitary + simple, see :issue:`25760` and :issue:`26657`)
 - Moritz Firsching (Sept 2021): Colored Jones polynomial
 - Sebastian Oehms (May 2022): add :meth:`links_gould_polynomial`
 """
@@ -73,7 +72,7 @@ from sage.categories.groups import Groups
 from sage.combinat.permutation import Permutation
 from sage.combinat.permutation import Permutations
 from sage.combinat.subset import Subsets
-from sage.features import PythonModule
+from sage.features.sagemath import sage__libs__braiding
 from sage.groups.artin import FiniteTypeArtinGroup, FiniteTypeArtinGroupElement
 from sage.groups.finitely_presented import FinitelyPresentedGroup
 from sage.groups.finitely_presented import GroupMorphismWithGensImages
@@ -81,7 +80,6 @@ from sage.groups.free_group import FreeGroup, is_FreeGroup
 from sage.functions.generalized import sign
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroupElement
-from sage.knots.knot import Knot
 from sage.libs.gap.libgap import libgap
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.lazy_attribute import lazy_attribute
@@ -99,7 +97,8 @@ lazy_import('sage.libs.braiding',
             ['leftnormalform', 'rightnormalform', 'centralizer', 'supersummitset', 'greatestcommondivisor',
              'leastcommonmultiple', 'conjugatingbraid', 'ultrasummitset',
              'thurston_type', 'rigidity', 'sliding_circuits'],
-            feature=PythonModule('sage.libs.braiding', spkg='libbraiding', type='standard'))
+            feature=sage__libs__braiding())
+lazy_import('sage.knots.knot', 'Knot')
 
 
 class Braid(FiniteTypeArtinGroupElement):
@@ -2068,7 +2067,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: br.is_conjugated(b)
             False
         """
-        t = [i for i in self.Tietze()]
+        t = list(self.Tietze())
         t.reverse()
         return self.parent()(tuple(t))
 
@@ -2547,14 +2546,14 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             sage: B1.category()
             Category of infinite groups
 
-        Check that :trac:`14081` is fixed::
+        Check that :issue:`14081` is fixed::
 
             sage: BraidGroup(2)
             Braid group on 2 strands
             sage: BraidGroup(('a',))
             Braid group on 2 strands
 
-        Check that :trac:`15505` is fixed::
+        Check that :issue:`15505` is fixed::
 
             sage: B = BraidGroup(4)
             sage: B.relations()
@@ -2659,7 +2658,8 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
         OUTPUT:
 
-        Raises a ``ValueError`` error since braid groups are infinite.
+        This raises a :class:`ValueError` error since braid groups
+        are infinite.
 
         TESTS::
 
@@ -2842,7 +2842,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             # quantum trace operator on two fold tensor space
             E = mu.parent().one()
             mu2 = E.tensor_product(mu)
-            return tuple([[R, RI], mu2])
+            return ([R, RI], mu2)
 
         from sage.matrix.matrix_space import MatrixSpace
         Ed = MatrixSpace(BR, d, d, sparse=sparse).one()
@@ -3533,7 +3533,7 @@ def BraidGroup(n=None, names='s'):
         (g0, g1)
 
     Since the word problem for the braid groups is solvable, their Cayley graph
-    can be locally obtained as follows (see :trac:`16059`)::
+    can be locally obtained as follows (see :issue:`16059`)::
 
         sage: def ball(group, radius):
         ....:     ret = set()

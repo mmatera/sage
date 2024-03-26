@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Free modules
 """
@@ -219,7 +218,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
     TESTS:
 
-    Before :trac:`14054`, combinatorial free modules violated the unique
+    Before :issue:`14054`, combinatorial free modules violated the unique
     parent condition. That caused a problem. The tensor product construction
     involves maps, but maps check that their domain and the parent of a
     to-be-mapped element are identical (not just equal). However, the tensor
@@ -260,7 +259,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         sage: XQ == XQ
         True
 
-    We check that issue :trac:`28681` is fixed::
+    We check that issue :issue:`28681` is fixed::
 
         sage: F = CombinatorialFreeModule(ZZ, ZZ); F.rename("F")
         sage: FF = tensor((F,F))
@@ -402,7 +401,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         TESTS:
 
-        Regression test for :trac:`10127`: ``self._indices`` needs to be
+        Regression test for :issue:`10127`: ``self._indices`` needs to be
         set early enough, in case the initialization of the categories
         use ``self.basis().keys()``. This occurred on several occasions
         in non trivial constructions. In the following example,
@@ -702,7 +701,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         The following originally used to yield ``p[[2]] # p[[2]]``, and if
         there was no natural coercion between ``s`` and ``p``, this would
         raise a :class:`NotImplementedError`.
-        Since :trac:`15305`, this takes the
+        Since :issue:`15305`, this takes the
         coercion between ``s`` and ``p`` and lifts it to the tensor product. ::
 
             sage: pp(a)                                                                 # needs sage.combinat
@@ -776,20 +775,6 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             return SetMorphism(S.Hom(self, category=self.category() | S.category()),
                                lambda x: self.sum_of_terms((G(g), K(c))
                                                            for c, g in x))
-
-    def _an_element_impl(self):  # TODO: REMOVE?
-        """
-        Return an element of ``self``, namely the zero element.
-
-        EXAMPLES::
-
-            sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
-            sage: F._an_element_impl()
-            0
-            sage: _.parent() is F
-            True
-        """
-        return self.element_class(self, {})
 
     def _first_ngens(self, n):
         """
@@ -951,7 +936,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         EXAMPLES::
 
             sage: QS2 = SymmetricGroupAlgebra(QQ,2)                                     # needs sage.combinat
-            sage: QS2.get_order() # note: order changed on 2009-03-13                   # needs sage.combinat
+            sage: QS2.get_order()  # note: order changed on 2009-03-13                  # needs sage.combinat
             [[2, 1], [1, 2]]
         """
         if self._order is None:
@@ -1351,7 +1336,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                 sage: tensor([F, tensor([G, H])]) == tensor([F, G, H])
                 True
 
-            Check that :trac:`19608` is fixed::
+            Check that :issue:`19608` is fixed::
 
                 sage: T = tensor([F, G, H])
                 sage: T in Modules(ZZ).FiniteDimensional()
@@ -1443,7 +1428,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                  ##      #
                          ##
 
-            Check that the breakpoints are correct (:trac:`29202`)::
+            Check that the breakpoints are correct (:issue:`29202`)::
 
                 sage: s._breakpoints                                                    # needs sage.combinat
                 [6]
@@ -1473,7 +1458,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                  └┴┘      ├┼┐
                           └┴┘
 
-            Check that the breakpoints are correct (:trac:`29202`)::
+            Check that the breakpoints are correct (:issue:`29202`)::
 
                 sage: s._breakpoints                                                    # needs sage.combinat
                 [7]
@@ -1684,7 +1669,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             return super()._coerce_map_from_(R)
 
 
-class CartesianProductWithFlattening():
+class CartesianProductWithFlattening:
     """
     A class for Cartesian product constructor, with partial flattening
     """
@@ -1907,7 +1892,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         TESTS:
 
-        The ``elements`` can be a generator as in :trac:`31453`::
+        The ``elements`` can be a generator as in :issue:`31453`::
 
             sage: from sage.categories.magmatic_algebras import (
             ....:     MagmaticAlgebras)

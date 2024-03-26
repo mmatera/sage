@@ -9,10 +9,11 @@ If the optional full CremonaDatabase is not installed, a mini-version
 is included by default with Sage.  It contains Weierstrass equations,
 rank, and torsion for curves up to conductor 10000.
 
-The large database includes all curves in John Cremona's tables. It
-also includes data related to the BSD conjecture and modular degrees
-for all of these curves, and generators for the Mordell-Weil
-groups. To install it, run the following in the shell::
+The large database includes all curves in John Cremona's tables. It also
+includes data related to the BSD conjecture and modular degrees for all of
+these curves, and generators for the Mordell-Weil groups. To install it via the
+optional :ref:`database_cremona_ellcurve <spkg_database_cremona_ellcurve>`
+package, run the following command in the shell ::
 
     sage -i database_cremona_ellcurve
 
@@ -120,7 +121,7 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
         raise RuntimeError('Please (re)move %s before building ' % db_path
                 + 'database')
     if not os.path.exists(data_tgz):
-        raise IOError("The data file is not at %s" % data_tgz)
+        raise OSError("The data file is not at %s" % data_tgz)
     t = walltime()
 
     if decompress:
@@ -849,7 +850,7 @@ class MiniCremonaDatabase(SQLDatabase):
             sage: d['torsion_order']
             2
 
-        Check that :trac:`17904` is fixed::
+        Check that :issue:`17904` is fixed::
 
             sage: 'gens' in CremonaDatabase().coefficients_and_data('100467a2')[1] # optional - database_cremona_ellcurve
             True
@@ -917,7 +918,7 @@ class MiniCremonaDatabase(SQLDatabase):
             sage: d['torsion_order']
             2
 
-        Check that :trac:`17904` is fixed::
+        Check that :issue:`17904` is fixed::
 
             sage: ai = EllipticCurve('100467a2').ainvs() # optional - database_cremona_ellcurve
             sage: 'gens' in CremonaDatabase().data_from_coefficients(ai) # optional - database_cremona_ellcurve
@@ -976,7 +977,7 @@ class MiniCremonaDatabase(SQLDatabase):
             sage: c.elliptic_curve('9450KKKK1')
             Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 5*x + 7 over Rational Field
 
-        Make sure :trac:`12565` is fixed::
+        Make sure :issue:`12565` is fixed::
 
             sage: c.elliptic_curve('10a1')
             Traceback (most recent call last):
@@ -1416,7 +1417,7 @@ class MiniCremonaDatabase(SQLDatabase):
         -  ``int`` - number_of_curves
         -  ``int`` - number_of_isogeny_classes
 
-       EXAMPLES::
+        EXAMPLES::
 
             sage: d = sage.databases.cremona.MiniCremonaDatabase(name='cremona', read_only=False, rebuild=True)   # not tested
             sage: d._init_allcurves('.', 11)    # not tested
@@ -1694,7 +1695,7 @@ def CremonaDatabase(name=None,mini=None,set_global=None):
         sage: isinstance(c, sage.databases.cremona.LargeCremonaDatabase)  # optional - database_cremona_ellcurve
         True
 
-    Verify that :trac:`12341` has been resolved::
+    Verify that :issue:`12341` has been resolved::
 
         sage: c = CremonaDatabase('should not exist', mini=True)
         Traceback (most recent call last):

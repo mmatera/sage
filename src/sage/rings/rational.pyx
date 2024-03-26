@@ -65,30 +65,41 @@ from cysignals.signals cimport sig_on, sig_off
 import operator
 import fractions
 
-from sage.arith.long cimport integer_check_long_py
-from sage.cpython.string cimport char_to_str, str_to_bytes
-
-from sage.structure.richcmp cimport rich_to_bool_sgn
 import sage.rings.rational_field
 
-cimport sage.rings.integer as integer
-from .integer cimport Integer
-
-from .integer_ring import ZZ
-
-from sage.structure.coerce cimport is_numpy_type
-
-from sage.libs.gmp.pylong cimport mpz_set_pylong
-
-from sage.structure.coerce cimport coercion_model
-from sage.structure.element cimport Element
-from sage.structure.parent cimport Parent
+from sage.arith.long cimport integer_check_long_py
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
+from sage.cpython.string cimport char_to_str, str_to_bytes
+from sage.libs.gmp.pylong cimport mpz_set_pylong
+from sage.rings.integer cimport Integer, smallInteger
+from sage.rings.integer_ring import ZZ
+from sage.structure.coerce cimport coercion_model, is_numpy_type
+from sage.structure.element cimport Element
+from sage.structure.parent cimport Parent
+from sage.structure.richcmp cimport rich_to_bool_sgn
 
 
-import sage.rings.real_mpfr
-import sage.rings.real_double
+RealNumber_classes = ()
+
+def _register_real_number_class(cls):
+    r"""
+    Register ``cls``.
+
+    This is called by ``sage.rings.real_mpfr``, to avoid a cyclic import.
+    """
+    global RealNumber_classes
+    RealNumber_classes += (cls,)
+
+
+RealDouble_classes = (float,)
+try:
+    from sage.rings.real_double import RealDoubleElement
+    RealDouble_classes += (RealDoubleElement,)
+except ImportError:
+    pass
+
+
 from libc.stdint cimport uint64_t
 from sage.libs.gmp.binop cimport mpq_add_z, mpq_mul_z, mpq_div_zz
 
@@ -225,7 +236,7 @@ cpdef Integer integer_rational_power(Integer a, Rational b) noexcept:
         sage: integer_rational_power(-1, 9/8) is None
         True
 
-    TESTS (:trac:`11228`)::
+    TESTS (:issue:`11228`)::
 
         sage: integer_rational_power(-10, QQ(2))
         100
@@ -289,7 +300,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5) noexcept:
 
     TESTS:
 
-    Check if :trac:`8540` is fixed::
+    Check if :issue:`8540` is fixed::
 
         sage: rational_power_parts(3/4, -1/2)
         (2, 3)
@@ -298,7 +309,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5) noexcept:
         sage: t^2                                                                       # needs sage.symbolic
         4/3
 
-    Check if :trac:`15605` is fixed::
+    Check if :issue:`15605` is fixed::
 
         sage: rational_power_parts(-1, -1/3)
         (1, -1)
@@ -322,7 +333,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5) noexcept:
         ....:     for p in srange(1, 6) for q in srange(1, 6))
         True
 
-    A few more tests added in :trac:`26414`::
+    A few more tests added in :issue:`26414`::
 
         sage: rational_power_parts(-1, 2/1)
         (1, 1)
@@ -349,7 +360,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5) noexcept:
 
     c = integer_rational_power(a, b)
     if c is not None:
-        return c, integer.smallInteger(1)
+        return c, smallInteger(1)
 
     numer, denom = b.numerator(), b.denominator()
     if a < factor_limit*factor_limit:
@@ -357,7 +368,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5) noexcept:
     else:
         from sage.rings.factorint import factor_trial_division
         f = factor_trial_division(a, factor_limit)
-    c = integer.smallInteger(1)
+    c = smallInteger(1)
     # The sign is not handled by the loop below. We don't want to
     # simplify (-1)^(2/3) to 1 (see Issue #15605), so we always move
     # the sign over to d. Note that the case (-1)^2 is already
@@ -367,7 +378,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5) noexcept:
         d = c
     else:
         # d = -1
-        d = integer.smallInteger(-1)
+        d = smallInteger(-1)
     for p, e in f:
         c *= p**((e // denom)*numer)
         d *= p**(e % denom)
@@ -472,7 +483,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
     TESTS:
 
-    Check that :trac:`28321` is fixed::
+    Check that :issue:`28321` is fixed::
 
         sage: QQ((2r^100r, 3r^100r))
         1267650600228229401496703205376/515377520732011331036461129765621272702107522001
@@ -520,7 +531,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Check that :trac:`19835` is fixed::
+        Check that :issue:`19835` is fixed::
 
             sage: QQ((0r,-1r))
             0
@@ -856,7 +867,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             ....:     assert (one1 <= one2) is True
             ....:     assert (one1 >= one2) is True
 
-        Comparisons with gmpy2 values (:trac:`28394`)::
+        Comparisons with gmpy2 values (:issue:`28394`)::
 
             sage: import gmpy2
             sage: values = [(-2,5),(-1,3),(0,1),(2,9),(1,1),(73,2)]
@@ -1454,7 +1465,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             True
             sage: e.norm()
             3/5
-            sage: 7.is_norm(K)
+            sage: 7.is_norm(K)                                                          # needs sage.groups
             Traceback (most recent call last):
             ...
             NotImplementedError: is_norm is not implemented unconditionally
@@ -1610,7 +1621,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (144/1).is_perfect_power(True)
             True
 
-        This test makes sure we workaround a bug in GMP (see :trac:`4612`)::
+        This test makes sure we workaround a bug in GMP (see :issue:`4612`)::
 
             sage: [-a for a in srange(100) if not QQ(-a^3).is_perfect_power()]
             []
@@ -1749,7 +1760,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             return (self > 0)
 
         ## Check that p is prime
-        from .integer_ring import ZZ
+        from sage.rings.integer_ring import ZZ
         p = ZZ(p)
         if check and not p.is_prime():
             raise ValueError('p must be "infinity" or a positive prime number.')
@@ -1883,10 +1894,11 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         -  ``extend`` -- bool (default: ``True``); if ``True``, return a
            square root in an extension ring, if necessary. Otherwise, raise a
-           ``ValueError`` if the square is not in the base ring.
+           ``ValueError`` if the square is not in the base ring. Ignored if ``prec``
+           is not ``None``.
 
         -  ``all`` -- bool (default: ``False``); if ``True``, return all
-           square roots of self, instead of just one.
+           square roots of ``self`` (a list of length 0, 1, or 2).
 
         EXAMPLES::
 
@@ -1930,25 +1942,44 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: sqrt(-2/3, prec=53, all=True)
             [0.816496580927726*I, -0.816496580927726*I]
 
-            sage: n.sqrt(extend=False, all=True)
+            sage: n.sqrt(extend=False)
             Traceback (most recent call last):
             ...
             ValueError: square root of 2/3 not a rational number
+            sage: n.sqrt(extend=False, all=True)
+            []
             sage: sqrt(-2/3, all=True)                                                  # needs sage.symbolic
             [sqrt(-2/3), -sqrt(-2/3)]
+
+        TESTS:
+
+        Ensure that :issue:`37153` is fixed, so that behaviour aligns
+        with other rings and fields.
+        See :issue:`9466` and :issue:`26509` for context::
+
+            sage: QQ(3).sqrt(extend=False, all=True)
+            []
+            sage: QQ(-1).sqrt(extend=False, all=True)
+            []
 
         AUTHORS:
 
         - Naqi Jaffery (2006-03-05): some examples
         """
+        if prec is not None:
+            from sage.misc.functional import _do_sqrt
+            return _do_sqrt(self, prec=prec, all=all)
+
         if mpq_sgn(self.value) == 0:
             return [self] if all else self
 
         if mpq_sgn(self.value) < 0:
-            if not extend:
-                raise ValueError("square root of negative number not rational")
-            from sage.misc.functional import _do_sqrt
-            return _do_sqrt(self, prec=prec, all=all)
+            if extend:
+                from sage.misc.functional import _do_sqrt
+                return _do_sqrt(self, prec=prec, all=all)
+            if all:
+                return []
+            raise ValueError("square root of negative number not rational")
 
         cdef Rational z = <Rational> Rational.__new__(Rational)
         cdef mpz_t tmp
@@ -1967,14 +1998,12 @@ cdef class Rational(sage.structure.element.FieldElement):
         sig_off()
 
         if non_square:
-            if not extend:
-                raise ValueError("square root of %s not a rational number" % self)
-            from sage.misc.functional import _do_sqrt
-            return _do_sqrt(self, prec=prec, all=all)
-
-        if prec:
-            from sage.misc.functional import _do_sqrt
-            return _do_sqrt(self, prec=prec, all=all)
+            if extend:
+                from sage.misc.functional import _do_sqrt
+                return _do_sqrt(self, prec=prec, all=all)
+            if all:
+                return []
+            raise ValueError("square root of %s not a rational number" % self)
 
         if all:
             return [z, -z]
@@ -2755,7 +2784,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (-1/6).sign()
             -1
         """
-        return integer.smallInteger(mpq_sgn(self.value))
+        return smallInteger(mpq_sgn(self.value))
 
     def mod_ui(Rational self, unsigned long int n):
         """
@@ -2806,7 +2835,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Check that :trac:`14870` is fixed::
+        Check that :issue:`14870` is fixed::
 
             sage: int(4) % QQ(3)
             1
@@ -2910,7 +2939,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (1/3).charpoly('x')
              x - 1/3
 
-        The default is ``var='x'``. (:trac:`20967`)::
+        The default is ``var='x'``. (:issue:`20967`)::
 
             sage: a = QQ(2); a.charpoly('x')
             x - 2
@@ -3107,7 +3136,9 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         if self.is_zero():
             raise ArithmeticError("Support of 0 not defined.")
-        return sage.arith.all.prime_factors(self)
+        from sage.arith.misc import prime_factors
+
+        return prime_factors(self)
 
     def log(self, m=None, prec=None):
         r"""
@@ -3934,7 +3965,7 @@ cdef double mpq_get_d_nearest(mpq_t x) except? -648555075988944.5:
 
     AUTHORS:
 
-    - Paul Zimmermann, Jeroen Demeyer (:trac:`14416`)
+    - Paul Zimmermann, Jeroen Demeyer (:issue:`14416`)
     """
     cdef mpz_ptr a = mpq_numref(x)
     cdef mpz_ptr b = mpq_denref(x)
@@ -4094,8 +4125,8 @@ cdef class Z_to_Q(Morphism):
               From: Integer Ring
               To:   Rational Field
         """
-        from . import integer_ring
-        from . import rational_field
+        from sage.rings import integer_ring
+        from sage.rings import rational_field
         import sage.categories.homset
         Morphism.__init__(self, sage.categories.homset.Hom(integer_ring.ZZ, rational_field.QQ))
 
@@ -4136,7 +4167,7 @@ cdef class Z_to_Q(Morphism):
               To:   Integer Ring
 
         This map is a morphism in the category of sets with partial
-        maps (see :trac:`15618`)::
+        maps (see :issue:`15618`)::
 
             sage: f.parent()
             Set of Morphisms from Rational Field to Integer Ring
@@ -4215,7 +4246,7 @@ cdef class int_to_Q(Morphism):
               From: Set of Python objects of class 'int'
               To:   Rational Field
         """
-        from . import rational_field
+        from sage.rings import rational_field
         import sage.categories.homset
         from sage.sets.pythonclass import Set_PythonType
         Morphism.__init__(self, sage.categories.homset.Hom(

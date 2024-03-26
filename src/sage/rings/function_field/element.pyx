@@ -83,7 +83,7 @@ def is_FunctionFieldElement(x):
     """
     if isinstance(x, FunctionFieldElement):
         return True
-    from .function_field import is_FunctionField
+    from sage.rings.function_field.function_field import is_FunctionField
     return is_FunctionField(x.parent())
 
 def make_FunctionFieldElement(parent, element_class, representing_element):
@@ -137,7 +137,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         TESTS:
 
-        Check that :trac:`16369` has been resolved::
+        Check that :issue:`16369` has been resolved::
 
             sage: K.<a> = FunctionField(QQ)
             sage: R.<b> = K[]
@@ -401,7 +401,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         TESTS:
 
-        Verify that :trac:`27712` is resolved::
+        Verify that :issue:`27712` is resolved::
 
             sage: K.<x> = FunctionField(GF(31))
             sage: R.<y> = K[]

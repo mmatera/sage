@@ -119,6 +119,9 @@ from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _f
 _join_cache = WeakValueDictionary()
 
 
+HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie', 'Hecke', 'Dedekind']
+
+
 class Category(UniqueRepresentation, SageObject):
     r"""
     The base class for modeling mathematical categories, like for example:
@@ -239,7 +242,7 @@ class Category(UniqueRepresentation, SageObject):
         ....:         def fD(self):
         ....:             return "D"
 
-    Categories should always have unique representation; by :trac:`12215`,
+    Categories should always have unique representation; by :issue:`12215`,
     this means that it will be kept in cache, but only
     if there is still some strong reference to it.
 
@@ -423,7 +426,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         Input mangling for unique representation.
 
-        Let ``C = Cs(...)`` be a category. Since :trac:`12895`, the
+        Let ``C = Cs(...)`` be a category. Since :issue:`12895`, the
         class of ``C`` is a dynamic subclass ``Cs_with_category`` of
         ``Cs`` in order for ``C`` to inherit code from the
         ``SubcategoryMethods`` nested classes of its super categories.
@@ -513,14 +516,10 @@ class Category(UniqueRepresentation, SageObject):
             sage: PrincipalIdealDomains()._repr_object_names()
             'principal ideal domains'
         """
-        i = -1
-        s = self._label
-        while i < len(s) - 1:
-            for i in range(len(s)):
-                if s[i].isupper():
-                    s = s[:i] + " " + s[i].lower() + s[i + 1:]
-                    break
-        return s.lstrip()
+        words = "".join(letter if not letter.isupper() else ";" + letter
+                        for letter in self._label).split(";")
+        return " ".join(w if w in HALL_OF_FAME else w.lower()
+                        for w in words).lstrip()
 
     def _short_name(self):
         """
@@ -566,7 +565,7 @@ class Category(UniqueRepresentation, SageObject):
     def __call__(self, x, *args, **opts):
         """
         Construct an object in this category from the data in ``x``,
-        or throw ``TypeError`` or ``NotImplementedError``.
+        or throw :class:`TypeError` or :class:`NotImplementedError`.
 
         If ``x`` is readily in ``self`` it is returned unchanged.
         Categories wishing to extend this minimal behavior should
@@ -584,7 +583,7 @@ class Category(UniqueRepresentation, SageObject):
     def _call_(self, x):
         """
         Construct an object in this category from the data in ``x``,
-        or throw ``NotImplementedError``.
+        or throw :class:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -670,7 +669,7 @@ class Category(UniqueRepresentation, SageObject):
 
             This test is incomplete for categories in
             :class:`CategoryWithParameters`, as introduced by
-            :trac:`11935`. This method is therefore overwritten by
+            :issue:`11935`. This method is therefore overwritten by
             :meth:`~sage.categories.category.CategoryWithParameters._subcategory_hook_`.
 
         EXAMPLES::
@@ -822,7 +821,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. NOTE::
 
-            Since :trac:`10963`, the order of the categories in the
+            Since :issue:`10963`, the order of the categories in the
             result is irrelevant. For details, see
             :ref:`category-primer-category-order`.
 
@@ -838,7 +837,7 @@ class Category(UniqueRepresentation, SageObject):
         r"""
         All the super categories of this category, including this category.
 
-        Since :trac:`11943`, the order of super categories is
+        Since :issue:`11943`, the order of super categories is
         determined by Python's method resolution order C3 algorithm.
 
         .. SEEALSO:: :meth:`all_super_categories`
@@ -873,7 +872,7 @@ class Category(UniqueRepresentation, SageObject):
         r"""
         All the proper super categories of this category.
 
-        Since :trac:`11943`, the order of super categories is
+        Since :issue:`11943`, the order of super categories is
         determined by Python's method resolution order C3 algorithm.
 
         .. SEEALSO:: :meth:`all_super_categories`
@@ -934,7 +933,7 @@ class Category(UniqueRepresentation, SageObject):
 
          - ``proper`` -- a boolean (default: ``False``); whether to exclude this category.
 
-        Since :trac:`11943`, the order of super categories is
+        Since :issue:`11943`, the order of super categories is
         determined by Python's method resolution order C3 algorithm.
 
         .. note::
@@ -1184,7 +1183,7 @@ class Category(UniqueRepresentation, SageObject):
                 False
 
             The support for modeling full subcategories has been
-            introduced in :trac:`16340`.
+            introduced in :issue:`16340`.
         """
         return self
 
@@ -1235,7 +1234,7 @@ class Category(UniqueRepresentation, SageObject):
              Category of right modules over Rational Field,
              Category of left modules over Rational Field)
             sage: structure(HopfAlgebras(QQ).Graded().WithBasis().Connected())
-            (Category of hopf algebras over Rational Field,
+            (Category of Hopf algebras over Rational Field,
              Category of graded modules over Rational Field)
 
         This method is used in :meth:`is_full_subcategory` for
@@ -1378,7 +1377,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. note::
 
-            By :trac:`11943`, the list of categories returned by
+            By :issue:`11943`, the list of categories returned by
             :meth:`all_super_categories` is supposed to match with the
             method resolution order of the parent and element
             classes. This method checks this.
@@ -1601,7 +1600,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. SEEALSO::
 
-            - :trac:`12895`
+            - :issue:`12895`
             - :meth:`parent_class`
             - :meth:`element_class`
             - :meth:`_make_named_class`
@@ -1653,7 +1652,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: type(C)
             <class 'sage.structure.dynamic_class.DynamicMetaclass'>
 
-        By :trac:`11935`, some categories share their parent
+        By :issue:`11935`, some categories share their parent
         classes. For example, the parent class of an algebra only
         depends on the category of the base ring. A typical example is
         the category of algebras over a finite field versus algebras
@@ -1698,7 +1697,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: type(C)
             <class 'sage.structure.dynamic_class.DynamicMetaclass'>
 
-        By :trac:`11935`, some categories share their element
+        By :issue:`11935`, some categories share their element
         classes. For example, the element class of an algebra only
         depends on the category of the base. A typical example is the
         category of algebras over a field versus algebras over a
@@ -2018,7 +2017,7 @@ class Category(UniqueRepresentation, SageObject):
              Category of commutative magmas,
              Category of finite additive groups)
             sage: HopfAlgebras(QQ)._with_axiom_as_tuple('FiniteDimensional')
-            (Category of hopf algebras over Rational Field,
+            (Category of Hopf algebras over Rational Field,
              Category of finite dimensional vector spaces over Rational Field)
         """
         if axiom in self.axioms():
@@ -2593,13 +2592,17 @@ def category_sample():
         sage: from sage.categories.category import category_sample
         sage: sorted(category_sample(), key=str)                                        # needs sage.groups
         [Category of Coxeter groups,
+         Category of Dedekind domains,
          Category of G-sets for Symmetric group of order 8! as a permutation group,
          Category of Hecke modules over Rational Field,
+         Category of Hopf algebras over Rational Field,
+         Category of Hopf algebras with basis over Rational Field,
          Category of Lie algebras over Rational Field,
          Category of Weyl groups,
+         Category of abelian varieties over Rational Field,
          Category of additive magmas, ...,
          Category of fields, ...,
-         Category of graded hopf algebras with basis over Rational Field, ...,
+         Category of graded Hopf algebras with basis over Rational Field, ...,
          Category of modular abelian varieties over Rational Field, ...,
          Category of simplicial complexes, ...,
          Category of vector spaces over Rational Field, ...
@@ -2627,7 +2630,7 @@ def category_graph(categories=None):
 
     For readability, the names of the category are shortened.
 
-    .. TODO:: Further remove the base ring (see also :trac:`15801`).
+    .. TODO:: Further remove the base ring (see also :issue:`15801`).
 
     EXAMPLES::
 
@@ -2646,9 +2649,8 @@ def category_graph(categories=None):
         categories = category_sample()
     # Include all the super categories
     # Get rid of join categories
-    categories = set(cat
-                     for category in categories
-                     for cat in category.all_super_categories(proper=isinstance(category, JoinCategory)))
+    categories = {cat for category in categories
+                  for cat in category.all_super_categories(proper=isinstance(category, JoinCategory))}
     g = graphs.digraph.DiGraph()
     for cat in categories:
         g.add_vertex(cat._repr_object_names())
@@ -2675,7 +2677,7 @@ class CategoryWithParameters(Category):
     depend only on the super categories of ``C``. For example, the
     vector space operations are provided if and only if ``K`` is a
     field, since ``VectorSpaces(K)`` is a super category of ``C`` only
-    in that case. In such cases, and as an optimization (see :trac:`11935`),
+    in that case. In such cases, and as an optimization (see :issue:`11935`),
     we want to use the same parent and element class for all fields.
     This is the purpose of this abstract class.
 
@@ -2835,7 +2837,8 @@ class CategoryWithParameters(Category):
         The parent class of an algebra depends only on the category of the base ring::
 
             sage: Algebras(ZZ)._make_named_class_key("parent_class")
-            Join of Category of euclidean domains
+            Join of Category of Dedekind domains
+                 and Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces
 
@@ -2846,7 +2849,8 @@ class CategoryWithParameters(Category):
             (Join of Category of number fields
                  and Category of quotient fields
                  and Category of metric spaces,
-             Join of Category of euclidean domains
+             Join of Category of Dedekind domains
+                 and Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
 
@@ -2858,7 +2862,7 @@ class CategoryWithParameters(Category):
              <class 'sage.categories.posets.Posets.element_class'>)
         """
 
-    _make_named_class_cache = dict()
+    _make_named_class_cache = {}
 
     _cmp_key = _cmp_key_named
 
@@ -2909,7 +2913,7 @@ class JoinCategory(CategoryWithParameters):
          Category of commutative additive monoids, ..., Category of additive magmas,
          Category of sets, Category of sets with partial maps, Category of objects]
 
-    By :trac:`11935`, join categories and categories over base rings
+    By :issue:`11935`, join categories and categories over base rings
     inherit from :class:`CategoryWithParameters`. This allows for
     sharing parent and element classes between similar categories. For
     example, since group algebras belong to a join category and since
@@ -2960,7 +2964,7 @@ class JoinCategory(CategoryWithParameters):
         r"""
         Return what the element/parent/... classes depend on.
 
-        Since :trac:`11935`, the element/parent classes of a join
+        Since :issue:`11935`, the element/parent classes of a join
         category over base only depend on the element/parent class of
         its super categories.
 
@@ -2972,7 +2976,8 @@ class JoinCategory(CategoryWithParameters):
         EXAMPLES::
 
             sage: Modules(ZZ)._make_named_class_key('element_class')
-            Join of Category of euclidean domains
+            Join of Category of Dedekind domains
+                 and Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces
             sage: Modules(QQ)._make_named_class_key('parent_class')

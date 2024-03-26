@@ -10,14 +10,14 @@ Coalgebras
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from .category_types import Category_over_base_ring
-from sage.categories.modules import Modules
+from sage.categories.category_types import Category_over_base_ring
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from sage.categories.tensor import TensorProductsCategory
 from sage.categories.dual import DualObjectsCategory
 from sage.categories.filtered_modules import FilteredModulesCategory
-from sage.categories.super_modules import SuperModulesCategory
+from sage.categories.modules import Modules
 from sage.categories.realizations import RealizationsCategory
+from sage.categories.super_modules import SuperModulesCategory
+from sage.categories.tensor import TensorProductsCategory
 from sage.categories.with_realizations import WithRealizationsCategory
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -224,7 +224,7 @@ class Coalgebras(Category_over_base_ring):
             .. WARNING::
 
                 This is only correct in certain cases (finite dimension, ...).
-                See :trac:`15647`.
+                See :issue:`15647`.
             """
             from sage.categories.algebras import Algebras
             return [Algebras(self.base_category().base_ring())]

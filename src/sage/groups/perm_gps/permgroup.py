@@ -29,7 +29,7 @@ Mathematical Folk Humor." Notices Amer. Math. Soc. 52, 24-34,
 Index of methods
 ----------------
 
-Here are the method of a :func:`PermutationGroup`
+Here are the methods of a :func:`PermutationGroup`
 
 {METHODS_OF_PermutationGroup_generic}
 
@@ -106,7 +106,7 @@ AUTHORS:
 - Christian Stump (2018): Added alternative implementation of strong_generating_system directly using GAP.
 
 - Sebastian Oehms (2018): Added :meth:`PermutationGroup_generic._Hom_` to use :class:`sage.groups.libgap_morphism.GroupHomset_libgap` and :meth:`PermutationGroup_generic.gap` and
-  :meth:`PermutationGroup_generic._subgroup_constructor` (for compatibility to libgap framework, see :trac:`26750`
+  :meth:`PermutationGroup_generic._subgroup_constructor` (for compatibility to libgap framework, see :issue:`26750`
 
 REFERENCES:
 
@@ -344,6 +344,7 @@ def PermutationGroup(gens=None, *args, **kwds):
     Note that we provide generators for the acting group.  The
     permutation group we construct is its homomorphic image::
 
+        sage: # needs sage.combinat
         sage: a = lambda g, x: vector(g*x, immutable=True)
         sage: X = [vector(x, immutable=True) for x in GF(3)^2]
         sage: G = SL(2,3); G.gens()
@@ -489,7 +490,7 @@ class PermutationGroup_generic(FiniteGroup):
         if isinstance(gap_group, str):
             # defining the GAP group from the original construction information
             # helps to avoid buffer size overflow since it avoids transferring
-            # lists of long generators (example PSp(8,3), see :trac:`26750`
+            # lists of long generators (example PSp(8,3), see :issue:`26750`
             self._libgap = libgap.eval(gap_group)
             gap_group = self._libgap
 
@@ -498,7 +499,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         # Handle the case where only the GAP group is specified.
         if gens is None:
-            gens = [gen for gen in gap_group.GeneratorsOfGroup()]
+            gens = list(gap_group.GeneratorsOfGroup())
 
         if domain is None:
             gens = [standardize_generator(x, as_cycles=True) for x in gens]
@@ -524,8 +525,8 @@ class PermutationGroup_generic(FiniteGroup):
 
         self._domain = domain
         self._deg = len(self._domain)
-        self._domain_to_gap = dict((key, i+1) for i, key in enumerate(self._domain))
-        self._domain_from_gap = dict((i+1, key) for i, key in enumerate(self._domain))
+        self._domain_to_gap = {key: i+1 for i, key in enumerate(self._domain)}
+        self._domain_from_gap = {i+1: key for i, key in enumerate(self._domain)}
 
         if not gens:  # length 0
             gens = [()]
@@ -680,10 +681,18 @@ class PermutationGroup_generic(FiniteGroup):
             sage: UPG = PG.subgroup([p1, p2, p3, p4, p5], canonicalize=False)
             sage: UPG.gap()
             <permutation group with 5 generators>
+
+        the caching of _libgap_() works::
+
+            sage: S = SymmetricGroup(4)
+            sage: g1 = S._libgap_()
+            sage: g1.IsIdenticalObj(S._libgap_())
+            true
         """
         if self._libgap is not None:
             return self._libgap
-        return super()._libgap_()
+        self._libgap = super()._libgap_()
+        return self._libgap
 
     # Override the default _libgap_ to use the caching as self._libgap
     _libgap_ = gap
@@ -775,7 +784,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         TESTS:
 
-        Check that :trac:`29624` is fixed::
+        Check that :issue:`29624` is fixed::
 
             sage: G = SymmetricGroup(2)
             sage: H = PermutationGroup([(1,2)])
@@ -974,7 +983,7 @@ class PermutationGroup_generic(FiniteGroup):
             ....:                 h = G3.coerce_map_from(G1)
             ....:                 assert h(elt) == g(f(elt))
 
-        Check that :trac:`26903` is fixed::
+        Check that :issue:`26903` is fixed::
 
             sage: G = SO(4,3,-1)
             sage: P = G.as_permutation_group(algorithm='smaller', seed=5)
@@ -987,7 +996,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: P1(g1*g2)
             (1,4,13,11)(2,5,14,18)(3,15,8,16)(6,7)(9,20,19,12)(10,17)
 
-        Another check for :trac:`5583`::
+        Another check for :issue:`5583`::
 
             sage: G = PermutationGroup([(), (1,3)])
             sage: G.has_coerce_map_from( PermutationGroup([(), (1,2)]))
@@ -1033,7 +1042,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         TESTS:
 
-        Test :trac:`9155`::
+        Test :issue:`9155`::
 
             sage: G = SymmetricGroup(2)
             sage: elements = G.list()
@@ -1043,7 +1052,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.list()
             [(), (1,2)]
         """
-        return [x for x in self]
+        return list(self)
 
     def __contains__(self, item):
         """
@@ -1365,6 +1374,38 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return len(self.gens())
 
+    def is_trivial(self):
+        r"""
+        Return ``True`` if this group is the trivial group.
+
+        A permutation group is trivial, if it consists only of the
+        identity element, that is, if it has no generators or only
+        trivial generators.
+
+        EXAMPLES::
+
+            sage: G = PermutationGroup([], domain=["a", "b", "c"])
+            sage: G.is_trivial()
+            True
+            sage: SymmetricGroup(0).is_trivial()
+            True
+            sage: SymmetricGroup(1).is_trivial()
+            True
+            sage: SymmetricGroup(2).is_trivial()
+            False
+            sage: DihedralGroup(1).is_trivial()
+            False
+
+        TESTS::
+
+            sage: G = PermutationGroup([[], []], canonicalize=False)
+            sage: G.ngens()
+            2
+            sage: G.is_trivial()
+            True
+        """
+        return all(g.is_one() for g in self._gens)
+
     @cached_method
     def one(self):
         """
@@ -1547,6 +1588,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         TESTS::
 
+            sage: # needs sage.graphs
             sage: g = graphs.PetersenGraph()
             sage: g.relabel(list("abcdefghik"))
             sage: g.vertices(sort=True)
@@ -1787,8 +1829,8 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3,4,10)]])
             sage: G.stabilizer(10)
             Subgroup generated by [(2,3,4), (1,2)(3,4)] of (Permutation Group with generators [(1,2)(3,4), (1,2,3,4,10)])
-            sage: G.stabilizer(1)
-            Subgroup generated by [(2,3)(4,10), (2,10,3)] of (Permutation Group with generators [(1,2)(3,4), (1,2,3,4,10)])
+            sage: G.stabilizer(1) == G.subgroup(['(2,3)(4,10)', '(2,10,3)'])
+            True
             sage: G = PermutationGroup([[(2,3,4)],[(6,7)]])
             sage: G.stabilizer(1)
             Subgroup generated by [(6,7), (2,3,4)] of (Permutation Group with generators [(6,7), (2,3,4)])
@@ -1949,7 +1991,9 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2,3,4)],[(1,2)]])
             sage: G.strong_generating_system()
             [[(), (1,2)(3,4), (1,3)(2,4), (1,4)(2,3)],
-             [(), (2,4), (2,3,4)], [(), (3,4)], [()]]
+            [(), (2,4,3), (2,3,4)],
+            [(), (3,4)],
+            [()]]
             sage: G = PermutationGroup([[(1,2,3)],[(4,5,7)],[(1,4,6)]])
             sage: G.strong_generating_system()
             [[(), (1,2,3), (1,4,6), (1,3,2), (1,5,7,4,6), (1,6,4), (1,7,5,4,6)],
@@ -2137,7 +2181,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: [SymmetricGroup(n).subgroup(gen)._order() for gen in special_gens]
             [6, 24, 120, 720, 5040, 40320, 362880]
 
-        Checks that output is a Sage integer (:trac:`23778`)::
+        Checks that output is a Sage integer (:issue:`23778`)::
 
             sage: P = PermutationGroup(['(1,2)','(1,3)'])
             sage: P.cardinality()
@@ -2337,13 +2381,14 @@ class PermutationGroup_generic(FiniteGroup):
         EXAMPLES::
 
             sage: G = SymmetricGroup(4)
-            sage: G.socle()
+            sage: s = G.socle(); s
             Subgroup generated by [(1,2)(3,4), (1,4)(2,3)] of
              (Symmetric group of order 4! as a permutation group)
-            sage: G.socle().socle()
-            Subgroup generated by [(1,2)(3,4), (1,4)(2,3)] of
-             (Subgroup generated by [(1,2)(3,4), (1,4)(2,3)]
-               of (Symmetric group of order 4! as a permutation group))
+
+        The socle of the socle is, essentially, the socle::
+
+            sage: s.socle() == s.subgroup(s.gens())
+            True
         """
         return self.subgroup(gap_group=self._gap_().Socle())
 
@@ -3023,7 +3068,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup(perm_ls)
             sage: while True:
             ....:     try:
-            ....:         assert G.as_finitely_presented_group().as_permutation_group().is_isomorphic(G)  # sometimes results in GAP error (see :trac:`32141`)
+            ....:         assert G.as_finitely_presented_group().as_permutation_group().is_isomorphic(G)  # sometimes results in GAP error (see :issue:`32141`)
             ....:         break
             ....:     except ValueError:
             ....:         pass
@@ -3446,11 +3491,11 @@ class PermutationGroup_generic(FiniteGroup):
         - David Joyner and William Stein (2006-01-04)
 
         """
-        G    = self._libgap_()
-        cl   = G.ConjugacyClasses()
-        n    = Integer(cl.Length())
+        G = self._libgap_()
+        cl = G.ConjugacyClasses()
+        n = Integer(cl.Length())
         irrG = G.Irr()
-        ct   = [[irrG[i, j] for j in range(n)] for i in range(n)]
+        ct = [[irrG[i, j] for j in range(n)] for i in range(n)]
 
         from sage.rings.number_field.number_field import CyclotomicField
         e = irrG.Flat().Conductor()
@@ -3706,6 +3751,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         But the automorphism group of Petersen's graph does not::
 
+            sage: # needs sage.graphs
             sage: G = graphs.PetersenGraph().automorphism_group()
             sage: G.has_regular_subgroup()
             False
@@ -3767,6 +3813,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         Picking an interesting group::
 
+            sage: # needs sage.graphs
             sage: g = graphs.DodecahedralGraph()
             sage: g.is_vertex_transitive()
             True
@@ -3776,12 +3823,12 @@ class PermutationGroup_generic(FiniteGroup):
 
         Computing its blocks representatives::
 
-            sage: ag.blocks_all()
+            sage: ag.blocks_all()                                                       # needs sage.graphs
             [[0, 15]]
 
         Now the full block::
 
-            sage: sorted(ag.blocks_all(representatives = False)[0])
+            sage: sorted(ag.blocks_all(representatives=False)[0])                       # needs sage.graphs
             [[0, 15], [1, 16], [2, 12], [3, 13], [4, 9],
              [5, 10], [6, 11], [7, 18], [8, 17], [14, 19]]
 
@@ -3977,6 +4024,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: g = graphs.CompleteGraph(4)
             sage: g.relabel(['a','b','c','d'])
             sage: mgs = g.automorphism_group().minimal_generating_set(); len(mgs)
@@ -4052,7 +4100,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         TESTS:
 
-        This shows that the issue at :trac:`7360` is fixed::
+        This shows that the issue at :issue:`7360` is fixed::
 
             sage: G = KleinFourGroup()
             sage: G.is_simple()
@@ -4067,6 +4115,37 @@ class PermutationGroup_generic(FiniteGroup):
             return info
         else:
             raise TypeError("group must be simple")
+
+    def minimal_normal_subgroups(self):
+        """
+        Return the nontrivial minimal normal subgroups ``self``.
+
+        EXAMPLES::
+
+            sage: G = PermutationGroup([(1,2,3),(4,5)])
+            sage: G.minimal_normal_subgroups()
+            [Subgroup generated by [(4,5)] of (Permutation Group with generators [(4,5), (1,2,3)]),
+             Subgroup generated by [(1,2,3)] of (Permutation Group with generators [(4,5), (1,2,3)])]
+        """
+        return [self.subgroup(gap_group=gap_subgroup)
+                for gap_subgroup in self._libgap_().MinimalNormalSubgroups()]
+
+    def maximal_normal_subgroups(self):
+        """
+        Return the maximal proper normal subgroups of ``self``.
+
+        This raises an error if `G/[G, G]` is infinite, yielding infinitely
+        many maximal normal subgroups.
+
+        EXAMPLES::
+
+            sage: G = PermutationGroup([(1,2,3),(4,5)])
+            sage: G.maximal_normal_subgroups()
+            [Subgroup generated by [(1,2,3)] of (Permutation Group with generators [(4,5), (1,2,3)]),
+             Subgroup generated by [(4,5)] of (Permutation Group with generators [(4,5), (1,2,3)])]
+        """
+        return [self.subgroup(gap_group=gap_subgroup)
+                for gap_subgroup in self._libgap_().MaximalNormalSubgroups()]
 
     ######################  Boolean tests #####################
 
@@ -4725,7 +4804,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.molien_series()
             -1/(x^6 - x^5 - x^4 + x^2 + x - 1)
 
-        Some further tests (after :trac:`15817`)::
+        Some further tests (after :issue:`15817`)::
 
             sage: G = PermutationGroup([[(1,2,3,4)]])
             sage: S4ms = SymmetricGroup(4).molien_series()
@@ -4746,7 +4825,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         TESTS:
 
-        Check that :trac:`34854` is fixed::
+        Check that :issue:`34854` is fixed::
 
             sage: PG = PermutationGroup(["(1,2,3,4,5,6,7)","(5,6,7)"])
             sage: PG.molien_series()
@@ -4854,7 +4933,7 @@ class PermutationGroup_generic(FiniteGroup):
         TESTS:
 
         Implementation details should not prevent us from computing
-        large subgroups (:trac:`5491`)::
+        large subgroups (:issue:`5491`)::
 
             sage: PSL(10,2).sylow_subgroup(7)
             Subgroup generated by...

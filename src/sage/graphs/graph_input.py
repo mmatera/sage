@@ -385,14 +385,14 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
 
     TESTS:
 
-    Fix bug reported in :trac:`22985`::
+    Fix bug reported in :issue:`22985`::
 
         sage: DiGraph(matrix ([[1,0,0,1],[0,0,1,1],[0,0,1,1]]).transpose())             # needs sage.modules
         Traceback (most recent call last):
         ...
         ValueError: each column represents an edge: -1 goes to 1
 
-    Handle incidence matrix containing a column with only zeros (:trac:`29275`)::
+    Handle incidence matrix containing a column with only zeros (:issue:`29275`)::
 
         sage: m = Matrix([[0,1],[0,-1],[0,0]]); m                                       # needs sage.modules
         [ 0  1]
@@ -402,7 +402,7 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
         sage: list(G.edges(sort=True, labels=False))                                    # needs sage.modules
         [(1, 0)]
 
-    Handle incidence matrix [[1],[-1]] (:trac:`29275`)::
+    Handle incidence matrix [[1],[-1]] (:issue:`29275`)::
 
         sage: m = Matrix([[1],[-1]]); m                                                 # needs sage.modules
         [ 1]
@@ -464,7 +464,7 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
 
     TESTS:
 
-    :trac:`32831` is fixed::
+    :issue:`32831` is fixed::
 
         sage: DiGraph({0: {}, 1: {}, 2: {}, 3: {}, 4: {}})
         Digraph on 5 vertices
@@ -559,7 +559,7 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
         for u in D:
             if len(set(D[u])) != len(D[u]):
                 if multiedges is False:
-                    v = next((v for v in D[u] if D[u].count(v) > 1))
+                    v = next(v for v in D[u] if D[u].count(v) > 1)
                     raise ValueError("non-multigraph got several edges (%s, %s)" % (u, v))
                 multiedges = True
                 break

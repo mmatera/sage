@@ -17,11 +17,11 @@ TESTS::
 
 .. TODO::
 
-    The following skipped tests should be removed once :trac:`13999` is fixed::
+    The following skipped tests should be removed once :issue:`13999` is fixed::
 
         sage: TestSuite(S).run(skip=['_test_nonzero_equal', '_test_elements', '_test_zero'])
 
-In :trac:`11068`, non-commutative quotient rings `R/I` were
+In :issue:`11068`, non-commutative quotient rings `R/I` were
 implemented.  The only requirement is that the two-sided ideal `I`
 provides a ``reduce`` method so that ``I.reduce(x)`` is the normal
 form of an element `x` with respect to `I` (i.e., we have
@@ -80,7 +80,7 @@ quotient ring is commutative::
     sage: (a+b+2)^4
     16 + 32*a + 32*b
 
-Since :trac:`7797`, there is an implementation of free algebras
+Since :issue:`7797`, there is an implementation of free algebras
 based on Singular's implementation of the Letterplace Algebra. Our
 letterplace wrapper allows to provide the above toy example more
 easily::
@@ -112,16 +112,15 @@ easily::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
-import sage.misc.latex as latex
-from . import ring, ideal, quotient_ring_element
-from sage.structure.category_object import normalize_names
-from sage.structure.richcmp import richcmp_method, richcmp
-import sage.structure.parent_gens
-from sage.misc.cachefunc import cached_method
-from sage.categories.rings import Rings
-from sage.categories.commutative_rings import CommutativeRings
-
 import sage.interfaces.abc
+import sage.misc.latex as latex
+import sage.structure.parent_gens
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.rings import Rings
+from sage.misc.cachefunc import cached_method
+from sage.rings import ideal, quotient_ring_element, ring
+from sage.structure.category_object import normalize_names
+from sage.structure.richcmp import richcmp, richcmp_method
 
 _Rings = Rings()
 _CommRings = CommutativeRings()
@@ -243,7 +242,7 @@ def QuotientRing(R, I, names=None, **kwds):
 
     TESTS:
 
-    By :trac:`11068`, the following does not return a generic
+    By :issue:`11068`, the following does not return a generic
     quotient ring but a usual quotient of the integer ring::
 
         sage: R = Integers(8)
@@ -252,7 +251,7 @@ def QuotientRing(R, I, names=None, **kwds):
         Ring of integers modulo 2
 
     Here is an example of the quotient of a free algebra by a
-    twosided homogeneous ideal (see :trac:`7797`)::
+    twosided homogeneous ideal (see :issue:`7797`)::
 
         sage: # needs sage.combinat sage.libs.singular sage.modules
         sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
@@ -274,7 +273,7 @@ def QuotientRing(R, I, names=None, **kwds):
         sage: j^3
         -j*k*i - j*k*j - j*k*k
 
-    Check that :trac:`5978` is fixed by if we quotient by the zero ideal `(0)`
+    Check that :issue:`5978` is fixed by if we quotient by the zero ideal `(0)`
     then we just return ``R``::
 
         sage: R = QQ['x']
@@ -302,7 +301,9 @@ def QuotientRing(R, I, names=None, **kwds):
     else:
         names = normalize_names(R.ngens(), names)
     if kwds.get('implementation') == 'pbori':
-        from sage.rings.polynomial.polynomial_ring_constructor import BooleanPolynomialRing_constructor as BooleanPolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import (
+            BooleanPolynomialRing_constructor as BooleanPolynomialRing,
+        )
         kwds.pop('implementation')
         return BooleanPolynomialRing(R.ngens(), names=names, **kwds)
     # workaround to silence warning from #34806
@@ -538,6 +539,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             Finite Field of size 5
         """
         from sage.categories.pushout import QuotientFunctor
+
         # Is there a better generic way to distinguish between things like Z/pZ as a field and Z/pZ as a ring?
         from sage.rings.ring import Field
         try:
@@ -594,7 +596,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         AUTHOR:
 
-        - Simon King (2011-03-23): See :trac:`7797`.
+        - Simon King (2011-03-23): See :issue:`7797`.
 
         EXAMPLES:
 
@@ -726,7 +728,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             False
 
         Test that there also is a lift for rings that are no
-        instances of :class:`~sage.rings.ring.Ring` (see :trac:`11068`)::
+        instances of :class:`~sage.rings.ring.Ring` (see :issue:`11068`)::
 
             sage: # needs sage.modules
             sage: MS = MatrixSpace(GF(5), 2, 2)
@@ -998,7 +1000,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         TESTS:
 
         We create an ideal of a fairly generic integer ring (see
-        :trac:`5666`)::
+        :issue:`5666`)::
 
             sage: R = Integers(10)
             sage: R.ideal(1)
@@ -1006,7 +1008,9 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         if len(gens) == 1:
             gens = gens[0]
-        from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+        from sage.rings.polynomial.multi_polynomial_ring_base import (
+            MPolynomialRing_base,
+        )
         if not (isinstance(self.__R, MPolynomialRing_base) and self.__R._has_singular):
             # pass through
             return super().ideal(gens, **kwds)
@@ -1019,7 +1023,9 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         global MPolynomialIdeal_quotient
         if MPolynomialIdeal_quotient is None:
-            from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal_quotient
+            from sage.rings.polynomial.multi_polynomial_ideal import (
+                MPolynomialIdeal_quotient,
+            )
         return MPolynomialIdeal_quotient(self, gens, **kwds)
 
     def _element_constructor_(self, x, coerce=True):
@@ -1097,7 +1103,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         TESTS:
 
-        We check that :trac:`13682` is fixed::
+        We check that :issue:`13682` is fixed::
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: I = R.ideal(x^2 + y^2)
@@ -1276,7 +1282,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         try:
             Q = self.__singular
-            if not (Q.parent() is singular):
+            if Q.parent() is not singular:
                 raise ValueError
             Q._check_valid()
             return Q
@@ -1347,6 +1353,30 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             Degree reverse lexicographic term order
         """
         return self.__R.term_order()
+
+    def random_element(self):
+        r"""
+        Return a random element of this quotient ring obtained by
+        sampling a random element of the cover ring and reducing
+        it modulo the defining ideal.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = QQ[]
+            sage: S = R.quotient([x^3, y^2])
+            sage: S.random_element()  # random
+            -8/5*xbar^2 + 3/2*xbar*ybar + 2*xbar - 4/23
+
+        TESTS:
+
+        Make sure we are not just getting images of integers in this
+        ring (which would be the case if the default implementation
+        of this method was inherited from generic rings)::
+
+            sage: any(S.random_element() not in ZZ for _ in range(999))
+            True
+        """
+        return self.retract(self.cover_ring().random_element())
 
 
 class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):

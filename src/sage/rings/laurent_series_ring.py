@@ -32,20 +32,17 @@ EXAMPLES::
 # ****************************************************************************
 
 
-from sage.categories.rings import Rings
-from sage.rings.infinity import infinity
 from sage.categories.algebras import Algebras
-from sage.categories.integral_domains import IntegralDomains
-from sage.categories.fields import Fields
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationFields
-
-from .laurent_series_ring_element import LaurentSeries
-from .ring import CommutativeRing
-
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.categories.fields import Fields
+from sage.categories.integral_domains import IntegralDomains
+from sage.categories.rings import Rings
 from sage.misc.cachefunc import cached_method
-
+from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+from sage.rings.laurent_series_ring_element import LaurentSeries
+from sage.rings.ring import CommutativeRing
+from sage.structure.unique_representation import UniqueRepresentation
 
 try:
     from sage.libs.pari.all import pari_gen
@@ -141,7 +138,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
     TESTS:
 
     Check if changing global series precision does it right (and
-    that :trac:`17955` is fixed)::
+    that :issue:`17955` is fixed)::
 
         sage: set_series_precision(3)
         sage: R.<x> = LaurentSeriesRing(ZZ)
@@ -153,11 +150,12 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         1 + 2*x + 4*x^2 + 8*x^3 + 16*x^4 + O(x^5)
         sage: set_series_precision(20)
 
-    Check categories (:trac:`24420`)::
+    Check categories (:issue:`24420`)::
 
         sage: LaurentSeriesRing(ZZ, 'x').category()
         Category of infinite commutative no zero divisors algebras
-         over (euclidean domains and infinite enumerated sets and metric spaces)
+         over (Dedekind domains and euclidean domains
+         and infinite enumerated sets and metric spaces)
         sage: LaurentSeriesRing(QQ, 'x').category()
         Join of Category of complete discrete valuation fields and Category of commutative algebras
          over (number fields and quotient fields and metric spaces) and Category of infinite sets
@@ -165,7 +163,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         Category of infinite commutative algebras
          over (finite commutative rings and subquotients of monoids and quotients of semigroups and finite enumerated sets)
 
-    Check coercions (:trac:`24431`)::
+    Check coercions (:issue:`24431`)::
 
         sage: pts = [LaurentSeriesRing,
         ....:        PolynomialRing,
@@ -228,7 +226,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: RZZ = LaurentSeriesRing(ZZ, 't')
             sage: RZZ.category()
             Category of infinite commutative no zero divisors algebras
-             over (euclidean domains and infinite enumerated sets and metric spaces)
+             over (Dedekind domains and euclidean domains
+             and infinite enumerated sets and metric spaces)
             sage: TestSuite(RZZ).run()
 
             sage: R1 = LaurentSeriesRing(Zmod(1), 't')
@@ -315,8 +314,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             ...
             ValueError: must be an integral domain
         """
-        from sage.categories.integral_domains import IntegralDomains
         from sage.categories.fields import Fields
+        from sage.categories.integral_domains import IntegralDomains
         if self in Fields():
             return self
         elif self in IntegralDomains():
@@ -442,7 +441,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         TESTS:
 
-        Check that :trac:`28993` is fixed::
+        Check that :issue:`28993` is fixed::
 
             sage: from sage.modular.etaproducts import qexp_eta                         # needs sage.modular
             sage: S.<t> = LaurentSeriesRing(RationalField())
@@ -450,7 +449,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             1 - t - t^2 + t^5 + t^7 - t^12 - t^15 + t^22 + t^26 + O(t^30)
 
         When converting from `R((z))` to `R((z))((w))`, the variable
-        `z` is sent to `z` rather than to `w` (see :trac:`7085`)::
+        `z` is sent to `z` rather than to `w` (see :issue:`7085`)::
 
             sage: A.<z> = LaurentSeriesRing(QQ)
             sage: B.<w> = LaurentSeriesRing(A)
@@ -459,7 +458,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: z/w
             z*w^-1
 
-        Various conversions from PARI (see also :trac:`2508`)::
+        Various conversions from PARI (see also :issue:`2508`)::
 
             sage: # needs sage.libs.pari
             sage: L.<q> = LaurentSeriesRing(QQ, default_prec=10)
@@ -482,15 +481,15 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: L(pari('O(x^-10)'))
             O(q^-10)
 
-        Check that :trac:`30073` is fixed::
+        Check that :issue:`30073` is fixed::
 
             sage: P.<x> = LaurentSeriesRing(QQ)
             sage: P({-3: 1})
             x^-3
         """
         from sage.rings.fraction_field_element import is_FractionFieldElement
-        from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.polynomial.multi_polynomial import MPolynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.structure.element import parent
 
         P = parent(x)
@@ -643,9 +642,11 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             True
         """
         A = self.base_ring()
+        from sage.rings.polynomial.laurent_polynomial_ring_base import (
+            LaurentPolynomialRing_generic,
+        )
         from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
         from sage.rings.power_series_ring import is_PowerSeriesRing
-        from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
 
         if ((is_LaurentSeriesRing(P) or
              isinstance(P, LaurentPolynomialRing_generic) or

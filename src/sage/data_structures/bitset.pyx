@@ -31,7 +31,7 @@ linear in ``capacity``.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .bitset_base cimport *
+from sage.data_structures.bitset_base cimport *
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
 
@@ -2377,7 +2377,7 @@ def test_bitset_copy_flex(py_a):
     """
     TESTS:
 
-    Check that :trac:`33012` is fixed::
+    Check that :issue:`33012` is fixed::
 
         sage: from sage.data_structures.bitset import test_bitset_copy_flex
         sage: test_bitset_copy_flex('0101'*100)

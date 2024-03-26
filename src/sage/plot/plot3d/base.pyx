@@ -278,19 +278,14 @@ cdef class Graphics3d(SageObject):
         T.export_jmol(scene_zip, **opts)
         from sage.interfaces.jmoldata import JmolData
         jdata = JmolData()
-        if not jdata.is_jvm_available():
+        if not jdata.is_jmol_available():
             # We can only use JMol to generate preview if a jvm is installed
             from sage.repl.rich_output.output_graphics import OutputImagePng
             tachyon = self._rich_repr_tachyon(OutputImagePng, **opts)
             tachyon.png.save_as(preview_png)
         else:
             # Java needs absolute paths
-            # On cygwin, they should be native ones
             scene_native = scene_zip
-
-            if sys.platform == 'cygwin':
-                import cygwin
-                scene_native = cygwin.cygpath(scene_native, 'w')
 
             script = '''set defaultdirectory "{0}"\nscript SCRIPT\n'''.format(scene_native)
             jdata.export_image(targetfile=preview_png, datafile=script,
@@ -2003,9 +1998,10 @@ end_scene""".format(
 
         This works when faces have more then 3 sides::
 
-            sage: P = polytopes.dodecahedron()                                          # needs sage.geometry.polyhedron
-            sage: Q = P.plot().all[-1]                                                  # needs sage.geometry.polyhedron
-            sage: print(Q.stl_binary()[:40].decode('ascii'))                            # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.groups
+            sage: P = polytopes.dodecahedron()
+            sage: Q = P.plot().all[-1]
+            sage: print(Q.stl_binary()[:40].decode('ascii'))
             STL binary file / made by SageMath / ###
         """
         import struct
@@ -2065,9 +2061,10 @@ end_scene""".format(
 
         Now works when faces have more then 3 sides::
 
-            sage: P = polytopes.dodecahedron()                                          # needs sage.geometry.polyhedron
-            sage: Q = P.plot().all[-1]                                                  # needs sage.geometry.polyhedron
-            sage: print(Q.stl_ascii_string().splitlines()[:7])                          # needs sage.geometry.polyhedron
+            sage: # needs sage.geometry.polyhedron sage.groups
+            sage: P = polytopes.dodecahedron()
+            sage: Q = P.plot().all[-1]
+            sage: print(Q.stl_ascii_string().splitlines()[:7])
             ['solid surface',
              'facet normal 0.0 0.5257311121191338 0.8506508083520399',
              '    outer loop',
@@ -2247,7 +2244,7 @@ end_scene""".format(
         """
         Draw a 3D plot of this graphics object, which just returns this
         object since this is already a 3D graphics object.
-        Needed to support PLOT in docstrings, see :trac:`17498`
+        Needed to support PLOT in docstrings, see :issue:`17498`
 
         EXAMPLES::
 
@@ -2300,7 +2297,7 @@ class Graphics3dGroup(Graphics3d):
             sage: len(G.all)
             10
 
-        We check that :trac:`17258` is solved::
+        We check that :issue:`17258` is solved::
 
             sage: g = point3d([0,-2,-2]); g += point3d([2,-2,-2])
             sage: len(g.all)
@@ -2528,7 +2525,7 @@ class Graphics3dGroup(Graphics3d):
 
         TESTS:
 
-        Check that :trac:`23200` is fixed::
+        Check that :issue:`23200` is fixed::
 
             sage: G = sage.plot.plot3d.base.Graphics3dGroup()
             sage: G.texture_set()

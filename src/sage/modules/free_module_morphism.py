@@ -41,12 +41,10 @@ TESTS::
 # be coercible into vector space of appropriate dimension.
 
 import sage.modules.free_module as free_module
-from . import matrix_morphism
 from sage.categories.morphism import Morphism
+from sage.modules import free_module_homspace, matrix_morphism
+from sage.structure.richcmp import rich_to_bool, richcmp
 from sage.structure.sequence import Sequence
-from sage.structure.richcmp import richcmp, rich_to_bool
-
-from . import free_module_homspace
 
 
 def is_FreeModuleMorphism(x):
@@ -297,7 +295,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             sage: phi(Y) == Z
             True
 
-        We test that :trac:`24590` is resolved::
+        We test that :issue:`24590` is resolved::
 
             sage: A = FreeQuadraticModule(ZZ,1,matrix([2]))
             sage: f = A.Hom(A).an_element()

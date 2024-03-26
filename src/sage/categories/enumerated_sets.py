@@ -182,7 +182,8 @@ class EnumeratedSets(CategoryWithAxiom):
             It is also possible to override ``__iter__`` method itself. Then
             the methods of the first column are defined using  ``__iter__``
 
-            If none of these are provided, raise a ``NotImplementedError``.
+            If none of these are provided, this raises
+            a :class:`NotImplementedError`.
 
             EXAMPLES:
 
@@ -604,7 +605,7 @@ class EnumeratedSets(CategoryWithAxiom):
             TESTS:
 
             Trying to list an infinite vector space raises an error
-            instead of running forever (see :trac:`10470`)::
+            instead of running forever (see :issue:`10470`)::
 
                 sage: (QQ^2).list()  # indirect test                                    # needs sage.modules
                 Traceback (most recent call last):
@@ -614,7 +615,7 @@ class EnumeratedSets(CategoryWithAxiom):
             Here we test that for an object that does not know whether it
             is finite or not.  Calling ``x.list()`` simply tries to create
             the list (but here it fails, since the object is not
-            iterable). This was fixed :trac:`11350` ::
+            iterable). This was fixed :issue:`11350` ::
 
                 sage: R.<t,p> = QQ[]
                 sage: Q = R.quotient(t^2-t+1)
@@ -928,7 +929,7 @@ class EnumeratedSets(CategoryWithAxiom):
             the probability is uniform.
 
             This is a generic implementation from the category
-            ``EnumeratedSets()``. It raise a ``NotImplementedError``
+            ``EnumeratedSets()``. It raises a :class:`NotImplementedError`
             since one does not know whether the set is finite.
 
             EXAMPLES::
@@ -940,7 +941,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: unknown cardinality
-                """
+            """
             raise NotImplementedError("unknown cardinality")
 
         def map(self, f, name=None, *, is_injective=True):

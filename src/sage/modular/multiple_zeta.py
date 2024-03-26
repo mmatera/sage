@@ -277,7 +277,7 @@ def composition_to_iterated(w, reverse=False) -> tuple[int, ...]:
         sage: composition_to_iterated((1,2), True)
         (1, 0, 1)
     """
-    word = tuple()
+    word = ()
     loop_over = reversed(w) if reverse else w
     for letter in loop_over:
         word += (1,) + (0,) * (letter - 1)
@@ -640,7 +640,7 @@ class Multizetas(CombinatorialFreeModule):
         sage: (u*M((2,))+M((3,)))*M((2,))
         4*u*ζ(1,3) + 6*ζ(1,4) + 2*u*ζ(2,2) + 3*ζ(2,3) + ζ(3,2)
 
-    Check for :trac:`30925`::
+    Check for :issue:`30925`::
 
         sage: M = Multizetas(QQ)
         sage: l = [1,2,3]
@@ -1175,7 +1175,7 @@ class Multizetas(CombinatorialFreeModule):
             """
             if basis is None:
                 basis = self.parent().basis_brown
-            support = set(sum(d) for d in self.support())
+            support = {sum(d) for d in self.support()}
             result = self.parent().zero()
             for d in sorted(support):
                 h = self.homogeneous_component(d)
@@ -1994,7 +1994,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
             P = self.parent()
             deg = P.degree_on_basis
             phi = P.phi
-            for d in sorted(set(deg(w) for w in self.support())):
+            for d in sorted({deg(w) for w in self.support()}):
                 z = self.homogeneous_component(d)
                 if not phi(z).is_zero():
                     return True

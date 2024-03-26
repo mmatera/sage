@@ -71,6 +71,7 @@ Methods
 
 from sage.misc.superseded import deprecation
 
+
 def is_connected(G):
     """
     Check whether the (di)graph is connected.
@@ -145,7 +146,7 @@ def connected_components(G, sort=None, key=None):
     - ``sort`` -- boolean (default: ``None``); if ``True``, vertices inside each
       component are sorted according to the default ordering
 
-      As of :trac:`35889`, this argument must be explicitly specified (unless a
+      As of :issue:`35889`, this argument must be explicitly specified (unless a
       ``key`` is given); otherwise a warning is printed and ``sort=True`` is
       used. The default will eventually be changed to ``False``.
 
@@ -185,7 +186,7 @@ def connected_components(G, sort=None, key=None):
         ...
         ValueError: sort keyword is False, yet a key function is given
 
-    Deprecation warning for ``sort=None`` (:trac:`35889`)::
+    Deprecation warning for ``sort=None`` (:issue:`35889`)::
 
         sage: G = graphs.HouseGraph()
         sage: G.connected_components()
@@ -295,7 +296,7 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None):
     - ``sort`` -- boolean (default: ``None``); if ``True``, vertices inside the
       component are sorted according to the default ordering
 
-      As of :trac:`35889`, this argument must be explicitly specified (unless a
+      As of :issue:`35889`, this argument must be explicitly specified (unless a
       ``key`` is given); otherwise a warning is printed and ``sort=True`` is
       used. The default will eventually be changed to ``False``.
 
@@ -327,7 +328,7 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None):
         ...
         TypeError: the input must be a Sage graph
 
-    :trac:`35889` is fixed::
+    :issue:`35889` is fixed::
 
         sage: G = Graph([('A', 1)])
         sage: G.connected_component_containing_vertex(1, sort=False)
@@ -345,7 +346,7 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None):
         ...
         ValueError: sort keyword is False, yet a key function is given
 
-    Deprecation warning for ``sort=None`` (:trac:`35889`)::
+    Deprecation warning for ``sort=None`` (:issue:`35889`)::
 
         sage: G = graphs.HouseGraph()
         sage: G.connected_component_containing_vertex(1)
@@ -496,7 +497,7 @@ def blocks_and_cut_vertices(G, algorithm="Tarjan_Boost", sort=False, key=None):
         sage: blocks_and_cut_vertices(g)
         ([[1, 2, 3], [5, 6], [5, 7], [5, 8], [4]], [5])
 
-    A directed graph with Boost's algorithm (:trac:`25994`)::
+    A directed graph with Boost's algorithm (:issue:`25994`)::
 
         sage: rings = graphs.CycleGraph(10)
         sage: rings.merge_vertices([0, 5])
@@ -700,7 +701,7 @@ def blocks_and_cuts_tree(G):
     TESTS:
 
     When ``self`` is not connected, the resulting graph is a forest
-    (:trac:`24163`)::
+    (:issue:`24163`)::
 
         sage: from sage.graphs.connectivity import blocks_and_cuts_tree
         sage: T = blocks_and_cuts_tree(Graph(2))
@@ -1005,7 +1006,7 @@ def edge_connectivity(G,
 
       - ``"boost"`` -- use the Boost graph library (which is much more
         efficient). It is not available when ``edge_labels=True``, and it is
-        unreliable for directed graphs (see :trac:`18753`).
+        unreliable for directed graphs (see :issue:`18753`).
 
       -``"Sage"`` -- use Sage's implementation based on integer linear
        programming
@@ -1114,7 +1115,7 @@ def edge_connectivity(G,
         [1, [(0, 1)], [{0}, {1, 2, 3, 4, 5, 6, 7, 8, 9}]]
 
     However, the Boost algorithm is not reliable if the input is directed
-    (see :trac:`18753`)::
+    (see :issue:`18753`)::
 
         sage: g = digraphs.Path(3)
         sage: edge_connectivity(g)
@@ -1457,7 +1458,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
         ...
         TypeError: the input must be a Sage graph
 
-    Complete Graph with loops or multiple edges (:trac:`25589`)::
+    Complete Graph with loops or multiple edges (:issue:`25589`)::
 
         sage: G = Graph([(0, 1), (0, 1)], multiedges=True)
         sage: G.vertex_connectivity()                                                   # needs sage.numerical.mip
@@ -1915,7 +1916,7 @@ def strong_articulation_points(G):
         ...
         TypeError: the input must be a Sage DiGraph
 
-    Issue :trac:`29958` is fixed::
+    Issue :issue:`29958` is fixed::
 
         sage: D = DiGraph('SA?GA??_??a???@?@OH_?@?I??b??G?AgGGCO??AC????a?????A@????AOCOQ?d??I?')
         sage: SAP = strong_articulation_points(D)
@@ -2014,7 +2015,7 @@ def bridges(G, labels=True):
         sage: list(bridges(g, labels=True))
         [(2, 3, 'label')]
 
-    Issue :trac:`23817` is solved::
+    Issue :issue:`23817` is solved::
 
         sage: G = Graph()
         sage: G.add_edge(0, 1)
@@ -2041,7 +2042,7 @@ def bridges(G, labels=True):
     if G.order() < 2 or not is_connected(G):
         return
 
-    B, C = G.blocks_and_cut_vertices()
+    B, _ = G.blocks_and_cut_vertices()
 
     # A block of size 2 is a bridge, unless the vertices are connected with
     # multiple edges.
@@ -2209,8 +2210,9 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
     # If a vertex cut is given, we check that it is valid. Otherwise, we compute
     # a small vertex cut
     if cut_vertices is None:
-        cut_size, cut_vertices = G.vertex_connectivity(value_only=False, solver=solver, verbose=verbose,
-                                                       integrality_tolerance=integrality_tolerance)
+        _, cut_vertices = G.vertex_connectivity(value_only=False,
+                                                solver=solver, verbose=verbose,
+                                                integrality_tolerance=integrality_tolerance)
         if not cut_vertices:
             # Typical example is a clique
             raise ValueError("the input graph has no vertex cut")
@@ -2218,7 +2220,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
         cut_vertices = list(cut_vertices)
         for u in cut_vertices:
             if u not in G:
-                raise ValueError("vertex {} is not a vertex of the input graph".format(u))
+                raise ValueError(f"vertex {u} is not a vertex of the input graph")
 
     H = G.copy(immutable=False)
     H.delete_vertices(cut_vertices)
@@ -3967,7 +3969,7 @@ cdef class TriconnectivitySPQR:
                         self.in_adj[eh_index] = e_virt_node
                         # end type-1 search
 
-                # if an path starts at edge e, empty the tstack.
+                # if a path starts at edge e, empty the tstack.
                 if self.starts_path[e_index]:
                     while self.__tstack_not_eos():
                         self.t_stack_top -= 1

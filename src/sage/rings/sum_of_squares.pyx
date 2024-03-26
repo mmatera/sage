@@ -7,7 +7,7 @@ by direct method not relying on factorisation.
 
 AUTHORS:
 
-- Vincent Delecroix (2014): first implementation (:trac:`16374`)
+- Vincent Delecroix (2014): first implementation (:issue:`16374`)
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Vincent Delecroix <20100.delecroix@gmail.com>
@@ -22,7 +22,7 @@ from libc.math cimport sqrt
 from cysignals.signals cimport sig_on, sig_off
 
 cimport sage.rings.integer as integer
-from . import integer
+from sage.rings import integer
 
 cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]) noexcept:
     r"""

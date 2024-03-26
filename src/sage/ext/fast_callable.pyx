@@ -576,7 +576,8 @@ def function_name(fn):
     Given a function, return a string giving a name for the function.
 
     For functions we recognize, we use our standard opcode name for the
-    function (so operator.add becomes 'add', and sage.all.sin becomes 'sin').
+    function (so :func:`operator.add` becomes ``'add'``, and :func:`sage.functions.trig.sin`
+    becomes ``'sin'``).
 
     For functions we don't recognize, we try to come up with a name,
     but the name will be wrapped in braces; this is a signal that
@@ -1645,7 +1646,7 @@ class IntegerPowerFunction():
         pi^2
         sage: square(I)                                                                 # needs sage.symbolic
         -1
-        sage: square(RIF(-1, 1)).str(style='brackets')
+        sage: square(RIF(-1, 1)).str(style='brackets')                                  # needs sage.rings.real_interval_field
         '[0.0000000000000000 .. 1.0000000000000000]'
         sage: IntegerPowerFunction(-1)
         (^(-1))
@@ -1948,7 +1949,7 @@ cpdef generate_code(Expression expr, InstructionStream stream) noexcept:
         1.00000095367477
 
     Make sure we do not overflow the stack with highly nested expressions
-    (:trac:`11766`)::
+    (:issue:`11766`)::
 
         sage: # needs sage.rings.real_mpfr
         sage: R.<x> = CC[]

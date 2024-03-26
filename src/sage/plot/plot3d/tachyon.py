@@ -148,11 +148,11 @@ AUTHOR:
 
 - Tom Boothby: 3d function plotting n'stuff
 
-- Leif Hille: key idea for bugfix for texfunc issue (:trac:`799`)
+- Leif Hille: key idea for bugfix for texfunc issue (:issue:`799`)
 
 - Marshall Hampton: improved doctests, rings, axis-aligned boxes.
 
-- Paul Graham: Respect global verbosity settings (:trac:`16228`)
+- Paul Graham: Respect global verbosity settings (:issue:`16228`)
 
 .. TODO::
 
@@ -316,7 +316,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     If the optional parameter ``viewdir`` is not set, the camera
     center should not coincide with the point which
-    is looked at (see :trac:`7232`)::
+    is looked at (see :issue:`7232`)::
 
         sage: t = Tachyon(xres=80,yres=80, camera_position=(2,5,2), look_at=(2,5,2))
         Traceback (most recent call last):
@@ -1427,7 +1427,7 @@ class Cylinder():
             sage: c = Cylinder((0,0,0),(1,1,1),.1,'s')
             sage: c.str()
             '\n        cylinder center  0.0 0.0 0.0  axis  1.0 1.0 1.0  rad 0.1 s\n        '
-            """
+        """
         return r"""
         cylinder center %s axis %s rad %s %s
         """ % (tostr(self._center), tostr(self._axis), self._radius, self._texture)

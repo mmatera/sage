@@ -854,7 +854,7 @@ cdef class MatrixArgs:
             ...
             TypeError: nonzero scalar matrix must be square
 
-        Check :trac:`19134`::
+        Check :issue:`19134`::
 
             sage: matrix(2, 3, [])
             Traceback (most recent call last):
@@ -1241,7 +1241,7 @@ cdef class MatrixArgs:
 
         TESTS:
 
-        Check that :trac:`26655` is fixed::
+        Check that :issue:`26655` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(9)
@@ -1305,7 +1305,7 @@ cdef class MatrixArgs:
                 return MA_ENTRIES_NDARRAY
             return MA_ENTRIES_SCALAR
         if isinstance(self.entries, Gen):  # PARI object
-            from sage.libs.pari.convert_sage import pari_typ_to_entries_type
+            from sage.libs.pari.convert_sage_matrix import pari_typ_to_entries_type
             return pari_typ_to_entries_type(self)
         if isinstance(self.entries, MatrixArgs):
             # Prevent recursion

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Convex rational polyhedral cones
 
@@ -554,7 +553,7 @@ def _ambient_space_point(body, data):
 
     An integral, rational, real algebraic, or numeric point of the
     ambient space of ``body`` is returned if ``data`` were
-    successfully interpreted in such a way. A ``TypeError`` is raised
+    successfully interpreted in such a way. A :class:`TypeError` is raised
     otherwise.
 
     TESTS::
@@ -1664,7 +1663,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         otherwise, in particular when ``point`` is incompatible with
         the ambient space.
 
-        A ``ValueError`` is raised if ``region`` is not one of the
+        A :class:`ValueError` is raised if ``region`` is not one of the
         three allowed values.
 
         TESTS::
@@ -2340,8 +2339,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         or
         :meth:`~sage.geometry.cone.ConvexRationalPolyhedralCone.facet_of`. The
         cone returned by this method will have ``self`` as ambient. If ``cone``
-        does not represent a valid cone of ``self``, ``ValueError`` exception
-        is raised.
+        does not represent a valid cone of ``self``, :class:`ValueError`
+        exception is raised.
 
         .. NOTE::
 
@@ -2548,7 +2547,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         C1 and C2 are equal, but not identical. We currently want them
         to have non identical face lattices, even if the faces
-        themselves are equal (see :trac:`10998`)::
+        themselves are equal (see :issue:`10998`)::
 
             sage: C1.face_lattice() is C2.face_lattice()                                # needs sage.combinat sage.graphs
             False
@@ -2738,7 +2737,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         TESTS:
 
         Now we check that "general" cones whose dimension is smaller than the
-        dimension of the ambient space work as expected (see :trac:`9188`)::
+        dimension of the ambient space work as expected (see :issue:`9188`)::
 
             sage: c = Cone([(1,1,1,3),(1,-1,1,3),(-1,-1,1,3)])
             sage: c.faces()                                                             # needs sage.graphs
@@ -2752,7 +2751,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
              (3-d cone in 4-d lattice N,))
 
         We also ensure that a call to this function does not break
-        :meth:`facets` method (see :trac:`9780`)::
+        :meth:`facets` method (see :issue:`9780`)::
 
             sage: # needs palp sage.graphs
             sage: cone = toric_varieties.dP8().fan().generating_cone(0); cone
@@ -2988,7 +2987,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: halfspace.incidence_matrix().is_immutable()
             True
 
-        Check that the base ring is ``ZZ``, see :trac:`29840`::
+        Check that the base ring is ``ZZ``, see :issue:`29840`::
 
             sage: halfspace.incidence_matrix().base_ring()
             Integer Ring
@@ -3017,8 +3016,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         - :class:`cone <ConvexRationalPolyhedralCone>`.
 
-        Raises ``ValueError`` if the ambient space dimensions are not
-        compatible.
+        This raises :class:`ValueError` if the ambient space dimensions
+        are not compatible.
 
         EXAMPLES::
 
@@ -3265,7 +3264,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: classify_cone_2d(*cone2.rays())
             (3, 2)
 
-        We check that :trac:`18613` is fixed::
+        We check that :issue:`18613` is fixed::
 
             sage: K = cones.trivial(0)
             sage: K.is_isomorphic(K)                                                    # needs sage.graphs
@@ -3548,7 +3547,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             A 1-dimensional polyhedron in ZZ^2 defined as the convex hull
             of 1 vertex and 1 line
 
-        Here is an example of a trivial cone (see :trac:`10237`)::
+        Here is an example of a trivial cone (see :issue:`10237`)::
 
             sage: origin = Cone([], lattice=ZZ^2)
             sage: origin.polyhedron()
@@ -4000,7 +3999,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             [ 2 -3  0]
             sage: m.det()
             -1
-            """
+        """
         if "_sublattice_complement" not in self.__dict__:
             self._split_ambient_lattice()
         if args or kwds:
@@ -4047,7 +4046,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         TESTS:
 
-        We check that :trac:`24541` is fixed::
+        We check that :issue:`24541` is fixed::
 
             sage: c = Cone([(1,0)], lattice=ZZ^2)
             sage: c.orthogonal_sublattice()
@@ -4324,7 +4323,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: sorted(wedge.semigroup_generators())
             [N(0, 0, -1), N(0, 0, 1), N(1, 0, 0), N(1, 1, 0), N(1, 2, 0)]
 
-        Nor does it have to be full-dimensional (see :trac:`11312`)::
+        Nor does it have to be full-dimensional (see :issue:`11312`)::
 
             sage: Cone([(1,1,0), (-1,1,0)]).semigroup_generators()
             N( 0, 1, 0),
@@ -4500,7 +4499,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N(1, 1,  0)
             in 3-d lattice N
 
-        Not full-dimensional cones are ok, too (see :trac:`11312`)::
+        Not full-dimensional cones are ok, too (see :issue:`11312`)::
 
             sage: Cone([(1,1,0), (-1,1,0)]).Hilbert_basis()
             N( 1, 1, 0),
@@ -5349,7 +5348,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         Either a lattice element or vector contained in both this cone
         and its ambient vector space. If ``ring`` is ``ZZ``, a lattice
         element is returned; otherwise a vector is returned. If ``ring``
-        is neither ``ZZ`` nor ``QQ``, then a ``NotImplementedError`` is
+        is neither ``ZZ`` nor ``QQ``, then a :class:`NotImplementedError` is
         raised.
 
         EXAMPLES:
@@ -6267,7 +6266,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     A new, randomly generated cone.
 
-    A ``ValueError`` will be thrown under the following conditions:
+    A :class:`ValueError` will be thrown under the following conditions:
 
     * Any of ``min_ambient_dim``, ``max_ambient_dim``, ``min_rays``, or
       ``max_rays`` are negative.
@@ -6425,7 +6424,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         provided.
 
     If the user requests too many rays in zero, one, or two dimensions,
-    a ``ValueError`` is thrown::
+    a :class:`ValueError` is thrown::
 
         sage: random_cone(max_ambient_dim=0, min_rays=1)
         Traceback (most recent call last):
@@ -6513,7 +6512,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         sage: random_cone(lattice=L, strictly_convex=True)
         0-d cone in 0-d lattice L
 
-    A ``ValueError`` is thrown if a non-solid cone is requested in a
+    A :class:`ValueError` is thrown if a non-solid cone is requested in a
     zero-dimensional lattice::
 
         sage: L = ToricLattice(0)
@@ -6527,7 +6526,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         ...
         ValueError: all cones are solid when max_ambient_dim is zero.
 
-    A ``ValueError`` is thrown if a solid cone is requested but the
+    A :class:`ValueError` is thrown if a solid cone is requested but the
     maximum number of rays is too few::
 
         sage: random_cone(min_ambient_dim=4, max_rays=3, solid=True)
@@ -6542,7 +6541,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         ValueError: max_rays must be at least 5 for a solid cone in this
         lattice.
 
-    A ``ValueError`` is thrown if a non-solid cone is requested but
+    A :class:`ValueError` is thrown if a non-solid cone is requested but
     ``min_rays`` guarantees a solid cone::
 
         sage: random_cone(max_ambient_dim=4, min_rays=10, solid=False)

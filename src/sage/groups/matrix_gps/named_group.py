@@ -10,6 +10,8 @@ EXAMPLES::
     Special Linear Group of degree 2 over Integer Ring
     sage: G = SL(2, GF(3)); G
     Special Linear Group of degree 2 over Finite Field of size 3
+
+    sage: # needs sage.libs.gap
     sage: G.is_finite()
     True
     sage: G.conjugacy_classes_representatives()
@@ -170,7 +172,7 @@ def normalize_args_invariant_form(R, d, invariant_form):
 
     AUTHORS:
 
-    - Sebastian Oehms (2018-8) (see :trac:`26028`)
+    - Sebastian Oehms (2018-8) (see :issue:`26028`)
     """
     if invariant_form is None:
         return invariant_form
@@ -288,12 +290,13 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: G = GL(2,3)
             sage: G == MatrixGroup(G.gens())
             True
 
-            sage: # needs sage.rings.finite_rings
-            sage: G = groups.matrix.GL(4,2)                                             # needs sage.modules
+            sage: # needs sage.libs.gap sage.rings.finite_rings
+            sage: G = groups.matrix.GL(4,2)
             sage: H = MatrixGroup(G.gens())
             sage: G == H
             True

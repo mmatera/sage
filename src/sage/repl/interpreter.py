@@ -100,7 +100,7 @@ Test prompt transformer::
     sage: spt(["....: 2+2"])
     ['2+2']
 
-This should strip multiple prompts: see :trac:`16297`::
+This should strip multiple prompts: see :issue:`16297`::
 
     sage: spt(["sage:   sage: 2+2"])
     ['2+2']
@@ -122,7 +122,7 @@ line::
     sage: shell.run_cell('sage: a = [\n... 123]')      # old-style multi-line
     sage: shell.run_cell('sage: a = [\n....: 123]')    # new-style multi-line
 
-We test that :trac:`16196` is resolved::
+We test that :issue:`16196` is resolved::
 
     sage: shell.run_cell('    sage: 1+1')
     2
@@ -152,6 +152,18 @@ from IPython.core.prefilter import PrefilterTransformer
 from IPython.terminal.embed import InteractiveShellEmbed
 from IPython.terminal.ipapp import TerminalIPythonApp, IPAppCrashHandler
 from IPython.core.crashhandler import CrashHandler
+
+from ctypes import pythonapi, c_int, c_void_p
+# The following functions are part of the stable ABI since python 3.2
+# See: https://docs.python.org/3/c-api/sys.html#c.PyOS_getsig
+
+# PyOS_sighandler_t PyOS_getsig(int i)
+pythonapi.PyOS_getsig.restype = c_void_p
+pythonapi.PyOS_getsig.argtypes = c_int,
+
+# PyOS_sighandler_t PyOS_setsig(int i, PyOS_sighandler_t h)
+pythonapi.PyOS_setsig.restype = c_void_p
+pythonapi.PyOS_setsig.argtypes = c_int, c_void_p,
 
 
 # TODO: This global variable _do_preparse should be associated with an
@@ -287,6 +299,18 @@ class SageTerminalInteractiveShell(SageShellOverride, TerminalInteractiveShell):
         backend = BackendIPythonCommandline()
         backend.get_display_manager().switch_backend(backend, shell=self)
 
+    def prompt_for_code(self):
+        # save sigint handlers (python and os level)
+        # https://github.com/prompt-toolkit/python-prompt-toolkit/issues/1576
+        # https://github.com/sagemath/sage/issues/33428
+        # https://github.com/sagemath/sage/pull/35251
+        import signal
+        sigint = signal.getsignal(signal.SIGINT)
+        sigint_os = pythonapi.PyOS_getsig(signal.SIGINT)
+        text = TerminalInteractiveShell.prompt_for_code(self)
+        signal.signal(signal.SIGINT, sigint)
+        pythonapi.PyOS_setsig(signal.SIGINT, sigint_os)
+        return text
 
 class SageTestShell(SageShellOverride, TerminalInteractiveShell):
     """
@@ -410,7 +434,7 @@ def SagePreparseTransformer(lines):
     TESTS:
 
     Check that syntax errors in the preparser do not crash IPython,
-    see :trac:`14961`. ::
+    see :issue:`14961`. ::
 
         sage: preparser(True)
         sage: bad_syntax = "R.<t> = QQ{]"
@@ -427,7 +451,7 @@ def SagePreparseTransformer(lines):
         sage: shell.quit()
 
     Make sure the quote state is carried over across subsequent lines in order
-    to avoid interfering with multi-line strings, see :trac:`30417`. ::
+    to avoid interfering with multi-line strings, see :issue:`30417`. ::
 
         sage: SagePreparseTransformer(["'''\n", 'abc-1-2\n', "'''\n"])
         ["'''\n", 'abc-1-2\n', "'''\n"]
@@ -551,7 +575,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
             sage: ift.preparse_imports_from_sage('2 + gap(a)')
             '2 + gap(a)'
 
-        Since :trac:`28439`, this also works with more complicated expressions
+        Since :issue:`28439`, this also works with more complicated expressions
         containing nested parentheses::
 
             sage: # needs sage.libs.gap sage.symbolic
@@ -613,7 +637,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
         TESTS:
 
         Check that whitespace is not stripped and that special characters are
-        escaped (:trac:`28439`)::
+        escaped (:issue:`28439`)::
 
             sage: shell = interface_shell_embed(gap)                                    # needs sage.libs.gap sage.symbolic
             sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # needs sage.libs.gap sage.symbolic
@@ -701,7 +725,7 @@ def get_test_shell():
 
     TESTS:
 
-    Check that :trac:`14070` has been resolved::
+    Check that :issue:`14070` has been resolved::
 
         sage: from sage.tests.cmdline import test_executable
         sage: cmd = 'from sage.repl.interpreter import get_test_shell; shell = get_test_shell()'
@@ -775,7 +799,7 @@ class SageTerminalApp(TerminalIPythonApp):
 
         TESTS:
 
-        Test that :trac:`15972` has been fixed::
+        Test that :issue:`15972` has been fixed::
 
             sage: import tempfile
             sage: from sage.repl.interpreter import SageTerminalApp

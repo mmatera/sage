@@ -20,7 +20,7 @@ AUTHORS:
 
 - Martin Albrecht (2007-09): initial version
 
-- Niles Johnson (2010-08): (:trac:`3893`) ``random_element()`` should pass on ``*args`` and ``**kwds``.
+- Niles Johnson (2010-08): (:issue:`3893`) ``random_element()`` should pass on ``*args`` and ``**kwds``.
 
 EXAMPLES:
 
@@ -308,23 +308,21 @@ REFERENCES:
 - [MR2002]_
 """
 
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing, BooleanPolynomialRing_constructor as BooleanPolynomialRing
-
-from sage.structure.element import is_Matrix
 from sage.matrix.constructor import Matrix, random_matrix
 from sage.matrix.matrix_space import MatrixSpace
-
-from sage.misc.verbose import get_verbose
 from sage.misc.flatten import flatten
-
+from sage.misc.verbose import get_verbose
 from sage.modules.vector_modn_dense import Vector_modn_dense
-
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-from .mpolynomialsystemgenerator import MPolynomialSystemGenerator
-
+from sage.rings.polynomial.polynomial_ring_constructor import \
+    BooleanPolynomialRing_constructor as BooleanPolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
+from sage.structure.element import is_Matrix
+
+from .mpolynomialsystemgenerator import MPolynomialSystemGenerator
 
 
 def SR(n=1, r=1, c=1, e=4, star=False, **kwargs):
@@ -2064,7 +2062,7 @@ class SR_generic(MPolynomialSystemGenerator):
         We show that the (returned) key is a solution to the returned system::
 
             sage: sr = mq.SR(3,4,4,8, star=True, gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)                         # needs sage.rings.polynomial.pbori
+            sage: while True:  # workaround (see :issue:`31891`)                         # needs sage.rings.polynomial.pbori
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
@@ -3276,7 +3274,7 @@ class SR_gf2_2(SR_gf2):
             sage: l == sr.inversion_polynomials_single_sbox(biaffine_only=True, correct_only=False)                     # needs sage.libs.singular
             True
 
-       """
+        """
         e = self.e
         if x is None and w is None:
             # make sure it prints like in the book.

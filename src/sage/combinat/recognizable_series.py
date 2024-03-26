@@ -70,7 +70,7 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class PrefixClosedSet():
+class PrefixClosedSet:
     def __init__(self, words):
         r"""
         A prefix-closed set.
@@ -1437,7 +1437,7 @@ class RecognizableSeries(ModuleElement):
             True
 
         The following is not tested, as `MS^i` for integers `i` does
-        not work, thus ``vector([m])`` fails. (See :trac:`21317` for
+        not work, thus ``vector([m])`` fails. (See :issue:`21317` for
         details.)
 
         ::

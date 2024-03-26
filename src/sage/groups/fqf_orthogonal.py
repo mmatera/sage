@@ -230,7 +230,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
             [1 3]
             [3 4]
 
-        Note that the following does not work since it may lead to ambiguities, see :trac:`30669`::
+        Note that the following does not work since it may lead to ambiguities, see :issue:`30669`::
 
             sage: Oq(f.matrix())                                                        # needs sage.graphs
             Traceback (most recent call last):
@@ -488,6 +488,7 @@ class ActionOnFqf(Action):
             P = a.parent()
             return P.linear_combination_of_smith_form_gens(v)
 
+
 def _isom_fqf(A, B=None):
     r"""
     Return isometries from `A` to `B`.
@@ -500,8 +501,9 @@ def _isom_fqf(A, B=None):
     OUTPUT:
 
     A list of generators of the orthogonal group of A.
-    If ``B`` is given returns instead a single isometry of `A` and `B` or
-    raises an ``ValueError`` if `A` and `B` are not isometric.
+
+    If ``B`` is given, this returns instead a single isometry of `A` and `B`
+    or raises a :class:`ValueError` if `A` and `B` are not isometric.
 
     EXAMPLES::
 
@@ -549,7 +551,7 @@ def _isom_fqf(A, B=None):
     # separating the different primes here would speed things up
     b_cand = [[b for b in B if b.q() == a.q() and b.order() == a.order()] for a in A.smith_form_gens()]
 
-    G = B.orthogonal_group(tuple())
+    G = B.orthogonal_group(())
     ambient = G.ambient()
     waiting = [[]]
     while len(waiting) > 0:

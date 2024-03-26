@@ -126,7 +126,7 @@ class OrderedSetPartition(ClonableArray,
          [{3}, {2, 4}, {1}],
          [{4}, {2, 3}, {1}]]
 
-    Since :trac:`14140`, we can create an ordered set partition directly by
+    Since :issue:`14140`, we can create an ordered set partition directly by
     :class:`OrderedSetPartition` which creates the parent object by taking the
     union of the partitions passed in. However it is recommended and
     (marginally) faster to create the parent first and then create the ordered
@@ -220,7 +220,7 @@ class OrderedSetPartition(ClonableArray,
             sage: OrderedSetPartition([[1,3],[2,4]])
             [{1, 3}, {2, 4}]
         """
-        return '[' + ', '.join(('{' + repr(sorted(x))[1:-1] + '}' for x in self)) + ']'
+        return '[' + ', '.join('{' + repr(sorted(x))[1:-1] + '}' for x in self) + ']'
 
     def check(self):
         """
@@ -1300,7 +1300,7 @@ class OrderedSetPartitions_scomp(OrderedSetPartitions):
             sage: [ p for p in OrderedSetPartitions([1], [1]) ]
             [[{1}]]
 
-        Let us check that it works for large size (:trac:`16646`)::
+        Let us check that it works for large size (:issue:`16646`)::
 
             sage: OrderedSetPartitions(42).first()
             [{1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12},

@@ -644,7 +644,7 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
         sage: canonical_2_adic_trains(symbol)
         [[0, 1, 2, 3, 4, 5], [6], [7, 8, 9]]
 
-    Check that :trac:`24818` is fixed::
+    Check that :issue:`24818` is fixed::
 
         sage: symbol = [[0, 1,  1, 1, 1], [1, 3, 1, 1, 1]]
         sage: canonical_2_adic_trains(symbol)
@@ -1202,7 +1202,7 @@ def two_adic_symbol(A, val):
     return [[s[0]+m0] + s[1:] for s in sym + two_adic_symbol(A, val)]
 
 
-class Genus_Symbol_p_adic_ring():
+class Genus_Symbol_p_adic_ring:
     r"""
     Local genus symbol over a `p`-adic ring.
 
@@ -1311,7 +1311,7 @@ class Genus_Symbol_p_adic_ring():
 
         TESTS:
 
-        Check that :trac:`25776` is fixed::
+        Check that :issue:`25776` is fixed::
 
             sage: G = Genus(matrix.diagonal([2,2,64]))
             sage: G
@@ -2132,7 +2132,7 @@ class Genus_Symbol_p_adic_ring():
 
     def excess(self):
         r"""
-        Returns the `p`-excess of the quadratic form whose Hessian
+        Return the `p`-excess of the quadratic form whose Hessian
         matrix is the symmetric matrix `A`.  When `p = 2`, the `p`-excess is
         called the oddity.
 
@@ -2242,7 +2242,7 @@ class Genus_Symbol_p_adic_ring():
             sage: G = Genus(matrix(ZZ,2,[0, 1, 1, 0]))
             sage: G.local_symbol(2).norm()
             2
-            """
+        """
         if self.rank() == 0:
             return ZZ(0)
         p = self.prime()
@@ -2321,7 +2321,7 @@ class Genus_Symbol_p_adic_ring():
         return canonical_2_adic_compartments(symbol)
 
 
-class GenusSymbol_global_ring():
+class GenusSymbol_global_ring:
     r"""
     This represents a collection of local genus symbols (at primes)
     and signature information which represent the genus of a

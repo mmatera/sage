@@ -10,9 +10,9 @@ AUTHORS:
 - Robert Bradshaw (2007-11): convert to Cython
 
 - Sebastian Oehms (2018-11): Added :meth:`gap` as synonym to
-  :meth:`_gap_` (compatibility to libgap framework, see :trac:`26750`)
+  :meth:`_gap_` (compatibility to libgap framework, see :issue:`26750`)
 
-- Sebastian Oehms (2019-02): Implemented :meth:`gap` properly (:trac:`27234`)
+- Sebastian Oehms (2019-02): Implemented :meth:`gap` properly (:issue:`27234`)
 
 There are several ways to define a permutation group element:
 
@@ -89,7 +89,7 @@ We create element of a permutation group of large degree::
 
 TESTS:
 
-Check that :trac:`13569` is fixed::
+Check that :issue:`13569` is fixed::
 
     sage: [g*h for g in SymmetricGroup(3) for h in AlternatingGroup(3)]
     [(), (1,2,3), (1,3,2), (1,3,2), (), (1,2,3), (1,2,3), (1,3,2), (), (2,3),
@@ -410,7 +410,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: k._gap_()
             (1,2)(3,5,6)
             sage: k._gap_().parent()
-            Gap
+            C library interface to GAP
 
         List notation::
 
@@ -424,7 +424,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: PermutationGroupElement([()])
             ()
 
-        We check that :trac:`16678` is fixed::
+        We check that :issue:`16678` is fixed::
 
             sage: Permutations.options.display='cycle'
             sage: p = Permutation((1,2))
@@ -835,13 +835,11 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: g._gap_()
             (1,2,3)(4,5)
         """
-        if gap is None:
-            from sage.interfaces.gap import gap
-        return gap(self._gap_init_())
+        return self._libgap_()
 
     def _libgap_(self):
         r"""
-        Returns self as a libgap element
+        Return ``self`` as a libgap element.
 
         EXAMPLES::
 
@@ -867,7 +865,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: p_libgap == p_pexpect
             True
             sage: type(p_libgap) == type(p_pexpect)
-            False
+            True
 
         If the permutation element is built from a libgap element, it is cached
         and returned by this function::
@@ -1005,7 +1003,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         TESTS:
 
-        Verify that we fixed bug :trac:`5537`::
+        Verify that we fixed bug :issue:`5537`::
 
             sage: h = PermutationGroupElement('(1,3,2)')
             sage: k = PermutationGroupElement('(1,2,3)(4,5)')
@@ -1297,6 +1295,39 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                 return prod
 
         return coercion_model.bin_op(left, right, operator.mul)
+
+    cpdef PermutationGroupElement _transpose_left(self, j, k) noexcept:
+        r"""
+        Return the product of the transposition `(j, k)` with ``self``.
+
+        EXAMPLES::
+
+            sage: S = SymmetricGroup(5)
+            sage: s = S([5, 2, 4, 3, 1])
+            sage: s._transpose_left(2, 3)
+            (1,5)(2,4,3)
+            sage: S((2, 3)) * s
+            (1,5)(2,4,3)
+
+            sage: S = SymmetricGroup(["a", "b", "c", "d", "e"])
+            sage: s = S(["e", "b", "d", "c", "a"])
+            sage: s._transpose_left("b", "c")
+            ('a','e')('b','d','c')
+            sage: S(("b", "c")) * s
+            ('a','e')('b','d','c')
+        """
+        if j == k:
+            return self
+        cdef PermutationGroupElement prod = self._new_c()
+        cdef int i
+        for i in range(self.n):
+            prod.perm[i] = self.perm[i]
+        if not self._parent._has_natural_domain():
+            convert_dict = self._parent._domain_to_gap
+            j = convert_dict[j]
+            k = convert_dict[k]
+        prod.perm[j - 1], prod.perm[k - 1] = self.perm[k - 1], self.perm[j - 1]
+        return prod
 
     cpdef _mul_(left, _right) noexcept:
         r"""
@@ -2003,7 +2034,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         TESTS:
 
-        Check for :trac:`28556`::
+        Check for :issue:`28556`::
 
             sage: G = SymmetricGroup(6)
             sage: g = G('(1,2,3)')

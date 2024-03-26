@@ -45,6 +45,8 @@ from sage.rings.integer cimport Integer
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
+
 
 x = polygen(ZZ, 'x')
 
@@ -204,7 +206,7 @@ def matching_polynomial(G, complement=True, name=None):
 
     TESTS:
 
-    Non-integer labels should work, (:trac:`15545`)::
+    Non-integer labels should work, (:issue:`15545`)::
 
         sage: G = Graph(10)
         sage: G.add_vertex((0,1))
@@ -389,7 +391,7 @@ cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int 
     cdef int edge1 = edges1[nedges]
     cdef int edge2 = edges2[nedges]
     cdef int new_nedges = 0
-    cdef int i, new_edge1, new_edge2
+    cdef int i
 
     # The new edges are all the edges that are not incident with (edge1, edge2)
 

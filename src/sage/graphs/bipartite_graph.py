@@ -1,5 +1,4 @@
 # autopep8: off
-# -*- coding: utf-8 -*-
 r"""
 Bipartite graphs
 
@@ -321,14 +320,14 @@ class BipartiteGraph(Graph):
     TESTS:
 
     Make sure we can create a ``BipartiteGraph`` with keywords but no positional
-    arguments (:trac:`10958`)::
+    arguments (:issue:`10958`)::
 
         sage: B = BipartiteGraph(multiedges=True)
         sage: B.allows_multiple_edges()
         True
 
     Ensure that we can construct a ``BipartiteGraph`` with isolated vertices via
-    the reduced adjacency matrix (:trac:`10356`)::
+    the reduced adjacency matrix (:issue:`10356`)::
 
         sage: # needs sage.modules
         sage: a = BipartiteGraph(matrix(2, 2, [1, 0, 1, 0]))
@@ -342,7 +341,7 @@ class BipartiteGraph(Graph):
         sage: sorted(g.left.union(g.right))
         [0, 1, 2, 3, 4, 5, 6, 7]
 
-    Make sure that loops are not allowed (:trac:`23275`)::
+    Make sure that loops are not allowed (:issue:`23275`)::
 
         sage: B = BipartiteGraph(loops=True)
         Traceback (most recent call last):
@@ -372,7 +371,7 @@ class BipartiteGraph(Graph):
 
         TESTS:
 
-        Check that :trac:`33249` is fixed::
+        Check that :issue:`33249` is fixed::
 
             sage: G = BipartiteGraph({2:[1], 3:[1], 4:[5]}, partition=([2,3,4],[1,5]))
             sage: print(G.left, G.right)
@@ -980,7 +979,7 @@ class BipartiteGraph(Graph):
                 self.right.remove(vertex)
                 self.left.add(vertex)
             else:
-                raise RuntimeError("vertex ({0}) is neither in left nor in right".format(vertex))
+                raise RuntimeError(f"vertex ({vertex}) is neither in left nor in right")
 
     def add_edge(self, u, v=None, label=None):
         r"""
@@ -1444,7 +1443,7 @@ class BipartiteGraph(Graph):
 
         TESTS:
 
-        Issue :trac:`25985` is fixed::
+        Issue :issue:`25985` is fixed::
 
             sage: B = BipartiteGraph(graphs.CycleGraph(6))
             sage: B.project_left().vertices(sort=True)
@@ -1750,7 +1749,7 @@ class BipartiteGraph(Graph):
         # open the file
         try:
             fi = open(fname, "r")
-        except IOError:
+        except OSError:
             print("unable to open file <<" + fname + ">>")
             return None
 
@@ -1850,7 +1849,7 @@ class BipartiteGraph(Graph):
         # open the file
         try:
             fi = open(fname, "w")
-        except IOError:
+        except OSError:
             print("Unable to open file <<" + fname + ">>.")
             return
 

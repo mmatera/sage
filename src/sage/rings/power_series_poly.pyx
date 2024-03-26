@@ -4,10 +4,15 @@ Power Series Methods
 
 The class ``PowerSeries_poly`` provides additional methods for univariate power series.
 """
-from .power_series_ring_element cimport PowerSeries
+from sage.rings.power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element
-from .infinity import infinity
-from sage.libs.pari.all import pari_gen, PariError
+from sage.rings.infinity import infinity
+
+try:
+    from sage.libs.pari.all import pari_gen, PariError
+except ImportError:
+    pari_gen = ()
+    PariError = ()
 
 
 cdef class PowerSeries_poly(PowerSeries):
@@ -30,7 +35,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: a*b
             1 + O(t^5)
 
-        Check that :trac:`22216` is fixed::
+        Check that :issue:`22216` is fixed::
 
             sage: R.<T> = PowerSeriesRing(QQ)
             sage: R(pari('1 + O(T)'))                                                   # needs sage.libs.pari
@@ -199,8 +204,8 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: f(f)(f) == f(f(f))
             True
 
-        The following demonstrates that the problems raised in :trac:`3979`
-        and :trac:`5367` are solved::
+        The following demonstrates that the problems raised in :issue:`3979`
+        and :issue:`5367` are solved::
 
             sage: [f(t^2 + O(t^n)) for n in [9, 10, 11]]
             [t^4 + t^6 + O(t^11), t^4 + t^6 + O(t^12), t^4 + t^6 + O(t^12)]
@@ -499,7 +504,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
         TESTS:
 
-        In the past this could die with EXC_BAD_ACCESS (:trac:`8029`)::
+        In the past this could die with EXC_BAD_ACCESS (:issue:`8029`)::
 
             sage: # needs sage.rings.real_mpfr
             sage: A.<x> = RR['x']
@@ -1168,7 +1173,7 @@ cdef class PowerSeries_poly(PowerSeries):
             ...
             ValueError: the precision of the series is not large enough
 
-        Check that :trac:`21212` is fixed::
+        Check that :issue:`21212` is fixed::
 
             sage: QQx.<x> = QQ[[]]
             sage: (1 + x + O(x^100)).pade(2,2)
@@ -1213,7 +1218,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
         TESTS:
 
-        Check that :trac:`18094` is fixed::
+        Check that :issue:`18094` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: SR(R(0).add_bigoh(20))                                                # needs sage.symbolic

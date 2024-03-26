@@ -60,15 +60,15 @@ cdef enum token_types:
     MATRIX
 
 enum_map = {
-  INT:        'INT',
-  FLOAT:      'FLOAT',
-  NAME:       'NAME',
-  EOS:        'EOS',
-  ERROR:      'ERROR',
-  LESS_EQ:    'LESS_EQ',
+  INT: 'INT',
+  FLOAT: 'FLOAT',
+  NAME: 'NAME',
+  EOS: 'EOS',
+  ERROR: 'ERROR',
+  LESS_EQ: 'LESS_EQ',
   GREATER_EQ: 'GREATER_EQ',
-  NOT_EQ:     'NOT_EQ',
-  MATRIX:     'MATRIX',
+  NOT_EQ: 'NOT_EQ',
+  MATRIX: 'MATRIX',
 }
 
 
@@ -168,7 +168,7 @@ cdef class Tokenizer:
 
         TESTS:
 
-        Check support for unicode characters (:trac:`29280`)::
+        Check support for unicode characters (:issue:`29280`)::
 
             sage: Tokenizer("λ+α_β0 Γ^ω").test()
             ['NAME(λ)', '+', 'NAME(α_β0)', 'NAME(Γ)', '^', 'NAME(ω)']

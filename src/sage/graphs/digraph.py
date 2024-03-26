@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Directed graphs
 
@@ -58,8 +57,6 @@ graphs. Here is what they can do
     :widths: 30, 70
     :delim: |
 
-    :meth:`~DiGraph.all_paths_iterator` | Return an iterator over the paths of ``self``.
-    :meth:`~DiGraph.all_simple_paths` | Return a list of all the simple paths of ``self`` starting with one of the given vertices.
     :meth:`~DiGraph.all_cycles_iterator` | Return an iterator over all the cycles of ``self`` starting with one of the given vertices.
     :meth:`~DiGraph.all_simple_cycles` | Return a list of all simple cycles of ``self``.
 
@@ -71,6 +68,7 @@ graphs. Here is what they can do
     :delim: |
 
     :meth:`~DiGraph.path_semigroup` | Return the (partial) semigroup formed by the paths of the digraph.
+    :meth:`~DiGraph.auslander_reiten_quiver` | Return the Auslander-Reiten quiver of ``self``.
 
 **Connectivity:**
 
@@ -444,9 +442,9 @@ class DiGraph(GenericGraph):
     #. An igraph directed Graph (see also
        :meth:`~sage.graphs.generic_graph.GenericGraph.igraph_graph`)::
 
-           sage: import igraph                                  # optional - python_igraph
-           sage: g = igraph.Graph([(0,1),(0,2)], directed=True) # optional - python_igraph
-           sage: DiGraph(g)                                     # optional - python_igraph
+           sage: import igraph                                   # optional - python_igraph
+           sage: g = igraph.Graph([(0,1),(0,2)], directed=True)  # optional - python_igraph
+           sage: DiGraph(g)                                      # optional - python_igraph
            Digraph on 3 vertices
 
        If ``vertex_labels`` is ``True``, the names of the vertices are given by
@@ -462,8 +460,9 @@ class DiGraph(GenericGraph):
 
        If the igraph Graph has edge attributes, they are used as edge labels::
 
-           sage: g = igraph.Graph([(0,1),(0,2)], directed=True, edge_attrs={'name':['a','b'], 'weight':[1,3]}) # optional - python_igraph
-           sage: DiGraph(g).edges(sort=True)               # optional - python_igraph
+           sage: g = igraph.Graph([(0, 1), (0, 2)], directed=True,                  # optional - python_igraph
+           ....:                  edge_attrs={'name':['a', 'b'], 'weight':[1, 3]})
+           sage: DiGraph(g).edges(sort=True)                                        # optional - python_igraph
            [(0, 1, {'name': 'a', 'weight': 1}), (0, 2, {'name': 'b', 'weight': 3})]
 
 
@@ -514,7 +513,7 @@ class DiGraph(GenericGraph):
         sage: G.edges(sort=True)
         [(1, 2, None)]
 
-    Check that :trac:`27505` is fixed::
+    Check that :issue:`27505` is fixed::
 
         sage: DiGraph(DiGraph().networkx_graph(), weighted=None, format='NX')           # needs networkx
         Digraph on 0 vertices
@@ -551,7 +550,7 @@ class DiGraph(GenericGraph):
             sage: g.get_pos() == graphs.PetersenGraph().get_pos()
             True
 
-        The position dictionary is not the input one (:trac:`22424`)::
+        The position dictionary is not the input one (:issue:`22424`)::
 
             sage: my_pos = {0:(0,0), 1:(1,1)}
             sage: D = DiGraph([[0,1], [(0,1)]], pos=my_pos)
@@ -567,8 +566,8 @@ class DiGraph(GenericGraph):
             sage: DiGraph({1:{2:0}})
             Digraph on 2 vertices
 
-        An empty list or dictionary defines a simple graph (:trac:`10441` and
-        :trac:`12910`)::
+        An empty list or dictionary defines a simple graph (:issue:`10441` and
+        :issue:`12910`)::
 
             sage: DiGraph([])
             Digraph on 0 vertices
@@ -576,7 +575,7 @@ class DiGraph(GenericGraph):
             Digraph on 0 vertices
             sage: # not "Multi-digraph on 0 vertices"
 
-        Problem with weighted adjacency matrix (:trac:`13919`)::
+        Problem with weighted adjacency matrix (:issue:`13919`)::
 
             sage: B = {0:{1:2,2:5,3:4},1:{2:2,4:7},2:{3:1,4:4,5:3},
             ....:      3:{5:4},4:{5:1,6:5},5:{4:1,6:7,5:1}}
@@ -621,13 +620,13 @@ class DiGraph(GenericGraph):
 
         Sage DiGraph from igraph undirected graph::
 
-            sage: import igraph           # optional - python_igraph
-            sage: DiGraph(igraph.Graph()) # optional - python_igraph
+            sage: import igraph            # optional - python_igraph
+            sage: DiGraph(igraph.Graph())  # optional - python_igraph
             Traceback (most recent call last):
             ...
             ValueError: a *directed* igraph graph was expected. To build an undirected graph, call the Graph constructor
 
-        Vertex labels are retained in the graph (:trac:`14708`)::
+        Vertex labels are retained in the graph (:issue:`14708`)::
 
             sage: g = DiGraph()
             sage: g.add_vertex(0)
@@ -1045,12 +1044,12 @@ class DiGraph(GenericGraph):
 
         TESTS:
 
-        Immutable graphs yield immutable graphs (:trac:`17005`)::
+        Immutable graphs yield immutable graphs (:issue:`17005`)::
 
             sage: DiGraph([[1, 2]], immutable=True).to_undirected()._backend
             <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
 
-        Vertex labels will be retained (:trac:`14708`)::
+        Vertex labels will be retained (:issue:`14708`)::
 
             sage: D.set_vertex(0, 'foo')
             sage: G = D.to_undirected()
@@ -1194,7 +1193,7 @@ class DiGraph(GenericGraph):
         """
         Return an iterator over the in-neighbors of ``vertex``.
 
-        An vertex `u` is an in-neighbor of a vertex `v` if `uv` in an edge.
+        A vertex `u` is an in-neighbor of a vertex `v` if `uv` in an edge.
 
         EXAMPLES::
 
@@ -1579,7 +1578,7 @@ class DiGraph(GenericGraph):
         TESTS:
 
         Comparing with/without constraint generation. Also double-checks issue
-        :trac:`12833`::
+        :issue:`12833`::
 
             sage: for i in range(20):                                                   # needs sage.numerical.mip
             ....:     g = digraphs.RandomDirectedGNP(10, .3)
@@ -1590,7 +1589,7 @@ class DiGraph(GenericGraph):
             ....:         print("Oh my, oh my !")
             ....:         break
 
-        Loops are part of the feedback edge set (:trac:`23989`)::
+        Loops are part of the feedback edge set (:issue:`23989`)::
 
             sage: # needs sage.combinat
             sage: D = digraphs.DeBruijn(2, 2)
@@ -1618,7 +1617,7 @@ class DiGraph(GenericGraph):
             ....:                          constraint_generation=False)
             10
 
-        Strongly connected components are well handled (:trac:`23989`)::
+        Strongly connected components are well handled (:issue:`23989`)::
 
             sage: g = digraphs.Circuit(3) * 2
             sage: g.add_edge(0, 3)
@@ -1671,7 +1670,7 @@ class DiGraph(GenericGraph):
             p = MixedIntegerLinearProgram(constraint_generation=True,
                                           maximization=False, solver=solver)
 
-            # An variable for each edge
+            # A variable for each edge
             b = p.new_variable(binary=True)
 
             # Variables are binary, and their coefficient in the objective is
@@ -2424,7 +2423,7 @@ class DiGraph(GenericGraph):
             ...
             ValueError: radius is not defined for the empty DiGraph
 
-        Check that :trac:`35300` is fixed::
+        Check that :issue:`35300` is fixed::
 
             sage: H = DiGraph([[42, 'John'], [(42, 'John')]])
             sage: H.radius()
@@ -2553,7 +2552,7 @@ class DiGraph(GenericGraph):
             ...
             ValueError: diameter is not defined for the empty DiGraph
 
-        :trac:`32095` is fixed::
+        :issue:`32095` is fixed::
 
             sage: g6 = 'guQOUOQCW[IaDBCVP_IE\\RfxV@WMSaeHgheEIA@tfOJkB~@EpGLCrs'
             sage: g6 += 'aPIpwgQI_`Abs_x?VWxNJAo@w\\hffCDAW]bYGMIZGC_PYOrIw[Gp['
@@ -2564,7 +2563,7 @@ class DiGraph(GenericGraph):
             sage: G.diameter(algorithm='DiFUB', by_weight=True)
             3.0
 
-        Check that :trac:`35300` is fixed::
+        Check that :issue:`35300` is fixed::
 
             sage: H = DiGraph([[42, 'John'], [(42, 'John')]])
             sage: H.diameter()
@@ -3000,7 +2999,7 @@ class DiGraph(GenericGraph):
             try:
                 cycle = next(vi)
                 cycles.append((len(cycle), cycle))
-            except(StopIteration):
+            except StopIteration:
                 pass
         # Since we always extract a shortest path, using a heap
         # can speed up the algorithm
@@ -3015,7 +3014,7 @@ class DiGraph(GenericGraph):
             try:
                 cycle = next(vertex_iterators[shortest_cycle[0]])
                 heappush(cycles, (len(cycle), cycle))
-            except(StopIteration):
+            except StopIteration:
                 pass
 
     def all_simple_cycles(self, starting_vertices=None, rooted=False,
@@ -3180,15 +3179,32 @@ class DiGraph(GenericGraph):
         from sage.quivers.path_semigroup import PathSemigroup
         return PathSemigroup(self)
 
+    def auslander_reiten_quiver(self):
+        r"""
+        Return the Auslander-Reiten quiver of ``self``.
+
+        .. SEEALSO::
+
+            :class:`~sage.quivers.ar_quiver.AuslanderReitenQuiver`
+
+        EXAMPLES::
+
+            sage: D = DiGraph([[1,2,'a'], [1,2,'b']], multiedges=True)
+            sage: D.auslander_reiten_quiver()
+            Auslander-Reiten quiver of Multi-digraph on 2 vertices
+        """
+        from sage.quivers.ar_quiver import AuslanderReitenQuiver
+        return AuslanderReitenQuiver(self)
+
     # Directed Acyclic Graphs (DAGs)
 
     def topological_sort(self, implementation="default"):
         """
         Return a topological sort of the digraph if it is acyclic.
 
-        If the digraph contains a directed cycle, a ``TypeError`` is raised. As
-        topological sorts are not necessarily unique, different implementations
-        may yield different results.
+        If the digraph contains a directed cycle, a :class:`TypeError`
+        is raised. As topological sorts are not necessarily unique,
+        different implementations may yield different results.
 
         A topological sort is an ordering of the vertices of the digraph such
         that each vertex comes before all of its successors. That is, if `u`
@@ -3268,7 +3284,8 @@ class DiGraph(GenericGraph):
         Return an iterator over all topological sorts of the digraph if
         it is acyclic.
 
-        If the digraph contains a directed cycle, a ``TypeError`` is raised.
+        If the digraph contains a directed cycle, a :class:`TypeError`
+        is raised.
 
         A topological sort is an ordering of the vertices of the digraph such
         that each vertex comes before all of its successors. That is, if u comes
@@ -3405,7 +3422,7 @@ class DiGraph(GenericGraph):
 
         TESTS:
 
-        :trac:`31681` is fixed::
+        :issue:`31681` is fixed::
 
             sage: H = DiGraph({0: [1], 'X': [1]}, format='dict_of_lists')
             sage: pos = H.layout_acyclic_dummy(rankdir='up')
@@ -3746,7 +3763,7 @@ class DiGraph(GenericGraph):
             A 0-dimensional polyhedron in QQ^0 defined as the convex hull
             of 1 vertex
 
-        A digraph with multiple edges (:trac:`28837`)::
+        A digraph with multiple edges (:issue:`28837`)::
 
             sage: G = DiGraph([(0, 1), (0,1)], multiedges=True); G
             Multi-digraph on 2 vertices
@@ -4360,6 +4377,3 @@ class DiGraph(GenericGraph):
     from sage.graphs.connectivity import strongly_connected_components_subgraphs
     from sage.graphs.connectivity import strongly_connected_component_containing_vertex
     from sage.graphs.connectivity import strong_articulation_points
-    from sage.graphs.path_enumeration import _all_paths_iterator
-    from sage.graphs.path_enumeration import all_paths_iterator
-    from sage.graphs.path_enumeration import all_simple_paths

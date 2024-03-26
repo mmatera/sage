@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Finite dimensional algebras with basis
 
@@ -819,7 +818,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             TESTS:
 
             We check each idempotent belong to its own Peirce summand
-            (see :trac:`24687`)::
+            (see :issue:`24687`)::
 
                 sage: # needs sage.groups
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid
@@ -1437,7 +1436,15 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                     sage: S = SymmetricGroupAlgebra(QQ, 4)                              # needs sage.groups sage.modules
                     sage: S.simple_module_parameterization()                            # needs sage.groups sage.modules
-                    ([4], [3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1])
+                    ([1, 1, 1, 1], [2, 1, 1], [2, 2], [3, 1], [4])
+
+                    sage: S = SymmetricGroupAlgebra(GF(3), 4)                           # needs sage.groups sage.modules
+                    sage: S.simple_module_parameterization()                            # needs sage.groups sage.modules
+                    ([2, 1, 1], [2, 2], [3, 1], [4])
+
+                    sage: S = SymmetricGroupAlgebra(GF(4), 4)                           # needs sage.groups sage.modules
+                    sage: S.simple_module_parameterization()                            # needs sage.groups sage.modules
+                    ([3, 1], [4])
                 """
                 return tuple([mu for mu in self.cell_poset()
                               if self.cell_module(mu).nonzero_bilinear_form()])

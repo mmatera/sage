@@ -12,7 +12,7 @@ AUTHORS:
 
 TESTS:
 
-The following test, verifying that :trac:`16181` has been resolved, needs
+The following test, verifying that :issue:`16181` has been resolved, needs
 to stay at the beginning of this file so that its context is not
 poisoned by other tests::
 
@@ -20,7 +20,7 @@ poisoned by other tests::
     sage: a
     0
 
-Check the fix from :trac:`8323`::
+Check the fix from :issue:`8323`::
 
     sage: 'name' in globals()
     False
@@ -45,7 +45,7 @@ import pdb
 import sys
 import warnings
 
-from .lazy_string import lazy_string
+from sage.misc.lazy_string import lazy_string
 from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.lazy_import import lazy_import
 

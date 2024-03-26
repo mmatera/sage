@@ -11,21 +11,22 @@ Modules
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.abstract_method import abstract_method
-from sage.misc.lazy_import import LazyImport
-from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from sage.categories.morphism import SetMorphism
-from sage.categories.homsets import HomsetsCategory
-from sage.categories.homset import Hom
-from .category import Category
-from .category_types import Category_module
-from sage.categories.tensor import TensorProductsCategory, TensorProductFunctor, tensor
-from .dual import DualObjectsCategory
-from sage.categories.cartesian_product import CartesianProductsCategory
-from sage.categories.sets_cat import Sets
 from sage.categories.bimodules import Bimodules
+from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.categories.category import Category
+from sage.categories.category_types import Category_module
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from sage.categories.dual import DualObjectsCategory
 from sage.categories.fields import Fields
+from sage.categories.homset import Hom
+from sage.categories.homsets import HomsetsCategory
+from sage.categories.morphism import SetMorphism
+from sage.categories.sets_cat import Sets
+from sage.categories.tensor import TensorProductFunctor, TensorProductsCategory, tensor
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
+
 _Fields = Fields()
 
 
@@ -111,7 +112,7 @@ class Modules(Category_module):
         - Implement a ``FreeModules(R)`` category, when so prompted by a
           concrete use case: e.g.  modeling a free module with several
           bases (using :meth:`Sets.SubcategoryMethods.Realizations`)
-          or with an atlas of local maps (see e.g. :trac:`15916`).
+          or with an atlas of local maps (see e.g. :issue:`15916`).
     """
 
     @staticmethod
@@ -285,7 +286,7 @@ class Modules(Category_module):
 
                 - Typically, the category of graded modules should
                   define a separate ``graded_dual`` construction (see
-                  :trac:`15647`). For now the two constructions are
+                  :issue:`15647`). For now the two constructions are
                   not distinguished which is an oversimplified model.
 
             .. SEEALSO::
@@ -875,7 +876,7 @@ class Modules(Category_module):
                     sage: C.base_ring()
                     Integer Ring
 
-                Check that :trac:`29225` is fixed::
+                Check that :issue:`29225` is fixed::
 
                     sage: M = cartesian_product((ZZ^2, ZZ^3)); M                        # needs sage.modules
                     The Cartesian product of
@@ -883,7 +884,8 @@ class Modules(Category_module):
                       Ambient free module of rank 3 over the principal ideal domain Integer Ring)
                     sage: M.category()                                                  # needs sage.modules
                     Category of Cartesian products of modules with basis
-                     over (euclidean domains and infinite enumerated sets and metric spaces)
+                     over (Dedekind domains and euclidean domains
+                     and infinite enumerated sets and metric spaces)
                     sage: M.base_ring()                                                 # needs sage.modules
                     Integer Ring
 

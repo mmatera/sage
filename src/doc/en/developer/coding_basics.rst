@@ -7,10 +7,10 @@ General Conventions
 ===================
 
 
-There are many ways to contribute to Sage including sharing scripts
-and Sage worksheets that implement new functionality using Sage,
+There are many ways to contribute to Sage, including sharing scripts
+and Jupyter notebooks that implement new functionality using Sage,
 improving to the Sage library, or to working on the many underlying
-libraries distributed with Sage [1]_.
+libraries distributed with Sage, see :ref:`spkg`.
 This guide focuses on editing the Sage library itself.
 
 Sage is not just about gathering together functionality. It is about
@@ -19,10 +19,6 @@ number of algorithms, in a coherent framework that makes sense
 mathematically. In the design of Sage, the semantics of objects, the
 definitions, etc., are informed by how the corresponding objects are
 used in everyday mathematics.
-
-.. [1]
-   See https://www.sagemath.org/links-components.html for a full list
-   of packages shipped with every copy of Sage
 
 To meet the goal of making Sage easy to read, maintain, and improve,
 all Python/Cython code that is included with Sage should adhere to the
@@ -1039,17 +1035,6 @@ written.
     The :ref:`doctest fixer <section-fixdoctests-optional-needs>` uses
     tab stops at columns 48, 56, 64, ... for these tags.
 
-- **Python3 print:** Python3 syntax for print must be used in Sage
-  code and doctests. If you use an old-style print in doctests, it
-  will raise a SyntaxError::
-
-      sage: print "not like that"
-      Traceback (most recent call last):
-      ...
-      SyntaxError: ...
-      sage: print("but like this")
-      but like this
-
 - **Split long lines:** You may want to split long lines of code with a
   backslash. Note: this syntax is non-standard and may be removed in the
   future::
@@ -1192,7 +1177,7 @@ framework. Here is a comprehensive list:
   Use it for very long doctests that are only meant as documentation. It can
   also be used for todo notes of what will eventually be implemented::
 
-      sage: factor(x*y - x*z)    # todo: not implemented
+      sage: factor(x*y - x*z)    # not implemented
 
   It is also immediately clear to the user that the indicated example
   does not currently work.

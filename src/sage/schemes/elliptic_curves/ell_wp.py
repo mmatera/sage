@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Weierstrass `\wp`-function for elliptic curves
 
@@ -36,7 +35,7 @@ AUTHORS:
 - Chris Wuthrich 11/09: major restructuring
 
 - Jeroen Demeyer (2014-03-06): code clean up, fix characteristic bound
-  for quadratic algorithm (see :trac:`15855`)
+  for quadratic algorithm (see :issue:`15855`)
 
 """
 

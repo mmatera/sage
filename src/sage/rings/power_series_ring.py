@@ -109,7 +109,7 @@ AUTHORS:
 - William Stein: the code
 - Jeremy Cho (2006-05-17): some examples (above)
 - Niles Johnson (2010-09): implement multivariate power series
-- Simon King (2012-08): use category and coercion framework, :trac:`13412`
+- Simon King (2012-08): use category and coercion framework, :issue:`13412`
 
 TESTS::
 
@@ -134,37 +134,45 @@ TESTS::
 
 """
 
-from . import power_series_poly
-from . import power_series_mpoly
-from .power_series_pari import PowerSeries_pari
-from . import power_series_ring_element
-
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
-from .polynomial.polynomial_ring_constructor import PolynomialRing
-from . import laurent_series_ring
-from . import laurent_series_ring_element
-from . import integer
-from . import ring
-from .infinity import infinity
-import sage.misc.latex as latex
-from sage.structure.nonexact import Nonexact
-
-from sage.interfaces.abc import MagmaElement
-from sage.rings.fraction_field_element import FractionFieldElement
-from sage.misc.sage_eval import sage_eval
-
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.category_object import normalize_names
-from sage.structure.element import parent, Expression
 import sage.categories.commutative_rings as commutative_rings
+import sage.misc.latex as latex
+from sage.interfaces.abc import MagmaElement
+from sage.misc.sage_eval import sage_eval
+from sage.rings import (
+    integer,
+    laurent_series_ring,
+    laurent_series_ring_element,
+    power_series_mpoly,
+    power_series_poly,
+    power_series_ring_element,
+    ring,
+)
+from sage.rings.fraction_field_element import FractionFieldElement
+from sage.rings.infinity import infinity
+from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.structure.category_object import normalize_names
+from sage.structure.element import Expression, parent
+from sage.structure.nonexact import Nonexact
+from sage.structure.unique_representation import UniqueRepresentation
+
 _CommutativeRings = commutative_rings.CommutativeRings()
 import sage.categories.integral_domains as integral_domains
+
 _IntegralDomains = integral_domains.IntegralDomains()
 import sage.categories.fields as fields
+
 _Fields = fields.Fields()
 
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings
+
+try:
+    from .laurent_series_ring import LaurentSeriesRing
+    from .laurent_series_ring_element import LaurentSeries
+except ImportError:
+    LaurentSeriesRing = ()
+    LaurentSeries = ()
 
 
 def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
@@ -319,7 +327,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
         sage: L.default_prec()
         5
 
-    By :trac:`14084`, a power series ring belongs to the category of integral
+    By :issue:`14084`, a power series ring belongs to the category of integral
     domains, if the base ring does::
 
         sage: P = ZZ[['x']]
@@ -508,7 +516,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         EXAMPLES:
 
         This base class inherits from :class:`~sage.rings.ring.CommutativeRing`.
-        Since :trac:`11900`, it is also initialised as such, and since :trac:`14084`
+        Since :issue:`11900`, it is also initialised as such, and since :issue:`14084`
         it is actually initialised as an integral domain::
 
             sage: R.<x> = ZZ[[]]
@@ -527,7 +535,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: TestSuite(R).run()
 
         It is checked that the default precision is non-negative
-        (see :trac:`19409`)::
+        (see :issue:`19409`)::
 
             sage: PowerSeriesRing(ZZ, 'x', default_prec=-5)
             Traceback (most recent call last):
@@ -535,15 +543,17 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             ValueError: default_prec (= -5) must be non-negative
 
         """
-        from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
-
         if implementation is None:
+            try:
+                from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
+            except ImportError:
+                FiniteField_pari_ffelt = ()
             if isinstance(base_ring, FiniteField_pari_ffelt):
                 implementation = 'pari'
             else:
                 implementation = 'poly'
             R = PolynomialRing(base_ring, name, sparse=sparse)
-        elif implementation not in ['pari', 'mpoly']:     # see :trac:`28996`
+        elif implementation not in ['pari', 'mpoly']:     # see :issue:`28996`
             R = PolynomialRing(base_ring, name, sparse=sparse, implementation=implementation)
             implementation = 'poly'
         else:
@@ -567,6 +577,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             assert is_MPolynomialRing(self.__mpoly_ring)
             self.Element = power_series_mpoly.PowerSeries_mpoly
         elif implementation == 'pari':
+            from .power_series_pari import PowerSeries_pari
             self.Element = PowerSeries_pari
         else:
             raise ValueError('unknown power series implementation: %r' % implementation)
@@ -575,7 +586,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
                                       category=getattr(self, '_default_category',
                                                        _CommutativeRings))
         Nonexact.__init__(self, default_prec)
-        if self.Element is PowerSeries_pari:
+        if implementation == 'pari':
             self.__generator = self.element_class(self, R.gen().__pari__())
         else:
             self.__generator = self.element_class(self, R.gen(), is_gen=True)
@@ -773,7 +784,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             1 + euler_gamma*y + (1/2*euler_gamma^2 + 1/12*pi^2)*y^2 + O(y^3)
 
         Laurent series with non-negative valuation are accepted (see
-        :trac:`6431`)::
+        :issue:`6431`)::
 
             sage: L.<q> = LaurentSeriesRing(QQ)
             sage: P = L.power_series_ring()
@@ -785,7 +796,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             TypeError: self is not a power series
 
         It is checked that the precision is non-negative
-        (see :trac:`19409`)::
+        (see :issue:`19409`)::
 
             sage: PowerSeriesRing(ZZ, 'x')(1, prec=-5)
             Traceback (most recent call last):
@@ -801,7 +812,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             if prec >= f.prec():
                 return f
             f = f.truncate(prec)
-        elif isinstance(f, laurent_series_ring_element.LaurentSeries) and f.parent().power_series_ring() is self:
+        elif isinstance(f, LaurentSeries) and f.parent().power_series_ring() is self:
             return self(f.power_series(), prec, check=check)
         elif isinstance(f, MagmaElement) and str(f.Type()) == 'RngSerPowElt':
             v = sage_eval(f.Eltseq())
@@ -949,9 +960,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             return True   # this is allowed.
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
             return False
-        from .laurent_series_ring import is_LaurentSeriesRing
         v = im_gens[0]
-        if is_PowerSeriesRing(codomain) or is_LaurentSeriesRing(codomain):
+        if is_PowerSeriesRing(codomain) or isinstance(codomain, LaurentSeriesRing):
             try:
                 return v.valuation() > 0 or v.is_nilpotent()
             except NotImplementedError:
@@ -1142,7 +1152,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             2 - t - 5*t^2 + t^3 + O(t^4)
 
 
-        Further arguments are passed to the underlying base ring (:trac:`9481`)::
+        Further arguments are passed to the underlying base ring (:issue:`9481`)::
 
             sage: SZ = PowerSeriesRing(ZZ,'v')
             sage: SQ = PowerSeriesRing(QQ,'v')
@@ -1266,8 +1276,10 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         try:
             return self.__laurent_series_ring
         except AttributeError:
-            self.__laurent_series_ring = laurent_series_ring.LaurentSeriesRing(
-                                                 self.base_ring(), self.variable_name(), default_prec=self.default_prec(), sparse=self.is_sparse())
+            from .laurent_series_ring import LaurentSeriesRing
+
+            self.__laurent_series_ring = LaurentSeriesRing(
+                self.base_ring(), self.variable_name(), default_prec=self.default_prec(), sparse=self.is_sparse())
             return self.__laurent_series_ring
 
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs sphinx
 """
 Documentation builders
 
@@ -170,12 +171,10 @@ def builder_helper(type):
             if build_options.ABORT_ON_ERROR:
                 raise Exception("Non-exception during docbuild: %s" % (e,), e)
 
-        if "/latex" in output_dir:
-            logger.warning("LaTeX file written to {}".format(output_dir))
-        else:
-            logger.warning(
-                "Build finished. The built documents can be found in {}".
-                format(output_dir))
+        if type == 'latex':
+            logger.warning(f"LaTeX files can be found in {output_dir}.")
+        elif type != 'inventory':
+            logger.warning(f"Build finished. The built documents can be found in {output_dir}.")
 
     f.is_output_format = True
     return f
@@ -297,7 +296,7 @@ class DocBuilder():
 
         if subprocess.call(make_target % (tex_dir, command, pdf_dir), close_fds=False, shell=True):
             raise RuntimeError(error_message % (command, tex_dir))
-        logger.warning("Build finished.  The built documents can be found in %s", pdf_dir)
+        logger.warning(f"Build finished. The built documents can be found in {pdf_dir}.")
 
     def clean(self, *args):
         shutil.rmtree(self._doctrees_dir())
@@ -654,11 +653,11 @@ class ReferenceTopBuilder(DocBuilder):
         os.makedirs(d, exist_ok=True)
         return d
 
-    def pdf(self):
+    def html(self):
         """
-        Build top-level document.
+        Build the top-level document.
         """
-        super().pdf()
+        super().html()
 
         # We want to build master index file which lists all of the PDF file.
         # We modify the file index.html from the "reference_top" target, if it
@@ -668,12 +667,8 @@ class ReferenceTopBuilder(DocBuilder):
         reference_dir = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
         output_dir = self._output_dir('html')
 
-        # Check if the top reference index.html exists.
-        try:
-            with open(os.path.join(reference_dir, 'index.html')) as f:
-                html = f.read()
-        except FileNotFoundError:
-            return
+        with open(os.path.join(reference_dir, 'index.html')) as f:
+            html = f.read()
 
         # Install in output_dir a symlink to the directory containing static files.
         # Prefer relative path for symlinks.
@@ -888,7 +883,7 @@ class ReferenceSubBuilder(DocBuilder):
                 env.config.values = env.app.config.values
                 logger.debug("Opened Sphinx environment: %s", env_pickle)
                 return env
-        except (IOError, EOFError) as err:
+        except (OSError, EOFError) as err:
             logger.debug(
                 f"Failed to open Sphinx environment '{env_pickle}'", exc_info=True)
 

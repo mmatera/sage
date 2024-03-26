@@ -442,8 +442,10 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
         TESTS::
 
+            sage: TestSuite(LaurentPolynomialRing(Zmod(2), 'y')).run()
             sage: TestSuite(LaurentPolynomialRing(Zmod(4), 'y')).run()
             sage: TestSuite(LaurentPolynomialRing(ZZ, 'u')).run()
+            sage: TestSuite(LaurentPolynomialRing(Zmod(2)['T'], 'u')).run()
             sage: TestSuite(LaurentPolynomialRing(Zmod(4)['T'], 'u')).run()
         """
         if R.ngens() != 1:
@@ -519,7 +521,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
         TESTS:
 
-        Check that conversion back from fraction field does work (:trac:`26425`)::
+        Check that conversion back from fraction field does work (:issue:`26425`)::
 
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: F = FractionField(R)
@@ -555,11 +557,11 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
         elif isinstance(x, FractionFieldElement):
             # since the field of fraction of self is defined corresponding to
             # the polynomial ring of self the conversion of its elements back
-            # must be treated separately (:trac:`26425`).
+            # must be treated separately (:issue:`26425`).
             return from_fraction_field(self, x)
 
         elif isinstance(x, LocalizationElement):
-            # see :trac:`33477`.
+            # see :issue:`33477`.
             F = self.fraction_field()
             return from_fraction_field(self, F(x))
 
@@ -783,11 +785,11 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         elif isinstance(x, FractionFieldElement):
             # since the field of fraction of self is defined corresponding to
             # the polynomial ring of self the conversion of its elements back
-            # must be treated separately (:trac:`33477`).
+            # must be treated separately (:issue:`33477`).
             return from_fraction_field(self, x)
 
         elif isinstance(x, LocalizationElement):
-            # see :trac:`33477`.
+            # see :issue:`33477`.
             F = self.fraction_field()
             return from_fraction_field(self, F(x))
 

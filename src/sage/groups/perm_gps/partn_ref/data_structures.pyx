@@ -629,12 +629,12 @@ cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size) noexce
     cdef int *temp
     cdef int n = SC.degree
 
-    temp = <int *> sig_realloc( SC.generators[level],   n * size * sizeof(int) )
+    temp = <int *> sig_realloc(SC.generators[level], n * size * sizeof(int))
     if temp is NULL:
         return 1
     SC.generators[level] = temp
 
-    temp = <int *> sig_realloc( SC.gen_inverses[level], n * size * sizeof(int) )
+    temp = <int *> sig_realloc(SC.gen_inverses[level], n * size * sizeof(int))
     if temp is NULL:
         return 1
     SC.gen_inverses[level] = temp
@@ -1280,7 +1280,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 3, 1, 0)
-        sage: for n in range(4,9):              # known bug (see :trac:`32187`), not tested
+        sage: for n in range(4,9):              # known bug (see :issue:`32187`), not tested
         ....:     test_stab_chain_fns_4(n, 1, 0, 1)
         ....:     for j in range(6):
         ....:         test_stab_chain_fns_4(n, 2, 0, 1)

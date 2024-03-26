@@ -218,7 +218,7 @@ def edge_multiplicities(G):
 ########
 
 
-class Ear():
+class Ear:
     r"""
     An ear is a sequence of vertices
 
@@ -372,7 +372,7 @@ class Ear():
 ##################
 
 
-class EdgeSelection():
+class EdgeSelection:
     pass
 
 
@@ -574,7 +574,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
         sage: len(cache) > 0
         True
 
-    Verify that :trac:`18366` is fixed::
+    Verify that :issue:`18366` is fixed::
 
         sage: g = Graph(multiedges=True)
         sage: g.add_edges([(0,1,1),(1,5,2),(5,3,3),(5,2,4),(2,4,5),(0,2,6),(0,3,7),(0,4,8),(0,5,9)])

@@ -13,7 +13,7 @@ AUTHORS:
 
 - Sébastien Labbé (2008) - Initial version.
 - Sébastien Labbé (2009-11-24) - Pickling support
-- Sébastien Labbé (2010-01) - Inclusion into sage (:trac:`6775`).
+- Sébastien Labbé (2010-01) - Inclusion into sage (:issue:`6775`).
 
 EXAMPLES:
 
@@ -600,7 +600,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
         """
         d = {i: [self._nodes.parent[i]] for i in range(self.cardinality())}
-        from sage.graphs.graph import DiGraph
+        from sage.graphs.digraph import DiGraph
         return DiGraph(d)
 
 cdef class DisjointSet_of_hashables(DisjointSet_class):
@@ -891,5 +891,5 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             e = self._int_to_el[i]
             p = self._int_to_el[self._nodes.parent[i]]
             d[e] = [p]
-        from sage.graphs.graph import DiGraph
+        from sage.graphs.digraph import DiGraph
         return DiGraph(d)

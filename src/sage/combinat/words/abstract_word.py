@@ -225,7 +225,7 @@ class Word_class(SageObject):
             sage: len(Word(iter('a'*200), length='finite'))
             200
 
-        We make sure :trac:`8574` is fixed::
+        We make sure :issue:`8574` is fixed::
 
             sage: s = WordMorphism('0->000,1->%s'%('1'*100))
             sage: len(s('1'))
@@ -1476,24 +1476,24 @@ class Word_class(SageObject):
 
         Sum of digits modulo 2 of the prime numbers written in base 2::
 
-            sage: Word(primes(1000)).sum_digits()                                       # optional - sage.libs.pari
+            sage: Word(primes(1000)).sum_digits()                                       # needs sage.libs.pari
             word: 1001110100111010111011001011101110011011...
 
         Sum of digits modulo 3 of the prime numbers written in base 3::
 
-            sage: Word(primes(1000)).sum_digits(base=3)                                 # optional - sage.libs.pari
+            sage: Word(primes(1000)).sum_digits(base=3)                                 # needs sage.libs.pari
             word: 2100002020002221222121022221022122111022...
-            sage: Word(primes(1000)).sum_digits(base=3, mod=3)                          # optional - sage.libs.pari
+            sage: Word(primes(1000)).sum_digits(base=3, mod=3)                          # needs sage.libs.pari
             word: 2100002020002221222121022221022122111022...
 
         Sum of digits modulo 2 of the prime numbers written in base 3::
 
-            sage: Word(primes(1000)).sum_digits(base=3, mod=2)                          # optional - sage.libs.pari
+            sage: Word(primes(1000)).sum_digits(base=3, mod=2)                          # needs sage.libs.pari
             word: 0111111111111111111111111111111111111111...
 
         Sum of digits modulo 7 of the prime numbers written in base 10::
 
-            sage: Word(primes(1000)).sum_digits(base=10, mod=7)                         # optional - sage.libs.pari
+            sage: Word(primes(1000)).sum_digits(base=10, mod=7)                         # needs sage.libs.pari
             word: 2350241354435041006132432241353546006304...
 
         Negative entries::

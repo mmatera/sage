@@ -148,7 +148,7 @@ def _lexi_gen(zeroes=False):
     """
     count = Integer(0)
     while True:
-        mwrap, ind  = count.quo_rem(26)
+        mwrap, ind = count.quo_rem(26)
         if mwrap == 0 and not zeroes:
             name = ''
         else:
@@ -505,12 +505,12 @@ class FreeGroupElement(ElementLibGAP):
         """
         g = self.gap().UnderlyingElement()
         k = g.NumberSyllables().sage()
-        exponent_syllable  = libgap.eval('ExponentSyllable')
+        exponent_syllable = libgap.eval('ExponentSyllable')
         generator_syllable = libgap.eval('GeneratorSyllable')
         result = []
         gen = self.parent().gen
         for i in range(k):
-            exponent  = exponent_syllable(g, i+1).sage()
+            exponent = exponent_syllable(g, i+1).sage()
             generator = gen(generator_syllable(g, i+1).sage() - 1)
             result.append( (generator, exponent) )
         return tuple(result)
@@ -552,7 +552,7 @@ class FreeGroupElement(ElementLibGAP):
             sage: w(i+1 for i in range(2))
             1/2
 
-        Check that :trac:`25017` is fixed::
+        Check that :issue:`25017` is fixed::
 
             sage: F = FreeGroup(2)
             sage: x0, x1 = F.gens()
@@ -720,7 +720,7 @@ def wrap_FreeGroup(libgap_free_group):
 
     TESTS:
 
-    Check that we can do it twice (see :trac:`12339`) ::
+    Check that we can do it twice (see :issue:`12339`) ::
 
         sage: G = libgap.FreeGroup(['a', 'b'])
         sage: wrap_FreeGroup(G)
@@ -856,7 +856,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: G(a^2*b^-3*a^-1)
             a^2*b^-3*a^-1
 
-        Check that :trac:`17246` is fixed::
+        Check that :issue:`17246` is fixed::
 
             sage: F = FreeGroup(0)
             sage: F([])
@@ -880,7 +880,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
         except AttributeError:
             return self.element_class(self, x, **kwds)
         if isinstance(P, FreeGroup_class):
-            names = set(P._names[abs(i)-1] for i in x.Tietze())
+            names = {P._names[abs(i)-1] for i in x.Tietze()}
             if names.issubset(self._names):
                 return self([i.sign()*(self._names.index(P._names[abs(i)-1])+1)
                              for i in x.Tietze()])

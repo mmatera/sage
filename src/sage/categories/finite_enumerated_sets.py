@@ -128,7 +128,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             We ignore additional inputs since during doctests classes which
             override ``cardinality()`` call up to the category rather than
-            their own ``cardinality()`` method (see :trac:`13688`)::
+            their own ``cardinality()`` method (see :issue:`13688`)::
 
                 sage: C = FiniteEnumeratedSets().example()
                 sage: C._cardinality_from_iterator(algorithm='testing')
@@ -181,7 +181,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             We ignore additional inputs since during doctests classes which
             override ``cardinality()`` call up to the category rather than
-            their own ``cardinality()`` method (see :trac:`13688`)::
+            their own ``cardinality()`` method (see :issue:`13688`)::
 
                 sage: C = FiniteEnumeratedSets().example()
                 sage: C._cardinality_from_list(algorithm='testing')
@@ -665,7 +665,6 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                     sage: C.unrank(54213)
                     ('a', 86, [7, 5, 4, 4])
                 """
-                from builtins import zip
                 from sage.rings.integer_ring import ZZ
                 x = self(x)
                 b = ZZ.one()

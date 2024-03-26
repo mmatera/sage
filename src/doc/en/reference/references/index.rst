@@ -508,6 +508,11 @@ REFERENCES:
             Springer, 2012,
             http://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf
 
+.. [BMFPR2011] \M. Bousquet-Melou, É. Fusy, L.-F. Préville-Ratelle,
+                *The number of intervals in the m-Tamari lattices*.
+                Electronic Journal of Combinatorics 18(2), 2011.
+                :doi:`10.37236/2027`
+
 .. [BPPSST2017] Banik, Pandey, Peyrin, Sasaki, Sim, and Todo,
                 GIFT : A Small Present Towards Reaching the Limit of Lightweight
                 Encryption. *Cryptographic Hardware and Embedded Systems - CHES 2017*,
@@ -1044,6 +1049,11 @@ REFERENCES:
             *Guide to using plantri*, version 5.0, 2016.
             http://cs.anu.edu.au/~bdm/plantri/plantri-guide.txt
 
+.. [BM2021] Alin Bostan and Ryuhei Mori,
+            *A simple and fast algorithm for computing the N-th term of a linearly recurrent sequence*,
+            Proceedings of Symposium on Simplicity in Algorithms (SOSA), pp. 118--132, 2021.
+            :doi:`10.1137/1.9781611976496.14`
+
 .. [BMBFLR2008] A. Blondin-Massé, S. Brlek, A. Frosini, S. Labbé,
                 S. Rinaldi, *Reconstructing words from a fixed
                 palindromic length sequence*, Proc. TCS 2008, 5th IFIP
@@ -1133,6 +1143,10 @@ REFERENCES:
             Theory and its Applications, 1 (2015),
             83–96. :arxiv:`1406.5337`
 
+.. [BP2023] \N. Brettell and R. Pendavingh, *Computing excluded minors for
+            classes of matroids representable over partial fields*, arXiv
+            preprint :arxiv:`2302.13175` (2023).
+
 .. [BPRS2009] \J. Bastian, \T. Prellberg, \M. Rubey, \C. Stump, *Counting the
             number of elements in the mutation classes of* `\tilde{A}_n`-*quivers*;
             :arxiv:`0906.0487`
@@ -1216,6 +1230,9 @@ REFERENCES:
              Journal on Discrete Mathematics, 22 (4): 1277–1296,
              :doi:`10.1137/060664690`.
 
+.. [Bre2023] \N. Brettell, *The excluded minors for GF(5)-representable matroids
+             on ten elements*, arXiv preprint :arxiv:`2307.14614` (2023).
+
 .. [Bro2011] Francis Brown, *Multiple zeta values and periods: From
              moduli spaces to Feynman integrals*, in Contemporary Mathematics
              vol 539, pages 27-52, 2011.
@@ -1237,6 +1254,9 @@ REFERENCES:
              Computer Science, 1989, pp. 442-447.
              :doi:`10.1109/SFCS.1989.63516`,
              <http://www.cs.cmu.edu/~15859n/RelatedWork/Broder-GenRanSpanningTrees.pdf>_
+
+.. [Bro2009] \R. Bröker: *Constructing supersingular elliptic curves*.
+             Journal of Combinatorics and Number Theory 1.3 (2009), pp. 269--273.
 
 .. [Broder2000] Broder, A.Z., Kumar, R., Maghoul, F., Raghavan, P., Rajagopalan,
                 S., Stata, R., Tomkins, A., Wiener, J.L.: Graph structure in
@@ -1347,6 +1367,10 @@ REFERENCES:
             complexes and posets. I*. Trans. of
             Amer. Math. Soc. **348** No. 4. (1996)
 
+.. [BY2016] Pauline Bailet and Masahiko Yoshinaga. *Vanishing results for the
+            Aomoto complex of real hyperplane arrangements via minimality*.
+            J. Singularities. **14** (2016), 74-90.
+
 .. [BZ01] \A. Berenstein, A. Zelevinsky
           *Tensor product multiplicities, canonical bases
           and totally positive varieties*
@@ -1371,6 +1395,9 @@ REFERENCES:
 
 .. [Car1972] \R. W. Carter. *Simple groups of Lie type*, volume 28 of
              Pure and Applied Mathematics. John Wiley and Sons, 1972.
+
+.. [Car1972a] \R. W. Carter. *Conjugacy classes in the Weyl group*, Comp. Math.
+              Vol 26 (1972) 1-59.
 
 .. [Cha2005] \F. Chapoton, *Une Base Symétrique de l'algèbre des
              Coinvariants Quasi-Symétriques*, Electronic Journal of
@@ -1403,6 +1430,9 @@ REFERENCES:
 .. [CC2013] Mahir Bilen Can and Yonah Cherniavsky.
             *Omitting parentheses from the cyclic notation*. (2013).
             :arxiv:`1308.0936v2`.
+
+.. [CC2023] \C. Ceballos and C. Chenevière.
+                *On linear intervals in the alt `\nu`-Tamari lattices* :arxiv:`2305.02250`
 
 .. [CCL2015] \N. Cohen, D. Coudert, and A. Lancin. *On computing the Gromov
              hyperbolicity*. ACM Journal of Experimental Algorithmics,
@@ -1480,6 +1510,11 @@ REFERENCES:
 
 .. [CFI1992] Cai, JY., Fürer, M. & Immerman, N. Combinatorica (1992) 12: 389.
              :doi:`10.1007/BF01305232`
+
+.. [CFKLMPPS15] Marek Cygan, Fedor V. Fomin, Łukasz Kowalik, Daniel Lokshtanov,
+                Dániel Marx, Marcin Pilipczuk, Michał Pilipczuk, Saket Saurabh.
+                *Parameterized Algorithms*. Springer International Publishing
+                Switzerland 2015
 
 .. [CFKP1997] James W. Cannon, William J. Floyd, Richard Kenyon and Walter R. Parry.
               *Hyperbolic Geometry*. Flavors of Geometry, MSRI Publications,
@@ -2334,6 +2369,9 @@ REFERENCES:
 .. [Dy1994] \M. J. Dyer. *Bruhat intervals, polyhedral cones and
             Kazhdan-Lusztig-Stanley polynomials*. Math.Z., 215(2):223-236, 1994.
 
+.. [Dy2001] \M. J. Dyer. *On minimal lengths of expressions of Coxeter group elements as
+            products of reflections*. Proc. Amer. Math. Soc. Vol 129 (9) (Sep 2001) pp. 2591-2595
+
 .. _ref-E:
 
 **E**
@@ -2413,6 +2451,11 @@ REFERENCES:
 .. [Epp2008] David Eppstein, *Recognizing partial cubes in quadratic time*,
              J. Graph Algorithms and Applications 15 (2): 269-293, 2011.
              :doi:`10.7155/jgaa.00226`, :arxiv:`0705.1025`.
+
+.. [EPSV2023] Jonathan Komada Eriksen, Lorenz Panny, Jana Sotáková, and Mattia Veroni.
+              Deuring for the People: Supersingular Elliptic Curves with Prescribed
+              Endomorphism Ring in General Characteristic.
+              LuCaNT 2023. https://ia.cr/2023/106
 
 .. [Eri1995] \H. Erikson.  Computational and Combinatorial Aspects
              of Coxeter Groups.  Thesis, 1995.
@@ -3674,6 +3717,10 @@ REFERENCES:
              class number*, Habilitationsschrift, RWTH Aachen University, 2016.
              http://www.math.rwth-aachen.de/~Markus.Kirschmer/papers/herm.pdf
 
+.. [KV2010] \M. Kirschmer, J. Voight: *Algorithmic enumeration of ideal classes
+            for quaternion orders*. SIAM J. Comput. 39(5): 1714-1747 (2010)
+            https://math.dartmouth.edu/~jvoight/articles/73446.pdf
+
 .. [KB1983] \W. Kühnel and T. F. Banchoff, "The 9-vertex complex
             projective plane", Math. Intelligencer 5 (1983), no. 3,
             11-22.
@@ -4012,6 +4059,11 @@ REFERENCES:
 .. [Kul1991] Ravi Kulkarni, "An arithmetic geometric method in the
              study of the subgroups of the modular group", American
              Journal of Mathematics 113 (1991), no 6, 1053-1133
+
+.. [Kuniba2022] Atsuo Kuniba,
+                *Quantum Groups in Three-Dimensional Integrability*.
+                Theoretical and Mathematical Physics, Springer. 2022.
+                :doi:`10.1007/978-981-19-3262-5`.
 
 .. [Kur2008] Chris Kurth, "K Farey package for Sage",
              http://wayback.archive-it.org/855/20100510123900/http://www.public.iastate.edu/~kurthc/research/index.html
@@ -4507,6 +4559,10 @@ REFERENCES:
 .. [Mat2002] Jiří Matousek, "Lectures on Discrete Geometry", Springer,
              2002
 
+.. [Mathas2004] Andrew Mathas.
+                *Matrix units and generic degrees for the Ariki-Koike algebras*.
+                J. Algebra. **281** (2004) pp. 695-730.
+
 .. [Mas1995] Mason, Geoffrey. *The quantum double of a finite group and its role
              in conformal field theory*. Groups '93 Galway/St. Andrews, Vol. 2,
              405-417, London Math. Soc. Lecture Note Ser., 212, Cambridge, 1995.
@@ -4559,13 +4615,14 @@ REFERENCES:
 .. [Mat1978] \R. A. Mathon, *Symmetric conference matrices of order `pq^2 + 1`*,
              Canad. J. Math. 30 (1978) 321-331, :doi:`10.4153/CJM-1978-029-1`.
 
+.. [Mat2012] Yoshitake Matsumoto, *Database of Matroids*, 2012,
+             https://www-imai.is.s.u-tokyo.ac.jp/~ymatsu/matroid/index.html
+
 .. [Mat2015]  \A. Mathas. *Cyclotomic quiver Hecke algebras of type A*,
               in "Modular representation theory of finite and p-adic groups",
               165–266, Lect. Notes Ser. Inst. Math. Sci. Natl. Univ. Singap.,
               **30**, World Sci. Publ., Hackensack, NJ, 2015.
               :mathscinet:`MR3495747`
-
-.. [MatroidDatabase] `Database of Matroids <http://www-imai.is.s.u-tokyo.ac.jp/~ymatsu/matroid/index.html>`_
 
 .. [May1964] \J. P. May, "The cohomology of restricted Lie algebras
              and of Hopf algebras; application to the Steenrod
@@ -4683,6 +4740,12 @@ REFERENCES:
 .. [MM2015] \J. Matherne and \G. Muller, *Computing upper cluster algebras*,
             Int. Math. Res. Not. IMRN, 2015, 3121-3149.
 
+.. [MMRS2022] Ruslan G. Marzo, Rafael A. Melo,  Celso C. Ribeiro and
+              Marcio C. Santos: *New formulations and branch-and-cut procedures
+              for the longest induced path problem*. Computers & Operations
+              Research. 139, 105627 (2022)
+              :doi:`10.1016/j.cor.2021.105627`
+
 .. [Moh1988] \B. Mohar, *Isoperimetric inequalities, growth, and the spectrum
              of graphs*, Linear Algebra and its Applications 103 (1988),
              119–131.
@@ -4719,6 +4782,11 @@ REFERENCES:
 
 .. [MoPa1994] \P. Morton and P. Patel. The Galois theory of periodic points
               of polynomial maps. Proc. London Math. Soc., 68 (1994), 225-263.
+
+.. [Motsak2006] Olekasandr Motsak. *Computation of the central elements and
+                centralizers of sets of elements in non-commutative polynomial
+                algebras*. PhD Thesis, 2006.
+                https://kluedo.ub.rptu.de/frontdoor/deliver/index/docId/2308/file/Thesis.pdf
 
 .. [MP2019] \M. Montes, D. Penazzi
             "Yarara and Coral v1"
@@ -5033,6 +5101,9 @@ REFERENCES:
              :doi:`10.1016/j.ipl.2009.03.018`.
              http://mathsci.kaist.ac.kr/~sangil/pdf/2008exp.pdf
 
+.. [Oxl1987] James Oxley, *The binary matroids with no 4-wheel minor*, 1987,
+             Transactions of the American Mathematical Society, 301(1), 63-75.
+
 .. [Oxl1992] James Oxley, *Matroid theory*, Oxford University
              Press, 1992.
 
@@ -5075,6 +5146,11 @@ REFERENCES:
 .. [Pec2014] Oliver Pechenik, *Cyclic sieving of increasing tableaux and
              small Schroeder paths*, JCTA 125 (2014), 357-378,
              :doi:`10.1016/j.jcta.2014.04.002`
+
+.. [Pei2010] Peikert, C. (2010). An Efficient and Parallel Gaussian Sampler for
+             Lattices. In: Rabin, T. (eds) Advances in Cryptology – CRYPTO 2010.
+             CRYPTO 2010. Lecture Notes in Computer Science, vol 6223. Springer,
+             Berlin, Heidelberg. :doi:`10.1007/978-3-642-14623-7_5`
 
 .. [Pen2012] \R. Pendavingh, On the evaluation at `(-i, i)` of the
              Tutte polynomial of a binary matroid. Preprint:
@@ -5754,6 +5830,11 @@ REFERENCES:
              Proceedings of the American Mathematical Society,
              Volume 90. Number 2, February 1984, pp. 199-202.
 
+.. [Sq1998] Matthew B. Squire.
+            *Generating the acyclic orientations of a graph*.
+            Journal of Algorithms, Volume 26, Issue 2, Pages 275 - 290, 1998.
+            (https://doi.org/10.1006/jagm.1997.0891)
+
 .. [SS1983] Shorey and Stewart. "On the Diophantine equation a
             x^{2t} + b x^t y + c y^2 = d and pure powers in recurrence
             sequences." Mathematica Scandinavica, 1983.
@@ -6299,6 +6380,8 @@ REFERENCES:
 .. [Voi2012] \J. Voight. Identifying the matrix ring: algorithms for
              quaternion algebras and quadratic forms, to appear.
 
+.. [Voi2021] \J. Voight. Quaternion algebras, Springer Nature (2021).
+
 .. [VS06]   \G.D. Villa Salvador. Topics in the Theory of Algebraic Function
             Fields. Birkh\"auser, 2006.
 
@@ -6607,6 +6690,10 @@ REFERENCES:
 .. [ZJRRS2019] \M. R. Z'aba, N. Jamil, M. S. Rohmad, H. A. Rani, S. Shamsuddin
            *The CiliPadi Family of Lightweight Authenticated Encryption*
            https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/cilipadi-spec.pdf
+
+.. [ZL2014] Wei Zhou and George Labahn. "Unimodular completion of polynomial
+            matrices".  In Proceedings ISSAC 2014, pages 413-420. ACM, 2014.
+            :doi:`10.1145/2608628.2608640`
 
 .. [ZZ2005] Hechun Zhang and R. B. Zhang.
             *Dual canonical bases for the quantum special linear group

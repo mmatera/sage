@@ -70,7 +70,7 @@ class Polyhedron_base4(Polyhedron_base3):
 
         This function constructs a directed bipartite graph.
         The nodes of the graph correspond to the vertices of the polyhedron
-        and the facets of the polyhedron. There is an directed edge
+        and the facets of the polyhedron. There is a directed edge
         from a vertex to a face if and only if the vertex is incident to the face.
 
         INPUT:
@@ -126,12 +126,12 @@ class Polyhedron_base4(Polyhedron_base3):
 
         TESTS:
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
             sage: G._immutable
             True
 
-        Check that :trac:`29188` is fixed::
+        Check that :issue:`29188` is fixed::
 
             sage: P = polytopes.cube()
             sage: P.vertex_facet_graph().is_isomorphic(P.vertex_facet_graph(False))
@@ -192,7 +192,7 @@ class Polyhedron_base4(Polyhedron_base3):
 
         TESTS:
 
-        Check for a line segment (:trac:`30545`)::
+        Check for a line segment (:issue:`30545`)::
 
             sage: polytopes.simplex(1).graph().edges(sort=True)
             [(A vertex at (0, 1), A vertex at (1, 0), None)]
@@ -308,7 +308,7 @@ class Polyhedron_base4(Polyhedron_base3):
 
         .. NOTE::
 
-            The face lattice is not cached, as long as this creates a memory leak, see :trac:`28982`.
+            The face lattice is not cached, as long as this creates a memory leak, see :issue:`28982`.
 
         EXAMPLES::
 
@@ -406,7 +406,7 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: D.degree_polynomial()
             x^5 + x^4*y + x*y^4 + y^5 + 4*x^3*y + 8*x^2*y^2 + 4*x*y^3
 
-        Faces of an mutable polyhedron are not hashable. Hence those are not suitable as
+        Faces of a mutable polyhedron are not hashable. Hence those are not suitable as
         vertices of the hasse diagram. Use the combinatorial polyhedron instead::
 
             sage: # needs sage.rings.number_field
@@ -921,7 +921,7 @@ class Polyhedron_base4(Polyhedron_base3):
             ...
             ValueError: unknown output 'foobar', valid values are ('abstract', 'permutation', 'matrix', 'matrixlist')
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
             sage: P.restricted_automorphism_group(output="matrixlist")[0].is_immutable()
             True

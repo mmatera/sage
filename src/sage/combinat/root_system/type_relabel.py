@@ -10,7 +10,7 @@ Root system data for relabelled Cartan types
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.sets.family import FiniteFamily
+from sage.sets.family import Family, FiniteFamily
 from sage.combinat.root_system import cartan_type
 from sage.combinat.root_system import ambient_space
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
@@ -117,7 +117,7 @@ class CartanType(cartan_type.CartanType_decorator):
         TESTS:
 
         Test that the produced Cartan type is in the appropriate
-        abstract classes (see :trac:`13724`)::
+        abstract classes (see :issue:`13724`)::
 
             sage: ct = CartanType(['B',4]).relabel(cycle)
             sage: TestSuite(ct).run()
@@ -146,7 +146,7 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: isinstance(ct, cartan_type.CartanType_simply_laced)
             True
 
-        Check for the original issues of :trac:`13724`::
+        Check for the original issues of :issue:`13724`::
 
             sage: A3 = CartanType("A3")
             sage: A3.cartan_matrix()                                                    # needs sage.graphs
@@ -164,7 +164,7 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: ct.symmetrizer()                                                      # needs sage.graphs
             Finite family {1: 1, 2: 3}
 
-        Check the underlying issue of :trac:`24892`, that the root system
+        Check the underlying issue of :issue:`24892`, that the root system
         of a relabelled non-crystallographic Cartan type has an
         ``ambient_space()`` that does not result in an error (note that
         this should actually return a valid ambient space, which requires
@@ -173,10 +173,10 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: rI5 = CartanType(['I',5]).relabel({1:0,2:1})
             sage: rI5.root_system().ambient_space()
         """
-        assert isinstance(relabelling, FiniteFamily)
         cartan_type.CartanType_decorator.__init__(self, type)
-        self._relabelling = relabelling._dictionary
-        self._relabelling_inverse = relabelling.inverse_family()._dictionary
+        relabelling = Family(relabelling)
+        self._relabelling = dict(relabelling.items())
+        self._relabelling_inverse = dict(relabelling.inverse_family().items())
         self._index_set = tuple(sorted(relabelling[i] for i in type.index_set()))
         # TODO: design an appropriate infrastructure to handle this
         # automatically? Maybe using categories and axioms?
@@ -599,7 +599,7 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
             0   1   2   3
             B4~ relabelled by {0: 4, 1: 0, 2: 1, 3: 2, 4: 3}
 
-        This failed before :trac:`13724`::
+        This failed before :issue:`13724`::
 
             sage: ct = CartanType(["G",2]).dual(); ct
             ['G', 2] relabelled by {1: 2, 2: 1}

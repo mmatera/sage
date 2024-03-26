@@ -33,7 +33,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import category
+from sage.categories import category
 
 
 def _Functor_unpickle(Cl, D, domain, codomain):
@@ -42,7 +42,7 @@ def _Functor_unpickle(Cl, D, domain, codomain):
 
     AUTHOR:
 
-    - Simon King (2010-12): :trac:`10460`
+    - Simon King (2010-12): :issue:`10460`
 
     EXAMPLES::
 
@@ -74,9 +74,9 @@ cdef class Functor(SageObject):
       default call method:
 
       - ``_coerce_into_domain(self, x)``: Return an object of ``self``'s
-        domain, corresponding to ``x``, or raise a ``TypeError``.
+        domain, corresponding to ``x``, or raise a :class:`TypeError`.
 
-        - Default: Raise ``TypeError`` if ``x`` is not in ``self``'s domain.
+        - Default: Raise :class:`TypeError` if ``x`` is not in ``self``'s domain.
 
       - ``_apply_functor(self, x)``: Apply ``self`` to an object ``x`` of
         ``self``'s domain.
@@ -203,7 +203,7 @@ cdef class Functor(SageObject):
 
         AUTHOR:
 
-        - Simon King (2010-12):  :trac:`10460`
+        - Simon King (2010-12):  :issue:`10460`
 
         TESTS::
 
@@ -282,11 +282,12 @@ cdef class Functor(SageObject):
         NOTE:
 
         A subclass of :class:`Functor` may overload this method. It should
-        return an object of self's domain, and should raise a ``TypeError``
-        if this is impossible.
+        return an object of self's domain, and should raise a
+        :class:`TypeError` if this is impossible.
 
-        By default, the argument will not be changed, but a ``TypeError``
-        will be raised if the argument does not belong to the domain.
+        By default, the argument will not be changed, but a
+        :class:`TypeError` will be raised if the argument does not
+        belong to the domain.
 
         TESTS::
 
@@ -313,7 +314,7 @@ cdef class Functor(SageObject):
             Functor from Category of rings to Category of fields
 
         A functor can be renamed if its type is a Python class
-        (see :trac:`16156`)::
+        (see :issue:`16156`)::
 
             sage: I = IdentityFunctor(Rings()); I
             The identity functor on Category of rings
@@ -363,7 +364,7 @@ cdef class Functor(SageObject):
         The last example shows that it is tested whether the result of
         applying the functor lies in the functor's codomain. Note that
         the matrix functor used to be defined similar to this example,
-        which was fixed in :trac:`8807`::
+        which was fixed in :issue:`8807`::
 
             sage: class IllFunctor(Functor):
             ....:   def __init__(self, m, n):
@@ -511,7 +512,7 @@ class ForgetfulFunctor_generic(Functor):
             sage: F1 = ForgetfulFunctor(FiniteFields(), Fields())
 
         This is to test against a bug occurring in a previous version
-        (see :trac:`8800`)::
+        (see :issue:`8800`)::
 
             sage: F1 == QQ #indirect doctest
             False

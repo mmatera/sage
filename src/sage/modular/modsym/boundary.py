@@ -102,7 +102,7 @@ import sage.modular.hecke.all as hecke
 from sage.modular.modsym.manin_symbol import ManinSymbol
 
 from sage.rings.rational_field import Q as QQ
-from sage.rings.ring import Ring
+from sage.categories.rings import Rings
 
 from . import element
 
@@ -320,7 +320,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
         if not arithgroup.is_CongruenceSubgroup(group):
             raise TypeError("group must be a congruence subgroup")
         sign = int(sign)
-        if not isinstance(base_ring, Ring):
+        if base_ring not in Rings().Commutative():
             raise TypeError("base_ring must be a commutative ring")
         if character is None and arithgroup.is_Gamma0(group):
             character = dirichlet.TrivialCharacter(group.level(), base_ring)
@@ -480,7 +480,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             sage: B.rank()
             16
 
-        Test that :trac:`7837` is fixed::
+        Test that :issue:`7837` is fixed::
 
             sage: ModularSymbols(Gamma1(4),7).boundary_map().codomain().dimension()
             2
@@ -567,7 +567,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             return sum([c * self._coerce_in_manin_symbol(v) for c, v in S])
 
         elif is_FreeModuleElement(x):
-            y = {i: xi for i, xi in enumerate(x)}
+            y = dict(enumerate(x))
             return BoundarySpaceElement(self, y)
 
         raise TypeError("Coercion of %s (of type %s) into %s not (yet) defined." % (x, type(x), self))
@@ -987,7 +987,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             sage: B == loads(dumps(B))
             True
 
-        A test case from :trac:`6072`::
+        A test case from :issue:`6072`::
 
             sage: ModularSymbols(GammaH(8,[5]), 3).boundary_map()
             Hecke module morphism boundary map defined by the matrix
@@ -1120,7 +1120,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             [1/11],
             -[1/11]]
 
-        Test that :trac:`6072` is fixed. ::
+        Test that :issue:`6072` is fixed. ::
 
             sage: G = GammaH(8,[3])
 
@@ -1139,7 +1139,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             sage: B3.rank()
             0
 
-        Test that :trac:`25268` is fixed::
+        Test that :issue:`25268` is fixed::
 
             sage: G = GammaH(20, [13])
             sage: A = ModularSymbols(G, 3)

@@ -19,10 +19,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .free_module import (Module_free_ambient,
-                          FreeModule_ambient,
-                          FreeModule_ambient_field)
-
+from sage.modules.free_module import (
+    FreeModule_ambient,
+    FreeModule_ambient_field,
+    Module_free_ambient,
+)
 
 ###############################################################################
 #
@@ -118,7 +119,7 @@ class QuotientModule_free_ambient(Module_free_ambient):
         """
         return self.__hash
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of this module.
 
@@ -131,7 +132,7 @@ class QuotientModule_free_ambient(Module_free_ambient):
             sage: Q.gens()
             ((1, 0), (0, 1))
         """
-        return tuple([self(list(g)) for g in self._module.gens()])
+        return tuple(self(list(g)) for g in self._module.gens())
 
     def gen(self, i=0):
         """
@@ -570,7 +571,7 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
                                    Basis matrix:
                                    [1 2]
 
-        Make sure :trac:`10513` is fixed (no coercion from an abstract
+        Make sure :issue:`10513` is fixed (no coercion from an abstract
         vector space to an isomorphic quotient vector space)::
 
             sage: V = QQ^3 / [[1,2,3]]

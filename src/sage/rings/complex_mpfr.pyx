@@ -11,7 +11,7 @@ AUTHORS:
 
 - Vincent Delecroix (2010-01): plot function
 
-- Niles Johnson (2010-08): :trac:`3893`: ``random_element()`` should pass on
+- Niles Johnson (2010-08): :issue:`3893`: ``random_element()`` should pass on
   ``*args`` and ``**kwds``.
 
 - Travis Scrimshaw (2012-10-18): Added documentation for full coverage
@@ -36,21 +36,20 @@ import sage.misc.misc
 
 from sage.libs.mpfr cimport *
 
+from sage.structure.parent cimport Parent
 from sage.structure.element cimport RingElement, Element
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
-from sage.structure.parent import Parent
-from sage.structure.parent_gens import ParentWithGens
 
 from sage.misc.sage_eval import sage_eval
 
 import sage.rings.abc
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
-from . import infinity
-from .integer cimport Integer
+from sage.rings import infinity
+from sage.rings.integer cimport Integer
 
-from .complex_double cimport ComplexDoubleElement
-from .real_mpfr cimport RealNumber
+from sage.rings.complex_double cimport ComplexDoubleElement
+from sage.rings.real_mpfr cimport RealNumber
 from sage.libs.gsl.complex cimport *
 
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
@@ -59,7 +58,12 @@ from sage.rings.integer_ring import ZZ
 cimport gmpy2
 gmpy2.import_gmpy2()
 
-# Some objects that are note imported at startup in order to break
+try:
+    from sage.libs.pari.all import pari_gen
+except ImportError:
+    pari_gen = ()
+
+# Some objects that are not imported at startup in order to break
 # circular imports
 NumberFieldElement_quadratic = None
 AlgebraicNumber_base = None
@@ -97,8 +101,8 @@ def late_import():
         QQbar = sage.rings.qqbar.QQbar
         import sage.symbolic.ring
         SR = sage.symbolic.ring.SR
-        from .real_lazy import CLF, RLF
-        from .complex_double import CDF
+        from sage.rings.real_lazy import CLF, RLF
+        from sage.rings.complex_double import CDF
 
 cdef object numpy_complex_interface = {'typestr': '=c16'}
 cdef object numpy_object_interface = {'typestr': '|O'}
@@ -277,7 +281,9 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         """
         self._prec = int(prec)
         from sage.categories.fields import Fields
-        ParentWithGens.__init__(self, self._real_field(), ('I',), False, category=Fields().Infinite().Metric().Complete())
+        Parent.__init__(self, self._real_field(), names=('I',),
+                        normalize=False,
+                        category=Fields().Infinite().Metric().Complete())
         self._populate_coercion_lists_(coerce_list=[RRtoCC(self._real_field(), self)],
                 convert_method_name='_complex_mpfr_')
 
@@ -367,7 +373,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         try:
             return self.__real_field
         except AttributeError:
-            from .real_mpfr import RealField
+            from sage.rings.real_mpfr import RealField
             self.__real_field = RealField(self._prec)
             return self.__real_field
 
@@ -463,7 +469,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             sage: CC((1,2)) # indirect doctest
             1.00000000000000 + 2.00000000000000*I
 
-        Check that :trac:`14989` is fixed::
+        Check that :issue:`14989` is fixed::
 
             sage: x = polygen(ZZ, 'x')
             sage: QQi = NumberField(x^2 + 1, 'i', embedding=CC(0,1))                    # needs sage.rings.number_field
@@ -929,7 +935,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
             if isinstance(real, ComplexNumber):
                 real, imag = (<ComplexNumber>real).real(), (<ComplexNumber>real).imag()
-            elif isinstance(real, sage.libs.pari.all.pari_gen):
+            elif isinstance(real, pari_gen):
                 real, imag = real.real(), real.imag()
             elif isinstance(real, (list, tuple)):
                 re, imag = real
@@ -953,7 +959,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         TESTS:
 
-        Check that :trac:`12038` is resolved::
+        Check that :issue:`12038` is resolved::
 
             sage: from sage.rings.complex_mpfr import ComplexNumber as CN
             sage: coerce(CN, 1+I)                                                       # needs sage.symbolic
@@ -1029,7 +1035,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: for prec in (2, 53, 200):  # not tested, known bug (see :trac:`32129`)
+            sage: for prec in (2, 53, 200):  # not tested, known bug (see :issue:`32129`)
             ....:     fld = ComplexField(prec)
             ....:     var = polygen(fld)
             ....:     ins = [-20, 0, 1, -2^4000, 2^-4000] + [fld._real_field().random_element() for _ in range(3)]
@@ -1310,7 +1316,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         Note that the general format does not exactly match the behaviour of
         ``float``. Some Python versions do not implement the full spec
-        (see :trac:`30689`)::
+        (see :issue:`30689`)::
 
             sage: format(CC(3, 0), '.4g')
             '3.000 + 0e-15*I'
@@ -1661,7 +1667,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Check that :trac:`11323` is fixed::
+        Check that :issue:`11323` is fixed::
 
             sage: float(5)^(0.5 + 14.1347251*I)
             -1.62414637645790 - 1.53692828324508*I
@@ -2232,7 +2238,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Verify that :trac:`29409` is fixed::
+        Verify that :issue:`29409` is fixed::
 
             sage: cot(1 + I).n()
             0.217621561854403 - 0.868014142895925*I
@@ -2862,7 +2868,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Check that :trac:`7099` is fixed::
+        Check that :issue:`7099` is fixed::
 
             sage: C = ComplexField(400)
             sage: C(2 + I).gamma_inc(C(3 + I))  # abs tol 1e-120                        # needs sage.libs.pari
@@ -2926,7 +2932,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         if base is None:
             return ComplexNumber(self._parent, rho.log(), theta)
         else:
-            from .real_mpfr import RealField
+            from sage.rings.real_mpfr import RealField
             return ComplexNumber(self._parent, rho.log()/RealNumber(RealField(self.prec()),base).log(), theta/RealNumber(RealField(self.prec()),base).log())
 
     def additive_order(self):
@@ -3296,7 +3302,7 @@ def create_ComplexNumber(s_real, s_imag=None, int pad=0, min_prec=53):
     TESTS:
 
     Make sure we've rounded up ``log(10,2)`` enough to guarantee
-    sufficient precision (:trac:`10164`)::
+    sufficient precision (:issue:`10164`)::
 
         sage: s = "1." + "0"*10**6 + "1"
         sage: sage.rings.complex_mpfr.create_ComplexNumber(s,0).real()-1 == 0

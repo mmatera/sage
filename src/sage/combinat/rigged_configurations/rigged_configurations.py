@@ -531,7 +531,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
         TESTS:
 
-        We check that this works with relabelled Cartan types (:trac:`16876`)::
+        We check that this works with relabelled Cartan types (:issue:`16876`)::
 
             sage: ct = CartanType(['A',3,1]).relabel(lambda x: x+2)
             sage: RC = RiggedConfigurations(ct, [[4,1],[5,1]])
@@ -731,7 +731,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`17054` is fixed::
+        Check that :issue:`17054` is fixed::
 
             sage: B = crystals.infinity.RiggedConfigurations(['A',2])
             sage: RC = RiggedConfigurations(['A',2,1], [[1,1]]*4 + [[2,1]]*4)
@@ -1111,7 +1111,7 @@ class RCNonSimplyLaced(RiggedConfigurations):
             sage: TestSuite(RC).run() # long time
             sage: RC = RiggedConfigurations(['A',5,2], [[2,1]])
             sage: TestSuite(RC).run() # long time
-         """
+        """
         self._folded_ct = cartan_type.as_folding()
         RiggedConfigurations.__init__(self, cartan_type, dims)
 

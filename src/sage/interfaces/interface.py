@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap sage.libs.pari sage.libs.singular sage.symbolic
 r"""
 Common Interface Functionality
 
@@ -23,7 +24,7 @@ AUTHORS:
 - Simon King (2015): Improve pickling for InterfaceElement
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -36,7 +37,7 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 import operator
 
@@ -272,7 +273,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
         TESTS:
 
-        Check conversion of Booleans (:trac:`28705`)::
+        Check conversion of Booleans (:issue:`28705`)::
 
             sage: giac(True)
             true
@@ -281,14 +282,14 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         cls = self._object_class()
 
-        #Handle the case when x is an object
-        #in some interface.
+        # Handle the case when x is an object
+        # in some interface.
         if isinstance(x, InterfaceElement):
             if x.parent() is self:
                 return x
 
-            #We convert x into an object in this
-            #interface by first going through Sage.
+            # We convert x into an object in this
+            # interface by first going through Sage.
             try:
                 return self(x._sage_())
             except (NotImplementedError, TypeError):
@@ -340,7 +341,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
         TESTS:
 
-        Check that python type ``complex`` can be converted (:trac:`31775`)::
+        Check that python type ``complex`` can be converted (:issue:`31775`)::
 
             sage: giac(complex(I))**2  # should not return `j^2`
             -1
@@ -348,14 +349,14 @@ class Interface(WithEqualityById, ParentWithBase):
         if isinstance(x, bool):
             return self(self._true_symbol() if x else self._false_symbol())
         elif isinstance(x, int):
-            import sage.rings.all
-            return self(sage.rings.all.Integer(x))
+            from sage.rings.integer import Integer
+            return self(Integer(x))
         elif isinstance(x, float):
-            import sage.rings.all
-            return self(sage.rings.all.RDF(x))
+            from sage.rings.real_double import RDF
+            return self(RDF(x))
         elif isinstance(x, complex):
-            import sage.rings.all
-            return self(sage.rings.all.CDF(x))
+            from sage.rings.complex_double import CDF
+            return self(CDF(x))
         if use_special:
             try:
                 return self._coerce_from_special_method(x)
@@ -470,7 +471,7 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         Set the variable var to the given value.
         """
-        cmd = '%s%s%s;' % (var,self._assign_symbol(), value)
+        cmd = '%s%s%s;' % (var, self._assign_symbol(), value)
         self.eval(cmd)
 
     def get(self, var):
@@ -612,7 +613,7 @@ class Interface(WithEqualityById, ParentWithBase):
         self._check_valid_function_name(function)
         s = self._function_call_string(function,
                                        [s.name() for s in args],
-                                       ['%s=%s' % (key,value.name()) for key, value in kwds.items()])
+                                       ['%s=%s' % (key, value.name()) for key, value in kwds.items()])
         return self.new(s)
 
     def _function_call_string(self, function, args, kwds):
@@ -881,11 +882,12 @@ class InterfaceElement(Element):
         by the doctests because the original identifier was reused. This test makes sure
         that does not happen again::
 
-            sage: a = r("'abc'")                                                  # optional - rpy2
-            sage: b = dumps(a)                                                    # optional - rpy2
-            sage: r.set(a.name(), 0) # make sure that identifier reuse            # optional - rpy2
+            sage: # optional - rpy2
+            sage: a = r("'abc'")
+            sage: b = dumps(a)
+            sage: r.set(a.name(), 0) # make sure that identifier reuse
             ....:                    # does not accidentally lead to success
-            sage: loads(b)                                                        # optional - rpy2
+            sage: loads(b)
             [1] "abc"
 
         """
@@ -953,7 +955,7 @@ class InterfaceElement(Element):
 
         Here, GAP fails to compare, and so ``False`` is returned.
         In previous Sage versions, this example actually resulted
-        in an error; compare :trac:`5962`.
+        in an error; compare :issue:`5962`.
         ::
 
             sage: gap('DihedralGroup(8)')==gap('DihedralGroup(8)')
@@ -1014,9 +1016,9 @@ class InterfaceElement(Element):
             self._check_valid()
         except ValueError:
             return
-        if hasattr(self,'_name'):
+        if hasattr(self, '_name'):
             P = self.parent()
-            if not (P is None):
+            if P is not None:
                 P.clear(self._name)
 
     def _sage_repr(self):
@@ -1051,9 +1053,9 @@ class InterfaceElement(Element):
 
         - Felix Lawrence (2009-08-21)
         """
-        #TO DO: this could use file transfers when self.is_remote()
+        # TO DO: this could use file transfers when self.is_remote()
 
-        string = repr(self).replace('\n',' ').replace('\r', '')
+        string = repr(self).replace('\n', ' ').replace('\r', '')
         # Translate the external program's function notation to Sage's
         lfd = self.parent()._left_func_delim()
         if '(' != lfd:
@@ -1185,7 +1187,7 @@ class InterfaceElement(Element):
 
         TESTS:
 
-        In :trac:`22501`, several string representation methods have been
+        In :issue:`22501`, several string representation methods have been
         removed in favour of using the default implementation. The corresponding
         tests have been moved here::
 
@@ -1339,7 +1341,7 @@ class InterfaceElement(Element):
         TESTS:
 
         By default this returns ``True`` for elements that are considered to be
-        not ``False`` by the interface (:trac:`28705`)::
+        not ``False`` by the interface (:issue:`28705`)::
 
             sage: bool(giac('"a"'))
             True
@@ -1373,8 +1375,8 @@ class InterfaceElement(Element):
             sage: QQ(m)
             1
         """
-        import sage.rings.all
-        return sage.rings.all.Integer(repr(self))
+        from sage.rings.integer import Integer
+        return Integer(repr(self))
 
     def _rational_(self):
         """
@@ -1388,8 +1390,8 @@ class InterfaceElement(Element):
             sage: QQ(m)
             1/2
         """
-        import sage.rings.all
-        return sage.rings.all.Rational(repr(self))
+        from sage.rings.rational import Rational
+        return Rational(repr(self))
 
     def name(self, new_name=None):
         """
@@ -1401,13 +1403,14 @@ class InterfaceElement(Element):
 
         EXAMPLES::
 
-            sage: x = r([1,2,3]); x                                               # optional - rpy2
+            sage: # optional - rpy2
+            sage: x = r([1,2,3]); x
             [1] 1 2 3
-            sage: x.name()                                                        # optional - rpy2
+            sage: x.name()
             'sage...'
-            sage: x = r([1,2,3]).name('x'); x                                     # optional - rpy2
+            sage: x = r([1,2,3]).name('x'); x
             [1] 1 2 3
-            sage: x.name()                                                        # optional - rpy2
+            sage: x.name()
             'x'
 
         ::

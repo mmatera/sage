@@ -196,7 +196,7 @@ floating point rings::
     sage: ComplexField(230)(a)
     13.271347940197249310098819199575813940871106820003074817832971189555
 
-Check that :trac:`8237` is fixed::
+Check that :issue:`8237` is fixed::
 
     sage: maxima('infinity').sage()
     Infinity
@@ -590,11 +590,11 @@ class Pi(Constant):
 
     def _real_double_(self, R):
         """
-         EXAMPLES::
+        EXAMPLES::
 
-             sage: pi._real_double_(RDF)
-             3.141592653589793
-         """
+            sage: pi._real_double_(RDF)
+            3.141592653589793
+        """
         return R.pi()
 
     def _sympy_(self):

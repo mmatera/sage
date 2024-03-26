@@ -58,14 +58,6 @@ from .parsing import parse_optional_tags, parse_file_optional_tags, unparse_opti
 
 auto_optional_tags = set()
 
-try:
-    from sage.libs.arb.arb_version import version as arb_vers
-    arb_tag = 'arb2' + arb_vers().split('.')[1]
-    auto_optional_tags.add(arb_tag)
-except ImportError:
-    pass
-
-
 class DocTestDefaults(SageObject):
     """
     This class is used for doctesting the Sage doctest module.
@@ -139,6 +131,7 @@ class DocTestDefaults(SageObject):
         self.show_skipped = False
         self.target_walltime = -1
         self.baseline_stats_path = None
+        self.format = "sage"
 
         # sage-runtests contains more optional tags. Technically, adding
         # auto_optional_tags here is redundant, since that is added
@@ -418,12 +411,12 @@ class DocTestController(SageObject):
             elif options.long:
                 options.timeout = int(os.getenv('SAGE_TIMEOUT_LONG', 30 * 60))
             else:
-                options.timeout = int(os.getenv('SAGE_TIMEOUT', 5 * 60))
+                options.timeout = int(os.getenv('SAGE_TIMEOUT', 10 * 60))
             # For non-default GC options, double the timeout
             if options.gc:
                 options.timeout *= 2
         if options.nthreads == 0:
-            options.nthreads = int(os.getenv('SAGE_NUM_THREADS_PARALLEL',1))
+            options.nthreads = int(os.getenv('SAGE_NUM_THREADS_PARALLEL', 1))
         if options.failed and not (args or options.new):
             # If the user doesn't specify any files then we rerun all failed files.
             options.all = True
@@ -528,7 +521,7 @@ class DocTestController(SageObject):
                 # string from DocTestDefaults
                 try:
                     self.logfile = open(options.logfile, 'a')
-                except IOError:
+                except OSError:
                     print("Unable to open logfile {!r}\nProceeding without logging.".format(options.logfile))
                     self.logfile = None
         else:
@@ -809,7 +802,7 @@ class DocTestController(SageObject):
             ....:     print(f.read())
             hello world
 
-        Check that no duplicate logs appear, even when forking (:trac:`15244`)::
+        Check that no duplicate logs appear, even when forking (:issue:`15244`)::
 
             sage: DD = DocTestDefaults(logfile=tmp_filename())
             sage: DC = DocTestController(DD, [])
@@ -974,7 +967,7 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DD, [dirname])
             sage: DC.expand_files_into_sources()
             sage: len(DC.sources)
-            11
+            12
             sage: DC.sources[0].options.optional
             True
 
@@ -1011,7 +1004,7 @@ class DocTestController(SageObject):
                 if os.path.isdir(path):
                     for root, dirs, files in os.walk(path):
                         for dir in list(dirs):
-                            if dir[0] == "." or skipdir(os.path.join(root,dir)):
+                            if dir[0] == "." or skipdir(os.path.join(root, dir)):
                                 dirs.remove(dir)
                         for file in files:
                             if not skipfile(os.path.join(root, file),
@@ -1076,6 +1069,7 @@ class DocTestController(SageObject):
             sage.doctest.test
             sage.doctest.sources
             sage.doctest.reporting
+            sage.doctest.parsing_test
             sage.doctest.parsing
             sage.doctest.forker
             sage.doctest.fixtures
@@ -1092,6 +1086,35 @@ class DocTestController(SageObject):
                 basename = source.basename
                 return -self.stats.get(basename, default).get('walltime', 0), basename
             self.sources = sorted(self.sources, key=sort_key)
+
+    def source_baseline(self, source):
+        r"""
+        Return the ``baseline_stats`` value of ``source``.
+
+        INPUT:
+
+        - ``source`` -- a :class:`DocTestSource` instance
+
+        OUTPUT:
+
+        A dictionary.
+
+        EXAMPLES::
+
+            sage: from sage.doctest.control import DocTestDefaults, DocTestController
+            sage: from sage.env import SAGE_SRC
+            sage: import os
+            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','util.py')
+            sage: DD = DocTestDefaults()
+            sage: DC = DocTestController(DD, [filename])
+            sage: DC.expand_files_into_sources()
+            sage: DC.source_baseline(DC.sources[0])
+            {}
+        """
+        if self.baseline_stats:
+            basename = source.basename
+            return self.baseline_stats.get(basename, {})
+        return {}
 
     def run_doctests(self):
         """
@@ -1138,6 +1161,8 @@ class DocTestController(SageObject):
             iterations = ", ".join(iterations)
             if iterations:
                 iterations = " (%s)" % (iterations)
+            if self.baseline_stats:
+                self.log(f"Using --baseline-stats-path={self.options.baseline_stats_path}")
             self.log("Doctesting %s%s%s." % (filestr, threads, iterations))
             self.reporter = DocTestReporter(self)
             self.dispatcher = DocTestDispatcher(self)
@@ -1316,9 +1341,9 @@ class DocTestController(SageObject):
                 flags = os.getenv("SAGE_MEMCHECK_FLAGS")
                 if flags is None:
                     flags = "--leak-resolution=high --leak-check=full --num-callers=25 "
-                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind", "pyalloc.supp"))
-                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind", "sage.supp"))
-                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind", "sage-additional.supp"))
+                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE, "valgrind", "pyalloc.supp"))
+                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE, "valgrind", "sage.supp"))
+                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE, "valgrind", "sage-additional.supp"))
             elif opt.massif:
                 toolname = "massif"
                 flags = os.getenv("SAGE_MASSIF_FLAGS", "--depth=6 ")
@@ -1333,7 +1358,7 @@ class DocTestController(SageObject):
             if opt.omega:
                 toolname = "omega"
             if "%s" in flags:
-                flags %= toolname + ".%p" # replace %s with toolname
+                flags %= toolname + ".%p"  # replace %s with toolname
         cmd += flags + sage_cmd
 
         sys.stdout.flush()
@@ -1393,7 +1418,7 @@ class DocTestController(SageObject):
             Features detected...
             0
 
-        We check that :trac:`25378` is fixed (testing external packages
+        We check that :issue:`25378` is fixed (testing external packages
         while providing a logfile does not raise a ValueError: I/O
         operation on closed file)::
 
@@ -1417,7 +1442,7 @@ class DocTestController(SageObject):
             Features detected...
             0
 
-        We test the ``--hide`` option (:trac:`34185`)::
+        We test the ``--hide`` option (:issue:`34185`)::
 
             sage: from sage.doctest.control import test_hide
             sage: filename = tmp_filename(ext='.py')
@@ -1460,6 +1485,25 @@ class DocTestController(SageObject):
                 cumulative wall time: ... seconds
             Features detected...
             0
+
+        Test *Features that have been hidden* message::
+
+            sage: DC.run()                              # optional - meataxe
+            Running doctests with ID ...
+            Using --optional=sage
+            Features to be detected: ...
+            Doctesting 1 file.
+            sage -t ....py
+                [4 tests, ... s]
+            ----------------------------------------------------------------------
+            All tests passed!
+            ----------------------------------------------------------------------
+            Total time for all tests: ... seconds
+                cpu time: ... seconds
+                cumulative wall time: ... seconds
+            Features detected...
+            Features that have been hidden: ...meataxe...
+            0
         """
         opt = self.options
         L = (opt.gdb, opt.lldb, opt.valgrind, opt.massif, opt.cachegrind, opt.omega)
@@ -1487,10 +1531,10 @@ class DocTestController(SageObject):
                     pass
                 try:
                     ref = subprocess.check_output(["git",
-                                                      "--git-dir=" + SAGE_ROOT_GIT,
-                                                      "describe",
-                                                      "--always",
-                                                      "--dirty"])
+                                                   "--git-dir=" + SAGE_ROOT_GIT,
+                                                   "describe",
+                                                   "--always",
+                                                   "--dirty"])
                     ref = ref.decode('utf-8')
                     self.log("Git ref: " + ref, end="")
                 except subprocess.CalledProcessError:
@@ -1508,12 +1552,11 @@ class DocTestController(SageObject):
                     pass
                 else:
                     f = available_software._features[i]
-                    if f.is_present():
-                        f.hide()
-                        self.options.hidden_features.add(f)
-                        for g in f.joined_features():
-                            if g.name in self.options.optional:
-                                self.options.optional.discard(g.name)
+                    f.hide()
+                    self.options.hidden_features.add(f)
+                    for g in f.joined_features():
+                        if g.name in self.options.optional:
+                            self.options.optional.discard(g.name)
 
             for o in self.options.disabled_optional:
                 try:
@@ -1524,8 +1567,6 @@ class DocTestController(SageObject):
                     available_software._seen[i] = -1
 
             self.log("Features to be detected: " + ','.join(available_software.detectable()))
-            if self.options.hidden_features:
-                self.log("Hidden features: " + ','.join([f.name for f in self.options.hidden_features]))
             if self.options.probe:
                 self.log("Features to be probed: " + ('all' if self.options.probe is True
                                                       else ','.join(self.options.probe)))
@@ -1535,11 +1576,11 @@ class DocTestController(SageObject):
             self.sort_sources()
             self.run_doctests()
 
-            for f in self.options.hidden_features:
-                f.unhide()
-
             self.log("Features detected for doctesting: "
                      + ','.join(available_software.seen()))
+            if self.options.hidden_features:
+                features_hidden = [f.name for f in self.options.hidden_features if f.unhide()]
+                self.log("Features that have been hidden: " + ','.join(features_hidden))
             self.cleanup()
             return self.reporter.error_status
 
@@ -1603,7 +1644,7 @@ def run_doctests(module, options=None):
     if not save_dtmode:
         if options.debug:
             raise ValueError("You should not try to run doctests with a debugger from within Sage: IPython objects to embedded shells")
-        from IPython import get_ipython
+        from IPython.core.getipython import get_ipython
         IP = get_ipython()
         if IP is not None:
             old_color = IP.colors

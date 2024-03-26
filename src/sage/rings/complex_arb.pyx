@@ -121,12 +121,12 @@ TESTS::
     sage: SR.coerce(CBF(0.42 + 3.33*I))                                                 # needs sage.symbolic
     [0.4200000000000000 +/- ...e-17] + [3.330000000000000 +/- ...e-17]*I
 
-Check that :trac:`19839` is fixed::
+Check that :issue:`19839` is fixed::
 
     sage: log(SR(CBF(0.42))).pyobject().parent()                                        # needs sage.symbolic
     Complex ball field with 53 bits of precision
 
-:trac:`24621`::
+:issue:`24621`::
 
     sage: CBF(NumberField(polygen(QQ, 'y')^3 + 20, 'a', embedding=CC(1.35,2.35)).gen())
     [1.35720880829745...] + [2.35075461245119...]*I
@@ -161,7 +161,7 @@ from cpython.complex cimport PyComplex_FromDoubles
 from sage.ext.stdsage cimport PY_NEW
 
 from sage.libs.mpfr cimport MPFR_RNDU, MPFR_RNDD, MPFR_PREC_MIN, mpfr_get_d_2exp
-from sage.libs.arb.types cimport ARF_RND_NEAR
+from sage.libs.arb.types cimport ARF_RND_NEAR, arf_t, mag_t
 from sage.libs.arb.arb cimport *
 from sage.libs.arb.acb cimport *
 from sage.libs.arb.acb_calc cimport *
@@ -1360,12 +1360,13 @@ cdef class ComplexBall(RingElement):
             sage: CBF100(-3r)
             -3.000000000000000000000000000000
 
-            sage: ComplexBall(CBF100, 10^100)
-            1.000000000000000000000000000000e+100
             sage: ComplexBall(CBF100, CIF(1, 2))
             1.000000000000000000000000000000 + 2.000000000000000000000000000000*I
             sage: ComplexBall(CBF100, RBF(1/3), RBF(1))
             [0.3333333333333333 +/- ...e-17] + 1.000000000000000000000000000000*I
+            sage: ComplexBall(CBF100, 10^100)
+            [1.000000000000000000000000000000e+100 +/- ...]
+
             sage: NF.<a> = QuadraticField(-1, embedding=CC(0, -1))
             sage: CBF(a)
             -1.000000000000000*I
@@ -3009,7 +3010,7 @@ cdef class ComplexBall(RingElement):
             sage: CBF(1).rising_factorial(2**64)
             [+/- ...e+347382171326740403407]
             sage: ComplexBallField(128)(1).rising_factorial(2**64)
-            [2.343691126796861348e+347382171305201285713 +/- ...e+347382171305201285694]
+            [2.34369112679686134...e+347382171305201285713 +/- ...]
             sage: CBF(1/2).rising_factorial(CBF(2,3)) # abs tol 1e-15
             [-0.123060451458124 +/- 3.06e-16] + [0.0406412631676552 +/- 7.57e-17]*I
 
@@ -4791,18 +4792,14 @@ cdef class ComplexBall(RingElement):
 
             sage: n = CBF(1,1)
             sage: m = CBF(-2/3, 3/5)
-            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # arb216
-            [0.8934793755173 +/- ...e-14] + [0.95707868710750 +/- ...e-15]*I
-            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # arb218 - this is a regression, see :trac:28623
+            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # this is a regression, see :issue:28623
             nan + nan*I
             sage: n.elliptic_pi(m)
             [0.8934793755173...] + [0.957078687107...]*I
 
             sage: n = CBF(2, 3/7)
             sage: m = CBF(-1/3, 2/9)
-            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # arb216
-            [0.2969588746419 +/- ...e-14] + [1.3188795332738 +/- ...e-14]*I
-            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # arb218 -  this is a regression, see :trac:28623
+            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # this is a regression, see :issue:28623
             nan + nan*I
             sage: n.elliptic_pi(m)
             [0.296958874641...] + [1.318879533273...]*I

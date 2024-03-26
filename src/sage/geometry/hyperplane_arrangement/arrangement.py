@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Hyperplane Arrangements
 
@@ -1355,7 +1354,7 @@ class HyperplaneArrangementElement(Element):
             ...
             TypeError: base field must have characteristic zero
 
-        Check that :trac:`30749` is fixed::
+        Check that :issue:`30749` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: R.<y> = QQ[]
@@ -2723,7 +2722,7 @@ class HyperplaneArrangementElement(Element):
 
         OUTPUT:
 
-        A polyhedron. A ``ValueError`` is raised if the point is not
+        A polyhedron. A :class:`ValueError` is raised if the point is not
         interior to a region, that is, sits on a hyperplane.
 
         EXAMPLES::
@@ -3304,7 +3303,7 @@ class HyperplaneArrangementElement(Element):
 
         TESTS:
 
-        Check that :trac:`26705` is fixed::
+        Check that :issue:`26705` is fixed::
 
             sage: # needs sage.combinat sage.groups
             sage: w = WeylGroup(['A', 4]).from_reduced_word([3, 4, 2, 1])
@@ -3786,7 +3785,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             ValueError: linear expression must be non-constant to define a hyperplane
-       """
+        """
         if len(args) == 1:
             arg = args[0]
             if isinstance(arg, HyperplaneArrangementElement) and args[0].parent() is self:
@@ -3852,7 +3851,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         return len(self._names)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the coordinate hyperplanes.
 

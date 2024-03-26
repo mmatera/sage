@@ -8,11 +8,11 @@ AUTHORS:
 
 - William Stein (2007-01-24): modifications and clean up and docs, etc.
 
-- Niles Johnson (2010-08): :trac:`3893`: ``random_element()`` should pass
+- Niles Johnson (2010-08): :issue:`3893`: ``random_element()`` should pass
   on ``*args`` and ``**kwds``.
 
 - Travis Scrimshaw (2012-10-20): Fixing scientific notation output
-  to fix :trac:`13634`.
+  to fix :issue:`13634`.
 
 - Travis Scrimshaw (2012-11-02): Added doctests for full coverage
 
@@ -258,6 +258,8 @@ from cpython.object cimport Py_EQ, Py_NE, Py_LT, Py_LE, Py_GT, Py_GE
 
 from cysignals.signals cimport sig_on, sig_off
 
+import sage.arith.misc
+
 from sage.libs.gmp.mpz cimport *
 from sage.libs.mpfr cimport *
 from sage.libs.mpfi cimport *
@@ -269,11 +271,11 @@ from sage.structure.element cimport have_same_parent
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp
 
-from .convert.mpfi cimport mpfi_set_sage
-from .real_mpfr cimport RealField_class, RealNumber, RealField
-from .integer cimport Integer
-from .integer_ring import ZZ
-from .rational_field import QQ
+from sage.rings.convert.mpfi cimport mpfi_set_sage
+from sage.rings.real_mpfr cimport RealField_class, RealNumber, RealField
+from sage.rings.integer cimport Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 cimport sage.rings.abc
 
@@ -1639,7 +1641,7 @@ cdef class RealIntervalFieldElement(RingElement):
 
         TESTS:
 
-        Check that :trac:`13634` is fixed::
+        Check that :issue:`13634` is fixed::
 
             sage: RIF(0.025)
             0.025000000000000002?
@@ -1831,7 +1833,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: -v
             -0.2679491924311227?
 
-        Check that :trac:`15166` is fixed::
+        Check that :issue:`15166` is fixed::
 
             sage: RIF(1.84e13).exp()
             [2.0985787164673874e323228496 .. +infinity] # 32-bit
@@ -3867,7 +3869,7 @@ cdef class RealIntervalFieldElement(RingElement):
             False
 
         Check that ``_richcmp_`` is also working for intervals with different
-        precisions (:trac:`29220`)::
+        precisions (:issue:`29220`)::
 
             sage: from sage.structure.richcmp import op_LT, op_GT
             sage: R1 = RealIntervalField(2)
@@ -5035,7 +5037,7 @@ cdef class RealIntervalFieldElement(RingElement):
 
         known_bits = -self.relative_diameter().log2()
 
-        return sage.arith.all.algdep(self.center(), n, known_bits=known_bits)
+        return sage.arith.misc.algdep(self.center(), n, known_bits=known_bits)
 
     def factorial(self):
         """
@@ -5292,7 +5294,7 @@ def RealInterval(s, upper=None, int base=10, int pad=0, min_prec=53):
     TESTS:
 
     Make sure we've rounded up ``log(10,2)`` enough to guarantee
-    sufficient precision (:trac:`10164`).  This is a little tricky
+    sufficient precision (:issue:`10164`).  This is a little tricky
     because at the time of writing, we don't support intervals long
     enough to trip the error.  However, at least we can make sure
     that we either do it correctly or fail noisily::

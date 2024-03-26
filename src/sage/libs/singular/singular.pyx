@@ -1721,7 +1721,7 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     Whether an overflow occurs or not partially depends
 
     on the number of variables in the ring. See github issue
-    :trac:`11856`. With Singular 4, it is by default optimized
+    :issue:`11856`. With Singular 4, it is by default optimized
     for at least 4 variables on 64-bit and 2 variables on 32-bit,
     which in both cases makes a maximal default exponent of
     2^16-1.
@@ -1776,14 +1776,12 @@ cdef init_libsingular() noexcept:
     else:
         os.environ["SINGULAR_BIN_DIR"] = dirname(singular_executable)
 
-    import platform
-    if not platform.system().startswith("CYGWIN"):
-        # reload the current module to force reload of libSingular (see #33446)
-        lib = str_to_bytes(__loader__.path, FS_ENCODING, "surrogateescape")
-        handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
-        if not handle:
-            err = dlerror()
-            raise RuntimeError(f"Could not reload Singular library with RTLD_GLOBAL ({err})")
+    # reload the current module to force reload of libSingular (see #33446)
+    lib = str_to_bytes(__loader__.path, FS_ENCODING, "surrogateescape")
+    handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
+    if not handle:
+        err = dlerror()
+        raise RuntimeError(f"Could not reload Singular library with RTLD_GLOBAL ({err})")
 
     # load SINGULAR
     siInit(lib)

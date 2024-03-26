@@ -37,6 +37,7 @@ from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpq cimport *
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.fmpq_poly cimport *
+from sage.libs.flint.fmpq_poly_sage cimport *
 
 from sage.interfaces.singular import singular as singular_default
 
@@ -222,7 +223,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         cdef unsigned long n
         cdef Rational c
         cdef list L1
-        cdef mpq_t * L2
+        cdef fmpq_t q
 
         Polynomial.__init__(self, parent, is_gen=is_gen)
 
@@ -253,14 +254,11 @@ cdef class Polynomial_rational_flint(Polynomial):
             L1 = [e if isinstance(e, Rational) else Rational(e) for e in x]
             n  = <unsigned long> len(x)
             sig_on()
-            L2 = <mpq_t *> check_allocarray(n, sizeof(mpq_t))
+            fmpq_poly_fit_length(self._poly, n)
             for deg from 0 <= deg < n:
-                mpq_init(L2[deg])
-                mpq_set(L2[deg], (<Rational> L1[deg]).value)
-            fmpq_poly_set_array_mpq(self._poly, L2, n)
-            for deg from 0 <= deg < n:
-                mpq_clear(L2[deg])
-            sig_free(L2)
+                fmpq_init_set_readonly(q, (<Rational> L1[deg]).value)
+                fmpq_poly_set_coeff_fmpq(self._poly, deg, q)
+                fmpq_clear_readonly(q)
             sig_off()
 
 #           deg = 0
@@ -435,6 +433,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         utmost care.
         """
         cdef bint do_sig = _do_sig(self._poly)
+        cdef fmpz_t tmpfz
 
         if isinstance(value, int):
             if do_sig: sig_str("FLINT exception")
@@ -442,7 +441,9 @@ cdef class Polynomial_rational_flint(Polynomial):
             if do_sig: sig_off()
         elif isinstance(value, Integer):
             if do_sig: sig_str("FLINT exception")
-            fmpq_poly_set_coeff_mpz(self._poly, n, (<Integer> value).value)
+            fmpz_init_set_readonly(tmpfz, (<Integer> value).value)
+            fmpq_poly_set_coeff_fmpz(self._poly, n, tmpfz)
+            fmpz_clear_readonly(tmpfz)
             if do_sig: sig_off()
         elif isinstance(value, Rational):
             if do_sig: sig_str("FLINT exception")
@@ -492,7 +493,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         cdef Polynomial_rational_flint f
         cdef Rational r
         cdef fmpz_t tmpfz
-        cdef fmpq_t tmpfq
+        cdef fmpq_t tmpfq, tmpfq1
         cdef RealBall arb_a, arb_z
         cdef ComplexBall acb_a, acb_z
 
@@ -508,13 +509,23 @@ cdef class Polynomial_rational_flint(Polynomial):
             elif isinstance(a, Rational):
                 r = Rational.__new__(Rational)
                 sig_str("FLINT exception")
-                fmpq_poly_evaluate_mpq(r.value, self._poly, (<Rational> a).value)
+                fmpq_init_set_readonly(tmpfq, (<Rational> a).value)
+                fmpq_init(tmpfq1)
+                fmpq_poly_evaluate_fmpq(tmpfq1, self._poly, tmpfq)
+                fmpq_get_mpq(r.value, tmpfq1)
+                fmpq_clear(tmpfq1)
+                fmpq_clear_readonly(tmpfq)
                 sig_off()
                 return r
             elif isinstance(a, Integer):
                 r = Rational.__new__(Rational)
                 sig_str("FLINT exception")
-                fmpq_poly_evaluate_mpz(r.value, self._poly, (<Integer> a).value)
+                fmpz_init_set_readonly(tmpfz, (<Integer> a).value)
+                fmpq_init(tmpfq)
+                fmpq_poly_evaluate_fmpz(tmpfq, self._poly, tmpfz)
+                fmpq_get_mpq(r.value, tmpfq)
+                fmpq_clear(tmpfq)
+                fmpz_clear_readonly(tmpfz)
                 sig_off()
                 return r
             elif isinstance(a, int):
@@ -1027,7 +1038,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         TESTS:
 
-        The following example used to crash (cf. :trac:`11771`)::
+        The following example used to crash (cf. :issue:`11771`)::
 
             sage: R.<t> = QQ[]
             sage: f = 10**383 * (t+1)
@@ -1206,7 +1217,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             ...
             OverflowError: Sage Integer too large to convert to C long
 
-        FLINT memory errors do not crash Sage (:trac:`17629`)::
+        FLINT memory errors do not crash Sage (:issue:`17629`)::
 
             sage: t^(sys.maxsize//2)
             Traceback (most recent call last):
@@ -1214,13 +1225,13 @@ cdef class Polynomial_rational_flint(Polynomial):
             RuntimeError: FLINT exception
 
         Flush the output buffer to get rid of stray output -- see
-        :trac:`28649`::
+        :issue:`28649`::
 
             sage: from sage.misc.misc_c import cyflush
             sage: cyflush()
             ...
 
-        Test fractional powers (:trac:`20086`)::
+        Test fractional powers (:issue:`20086`)::
 
             sage: P.<R> = QQ[]
             sage: (1/27*R^3 + 2/3*R^2 + 4*R + 8)^(2/3)
@@ -1321,6 +1332,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         """
         cdef Polynomial_rational_flint res
         cdef bint do_sig
+        cdef fmpq_t tmpfq
 
         if right == 0:
             raise ZeroDivisionError("division by zero polynomial")
@@ -1331,8 +1343,9 @@ cdef class Polynomial_rational_flint(Polynomial):
                 do_sig = _do_sig(self._poly)
 
                 if do_sig: sig_str("FLINT exception")
-                fmpq_poly_scalar_div_mpq(res._poly, self._poly,
-                                                  (<Rational> QQ(right)).value)
+                fmpq_init_set_readonly(tmpfq, (<Rational> QQ(right)).value)
+                fmpq_poly_scalar_div_fmpq(res._poly, self._poly, tmpfq)
+                fmpq_clear_readonly(tmpfq)
                 if do_sig: sig_off()
                 return res
 
@@ -1504,7 +1517,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             ...
             ValueError: cannot differentiate with respect to 2*x
 
-        Check that :trac:`28187` is fixed::
+        Check that :issue:`28187` is fixed::
 
             sage: x = var("x")                                                          # needs sage.symbolic
             sage: f._derivative(x)                                                      # needs sage.symbolic
@@ -2097,7 +2110,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
+            sage: # needs sage.groups sage.libs.pari
             sage: R.<x> = QQ[]
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: G = f.galois_group(); G
@@ -2114,7 +2127,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         ::
 
-            sage: # needs sage.libs.pari
+            sage: # needs sage.groups sage.libs.pari
             sage: f = x^4 - 17*x^3 - 2*x + 1
             sage: G = f.galois_group(pari_group=True); G
             PARI group [24, -1, 5, "S4"] of degree 4
@@ -2159,7 +2172,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             ValueError: The polynomial must be irreducible
 
         Variable names that are reserved in PARI, such as ``zeta``,
-        are supported (see :trac:`20631`)::
+        are supported (see :issue:`20631`)::
 
             sage: R.<zeta> = QQ[]
             sage: (zeta^2 + zeta + 1).galois_group(pari_group=True)                     # needs sage.libs.pari
@@ -2256,7 +2269,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             (x + 2)^5
 
         Variable names that are reserved in PARI, such as ``zeta``,
-        are supported (see :trac:`20631`)::
+        are supported (see :issue:`20631`)::
 
             sage: R.<zeta> = QQ[]
             sage: (zeta^2 + zeta + 1).factor_mod(7)
@@ -2311,7 +2324,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         The input polynomial is considered to have "infinite" precision,
         therefore the `p`-adic factorization of the polynomial is not
         the same as first coercing to `\QQ_p` and then factoring
-        (see also :trac:`15422`)::
+        (see also :issue:`15422`)::
 
             sage: # needs sage.rings.padic
             sage: f = x^2 - 3^6
@@ -2400,7 +2413,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             [x + 48]
 
         Variable names that are reserved in PARI, such as ``I``, are
-        supported (see :trac:`20631`)::
+        supported (see :issue:`20631`)::
 
             sage: R.<I> = QQ[]
             sage: (I^2 + 1).hensel_lift(5, 3)
@@ -2506,7 +2519,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             1
 
         Variable names that are reserved in PARI, such as ``I``, are
-        supported (see :trac:`20631`)::
+        supported (see :issue:`20631`)::
 
             sage: R.<I> = QQ[]
             sage: (I^2 + 1).discriminant()

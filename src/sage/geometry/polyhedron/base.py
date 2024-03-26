@@ -278,7 +278,7 @@ class Polyhedron_base(Polyhedron_base7):
             ...
             TypeError: The PPL backend only supports rational data.
 
-        Test that equations are handled correctly (:trac:`24154`)::
+        Test that equations are handled correctly (:issue:`24154`)::
 
             sage: p = Polyhedron(vertices=[[19]])
             sage: lp, x = p.to_linear_program(return_variable=True)
@@ -504,7 +504,7 @@ class Polyhedron_base(Polyhedron_base7):
 
         TESTS:
 
-        We check that :trac:`28464` is fixed::
+        We check that :issue:`28464` is fixed::
 
             sage: P = Polyhedron(vertices=[(-130658298093891402635075/416049251842505144482473,
             ....: 177469511761879509172000/1248147755527515433447419,
@@ -551,7 +551,7 @@ class Polyhedron_base(Polyhedron_base7):
             sage: P.is_inscribed()
             True
 
-        We check that :trac:`29125` is fixed::
+        We check that :issue:`29125` is fixed::
 
             sage: P = Polyhedron(vertices=[[-2,-1], [-2,1], [0,-1], [0,1]], backend='field')
             sage: P.is_inscribed()
@@ -1175,12 +1175,13 @@ class Polyhedron_base(Polyhedron_base7):
 
         Floating-point polyhedron::
 
-            sage: P = polytopes.dodecahedron(exact=False); P                            # needs sage.groups
+            sage: # optional - jupymake, needs sage.groups
+            sage: P = polytopes.dodecahedron(exact=False); P
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 20 vertices
-            sage: print("Maybe recompile warning"); PP = polymake(P); PP        # optional - jupymake, needs sage.groups
+            sage: print("There may be a recompilation warning"); PP = polymake(P); PP
             There may be a recompilation warning...
             Polytope<Float>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0]                           # optional - jupymake, needs sage.groups
+            sage: sorted(PP.VERTICES[:], key=repr)[0]
             1 -0.472135955 0 -1.236067978
 
         """

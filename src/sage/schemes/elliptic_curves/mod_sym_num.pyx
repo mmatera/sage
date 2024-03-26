@@ -722,7 +722,7 @@ cdef class ModularSymbolNumerical:
         -4/5
     """
     cdef:
-        llong _N_E,  _cut_val, _t_plus, _t_minus
+        llong _N_E, _cut_val, _t_plus, _t_minus
         llong _t_unitary_minus, _t_unitary_plus
         int _lans
         int * _ans
@@ -736,10 +736,10 @@ cdef class ModularSymbolNumerical:
         int _global_sign
 
         # debug and optimisation
-        #public Integer nc_sums # number of calls to summation
-        #public Integer nc_direct # number of direct integrations vs
-        #public Integer nc_indirect # number of indirect
-        #public Integer nc_terms # number of terms summed in total
+        # public Integer nc_sums # number of calls to summation
+        # public Integer nc_direct # number of direct integrations vs
+        # public Integer nc_indirect # number of indirect
+        # public Integer nc_terms # number of terms summed in total
 
     def __cinit__(self):
         r"""
@@ -1315,7 +1315,7 @@ cdef class ModularSymbolNumerical:
         if self._ans is NULL or self._ans_num is NULL:
             if self._ans is not NULL: sig_free(self._ans)
             if self._ans_num is not NULL: sig_free(self._ans_num)
-            raise MemoryError("Memory error with an coefficients.")
+            raise MemoryError("Memory error with coefficients.")
 
         verbose("   not enough precomputed coefficients, "
                 "adding %s"%(T - self._lans), level=3)
@@ -2684,7 +2684,7 @@ cdef class ModularSymbolNumerical:
             sage: M._symbol_non_unitary(1/7,sign=-1)
             5/28
 
-        Test for :trac:`28476` ::
+        Test for :issue:`28476` ::
 
             sage: M = ModularSymbolNumerical(EllipticCurve("361a1"))
             sage: M._symbol_non_unitary(1/19)
@@ -3302,7 +3302,7 @@ cdef class ModularSymbolNumerical:
             sage: M._evaluate_approx(1/17,0.01) # abs tol 1e-11
             1.08712572498569 - 0.548379313090719*I
 
-       Test that is also works for non-unitary cusps (:trac:`29476`) ::
+       Test that is also works for non-unitary cusps (:issue:`29476`) ::
 
             sage: E = EllipticCurve("20a1")
             sage: m = E.modular_symbol_numerical()
