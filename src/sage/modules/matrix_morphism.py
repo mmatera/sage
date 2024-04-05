@@ -757,6 +757,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             If the two morphisms do not share the same ``side`` attribute, then
             the resulting morphism will be defined with the default value.
         """
+        if not isinstance(other, MatrixMorphism):
+            # The coercion only guarantees that they have the same parent,
+            # but homspaces can use multiple types of element classes.
+            return NotImplemented
         if self.side() == "left":
             if other.side() == "left":
                 return self.parent()(self.matrix() + other.matrix(), side=self.side())
@@ -822,6 +826,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             If the two morphisms do not share the same ``side`` attribute, then
             the resulting morphism will be defined with the default value.
         """
+        if not isinstance(other, MatrixMorphism):
+            # The coercion only guarantees that they have the same parent,
+            # but homspaces can use multiple types of element classes.
+            return NotImplemented
         if self.side() == "left":
             if other.side() == "left":
                 return self.parent()(self.matrix() - other.matrix(), side=self.side())
