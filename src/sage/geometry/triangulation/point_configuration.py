@@ -18,11 +18,7 @@ more details.
 
 Finding a single triangulation and listing all connected
 triangulations is implemented natively in this package. However, for
-more advanced options [TOPCOM]_ needs to be installed. It is available
-as an optional package for Sage, and you can install it with the
-shell command ::
-
-    sage -i topcom
+more advanced options [TOPCOM]_ needs to be installed; see :ref:`spkg_topcom`.
 
 .. note::
 
@@ -182,6 +178,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
+from sage.features.topcom import TOPCOMExecutable
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
 
@@ -611,7 +608,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             ['{{0,1,2,4},{1,2,3,4}}']
         """
         timeout = 600
-        proc = pexpect.spawn(executable, timeout=timeout)
+        executable_name, *args = executable.split()
+        executable_absname = TOPCOMExecutable(executable_name).absolute_filename()
+        proc = pexpect.spawn(executable_absname, args, timeout=timeout)
         proc.expect(r'Evaluating Commandline Options \.\.\.')
         proc.expect(r'\.\.\. done\.')
         proc.setecho(0)
