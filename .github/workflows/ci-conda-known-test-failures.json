@@ -8,14 +8,23 @@
     "sage.algebras.fusion_rings.fusion_ring": {
         "failed": "unreported random timeouts"
     },
+    "sage.categories.simplicial_sets": {
+        "failed": "failure (from GAP 4.13?) seen in https://github.com/sagemath/sage/actions/runs/9066914632/job/24910883869?pr=37998#step:10:8066"
+    },
     "sage.combinat.cluster_algebra_quiver.quiver": {
         "failed": "failure seen in https://github.com/sagemath/sage/actions/runs/6836592771/job/18591690058#step:11:10059"
     },
     "sage.geometry.cone": {
         "failed": "unreported random timeouts seen in https://github.com/sagemath/sage/actions/runs/6827937663/job/18571052628#step:11:12362"
     },
+    "sage.groups.finitely_presented": {
+        "failed": "failure (from GAP 4.13?) seen in https://github.com/sagemath/sage/actions/runs/9066914632/job/24910883869?pr=37998#step:10:4558"
+    },
     "sage.groups.matrix_gps.finitely_generated_gap": {
         "failed": true
+    },
+    "sage.groups.perm_gps.permgroup_named": {
+        "failed": "failure (from GAP 4.13?) seen in https://github.com/sagemath/sage/actions/runs/9066914632/job/24910883869?pr=37998#step:10:4812"
     },
     "sage.interfaces.expect": {
         "failed": true
@@ -53,6 +62,12 @@
     "sage.rings.function_field.drinfeld_modules.morphism": {
         "failed": "unreported random failure seen in https://github.com/sagemath/sage/actions/runs/6840502530/job/18599835766#step:11:10107"
     },
+    "sage.rings.number_field.galois_group": {
+        "failed": "unreported failure (sort order) in GaloisGroup_v2.artin_symbol, https://github.com/sagemath/sage/actions/runs/9066914632/job/24910883869?pr=37998#step:10:7896"
+    },
+    "sage.rings.number_field.number_field": {
+        "failed": "unreported failure (sort order) in NumberField_absolute.[optimized_]subfields, https://github.com/sagemath/sage/actions/runs/9066914632/job/24910883869?pr=37998#step:10:7937"
+    },
     "sage.rings.polynomial.multi_polynomial_ideal": {
         "failed": true
     },
@@ -64,6 +79,9 @@
     },
     "sage.rings.polynomial.skew_polynomial_finite_field": {
         "failed": true
+    },
+    "sage.rings.qqbar": {
+        "failed": "unreported failure seen in https://github.com/sagemath/sage/actions/runs/9066914632/job/24910883869?pr=37998#step:10:8581"
     },
     "sage.schemes.elliptic_curves.descent_two_isogeny": {
         "failed": "random segfault (macOS) https://github.com/sagemath/sage/issues/36949"
