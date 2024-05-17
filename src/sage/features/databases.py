@@ -194,7 +194,7 @@ class DatabaseKnotInfo(PythonModule):
             sage: isinstance(DatabaseKnotInfo(), DatabaseKnotInfo)
             True
         """
-        PythonModule.__init__(self, 'database_knotinfo', spkg='database_knotinfo')
+        PythonModule.__init__(self, 'database_knotinfo', spkg='pkg:pypi/database-knotinfo')
 
 
 class DatabaseMatroids(PythonModule):
@@ -220,7 +220,7 @@ class DatabaseMatroids(PythonModule):
             sage: isinstance(DatabaseMatroids(), DatabaseMatroids)
             True
         """
-        PythonModule.__init__(self, "matroid_database", spkg="matroid_database")
+        PythonModule.__init__(self, "matroid_database", spkg="pkg:pypi/matroid-database")
 
 
 class DatabaseCubicHecke(PythonModule):
@@ -246,7 +246,7 @@ class DatabaseCubicHecke(PythonModule):
             sage: isinstance(DatabaseCubicHecke(), DatabaseCubicHecke)
             True
         """
-        PythonModule.__init__(self, 'database_cubic_hecke', spkg='database_cubic_hecke')
+        PythonModule.__init__(self, 'database_cubic_hecke', spkg='pkg:pypi/database-cubic-hecke')
 
 
 class DatabaseReflexivePolytopes(StaticFile):
@@ -288,7 +288,7 @@ class DatabaseReflexivePolytopes(StaticFile):
 
 
 def all_features():
-    return [PythonModule('conway_polynomials', spkg='conway_polynomials', type='standard'),
+    return [PythonModule('conway_polynomials', spkg='pkg:pypi/conway-polynomials', type='standard'),
             DatabaseCremona(),
             DatabaseCremona('cremona_mini', type='standard'),
             DatabaseEllcurves(),
