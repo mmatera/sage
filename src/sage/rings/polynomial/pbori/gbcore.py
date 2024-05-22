@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-brial
+
 import contextlib
 from copy import copy
 from itertools import chain
