@@ -136,14 +136,12 @@ jobs:
         id: image
         uses: docker/build-push-action@v5
         with:
-          # push and load may not be set together at the moment
-          #
           # We are using "push" (to the local registry) because it was
           # more reliable than "load", for which we observed random failure
           # conditions in which the built image could not be found.
           #
           push:       true
-          load:       false
+          load:       true
           context:    .
           tags:       ${{ env.BUILD_IMAGE }}
           target:     with-targets
