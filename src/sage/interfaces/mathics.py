@@ -515,6 +515,8 @@ class Mathics(Interface):
         """
         if not self._session:
             from mathics.session import MathicsSession
+            from mathics.core.load_builtin import import_and_load_builtins
+            import_and_load_builtins()
             self._session = MathicsSession()
             from sage.interfaces.sympy import sympy_init
             sympy_init()
