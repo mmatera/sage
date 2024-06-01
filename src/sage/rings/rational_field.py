@@ -1700,7 +1700,7 @@ def is_RationalField(x) -> bool:
 
     EXAMPLES::
 
-        sage: from sage.rings.rational_field import RationalField as is_RF
+        sage: from sage.rings.rational_field import is_RationalField as is_RF
         sage: is_RF(QQ)
         True
         sage: is_RF(ZZ)
