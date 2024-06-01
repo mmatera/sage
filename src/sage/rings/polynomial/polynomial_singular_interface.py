@@ -41,7 +41,7 @@ import sage.rings.fraction_field
 import sage.rings.abc
 import sage.rings.number_field as number_field
 
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.function_field.function_field_rational import RationalFunctionField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer_ring import ZZ
@@ -75,7 +75,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
     if base_ring is ZZ:
         return make_ring("(ZZ)"), None
 
-    if sage.rings.rational_field.is_RationalField(base_ring):
+    if sage.rings.rational_field.isinstance(base_ring, RationalField):
         return make_ring("(QQ)"), None
 
     elif isinstance(base_ring, sage.rings.abc.RealField):
@@ -137,7 +137,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
         return R, minpoly
 
-    elif sage.rings.fraction_field.is_FractionField(base_ring):
+    elif sage.rings.fraction_field.isinstance(base_ring, FractionField_generic):
         if base_ring.ngens() == 1:
             gens = str(base_ring.gen())
         else:
@@ -431,7 +431,7 @@ def can_convert_to_singular(R):
 
     base_ring = R.base_ring()
     if (base_ring is ZZ
-        or is_RationalField(base_ring)
+        or isinstance(base_ring, RationalField)
         or isinstance(base_ring, (sage.rings.abc.IntegerModRing,
                                   sage.rings.abc.RealField, sage.rings.abc.ComplexField,
                                   sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField))):
@@ -440,7 +440,7 @@ def can_convert_to_singular(R):
         return base_ring.characteristic() <= 2147483647
     elif isinstance(base_ring, NumberField):
         return base_ring.is_absolute()
-    elif sage.rings.fraction_field.is_FractionField(base_ring):
+    elif sage.rings.fraction_field.isinstance(base_ring, FractionField_generic):
         B = base_ring.base_ring()
         return (B.is_prime_field() or B is ZZ
                 or (isinstance(B, FiniteField) and B.characteristic() <= 2147483647))

@@ -595,7 +595,7 @@ from sage.misc.misc import increase_recursion_limit
 from sage.rings import infinity
 from sage.rings.cc import CC
 from sage.rings.cif import CIF
-from sage.rings.complex_interval import is_ComplexIntervalFieldElement
+from sage.rings.complex_interval import ComplexIntervalFieldElement
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import (
@@ -1437,7 +1437,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
             sage: r = AA.polynomial_root(p, RIF(1, 2)); r^3
             2.000000000000000?
         """
-        if not is_RealIntervalFieldElement(interval):
+        if not isinstance(interval, RealIntervalFieldElement):
             raise ValueError("interval argument of .polynomial_root on algebraic real field must be real")
 
         return AlgebraicReal(ANRoot(poly, interval, multiplicity))
@@ -1573,7 +1573,7 @@ def is_AlgebraicRealField(F):
 
     EXAMPLES::
 
-        sage: from sage.rings.qqbar import is_AlgebraicRealField
+        sage: from sage.rings.qqbar import AlgebraicRealField
         sage: [is_AlgebraicRealField(x) for x in [AA, QQbar, None, 0, "spam"]]
         doctest:warning...
         DeprecationWarning: is_AlgebraicRealField is deprecated;
@@ -2490,7 +2490,7 @@ def conjugate_expand(v):
         sage: conjugate_expand(RIF(1, 2)).str(style='brackets')
         '[1.0000000000000000 .. 2.0000000000000000]'
     """
-    if is_RealIntervalFieldElement(v):
+    if isinstance(v, RealIntervalFieldElement):
         return v
     im = v.imag()
     if not im.contains_zero():
@@ -2523,7 +2523,7 @@ def conjugate_shrink(v):
         sage: conjugate_shrink(CIF(RIF(1, 2), RIF(-1, 2))).str(style='brackets')
         '[1.0000000000000000 .. 2.0000000000000000]'
     """
-    if is_RealIntervalFieldElement(v):
+    if isinstance(v, RealIntervalFieldElement):
         return v
     im = v.imag()
     if im.contains_zero():
@@ -4508,9 +4508,9 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         """
         self._descr = new_descr
         new_val = self._descr._interval_fast(self.parent().default_interval_prec())
-        if is_RealIntervalFieldElement(new_val) and is_ComplexIntervalFieldElement(self._value):
+        if isinstance(new_val, RealIntervalFieldElement) and isinstance(self._value, ComplexIntervalFieldElement):
             self._value = self._value.real().intersection(new_val)
-        elif is_RealIntervalFieldElement(self._value) and is_ComplexIntervalFieldElement(new_val):
+        elif isinstance(self._value, RealIntervalFieldElement) and isinstance(new_val, ComplexIntervalFieldElement):
             self._value = self._value.intersection(new_val.real())
         else:
             self._value = self._value.intersection(new_val)
@@ -4758,7 +4758,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         target = RR(1.0) >> field.prec()
         val = self.interval_diameter(target)
         if (isinstance(field, (RealIntervalField_class, RealBallField))
-                and is_ComplexIntervalFieldElement(val)):
+                and isinstance(val, ComplexIntervalFieldElement)):
             if val.imag().is_zero():
                 return field(val.real())
             elif self.imag().is_zero():
@@ -4827,7 +4827,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         # Adapted from NumberFieldElement._symbolic_()
         poly = self.minpoly()
-        if is_ComplexIntervalFieldElement(self._value):
+        if isinstance(self._value, ComplexIntervalFieldElement):
             interval_field = self._value.parent()
         else:
             interval_field = ComplexIntervalField(self._value.prec())
@@ -5485,7 +5485,7 @@ class AlgebraicReal(AlgebraicNumber_base):
             sage: type(b._value)
             <class 'sage.rings.real_mpfi.RealIntervalFieldElement'>
         """
-        if is_ComplexIntervalFieldElement(self._value):
+        if isinstance(self._value, ComplexIntervalFieldElement):
             self._value = self._value.real()
 
     def _more_precision(self):
@@ -6468,7 +6468,7 @@ class AlgebraicNumberPowQQAction(Action):
                         argument = argument - 2 * argument.parent().pi()
             else:
                 val = x._interval_fast(prec)
-                if is_RealIntervalFieldElement(val) or not val.crosses_log_branch_cut():
+                if isinstance(val, RealIntervalFieldElement) or not val.crosses_log_branch_cut():
                     argument = val.argument()
                     if val.imag().is_zero() and val.real() < 0:
                         argument_is_pi = True
@@ -6748,12 +6748,12 @@ def is_AlgebraicReal(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.qqbar import is_AlgebraicReal
+        sage: from sage.rings.qqbar import AlgebraicReal
         sage: is_AlgebraicReal(AA(sqrt(2)))                                             # needs sage.symbolic
         True
         sage: is_AlgebraicReal(QQbar(sqrt(2)))                                          # needs sage.symbolic
         False
-        sage: is_AlgebraicReal("spam")
+        sage: isinstance("spam", AlgebraicReal)
         False
     """
     return isinstance(x, AlgebraicReal)
@@ -6765,12 +6765,12 @@ def is_AlgebraicNumber(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.qqbar import is_AlgebraicNumber
+        sage: from sage.rings.qqbar import AlgebraicNumber
         sage: is_AlgebraicNumber(AA(sqrt(2)))                                           # needs sage.symbolic
         False
         sage: is_AlgebraicNumber(QQbar(sqrt(2)))                                        # needs sage.symbolic
         True
-        sage: is_AlgebraicNumber("spam")
+        sage: isinstance("spam", AlgebraicNumber)
         False
     """
     return isinstance(x, AlgebraicNumber)
@@ -7053,7 +7053,7 @@ class ANRoot(ANDescr):
             poly = AlgebraicPolynomialTracker(poly)
         self._poly = poly
         self._multiplicity = multiplicity
-        self._complex = is_ComplexIntervalFieldElement(interval)
+        self._complex = isinstance(interval, ComplexIntervalFieldElement)
         self._complex_poly = poly.is_complex()
         self._interval = self.refine_interval(interval, 64)
 
@@ -7139,7 +7139,7 @@ class ANRoot(ANDescr):
         intv = self._interval
         # Check whether a 53-bit interval actually isolates the root.
         # If so, use it, because 53-bit intervals print prettier.
-        if is_ComplexIntervalFieldElement(intv):
+        if isinstance(intv, ComplexIntervalFieldElement):
             loose_intv = CIF(intv)
         else:
             loose_intv = RIF(intv)
@@ -7989,7 +7989,7 @@ class ANExtensionElement(ANDescr):
     def _interval_fast(self, prec):
         gen_val = self._generator._interval_fast(prec)
         v = self._value.polynomial()(gen_val)
-        if self._exactly_real and is_ComplexIntervalFieldElement(v):
+        if self._exactly_real and isinstance(v, ComplexIntervalFieldElement):
             return v.real()
         return v
 
@@ -8338,7 +8338,7 @@ class ANUnaryExpr(ANDescr):
 
         v = self._arg._interval_fast(prec)
 
-        if not is_ComplexIntervalFieldElement(v):
+        if not isinstance(v, ComplexIntervalFieldElement):
             self._complex = False
 
         if op == '-':
@@ -8348,7 +8348,7 @@ class ANUnaryExpr(ANDescr):
             return ~v
 
         if op == 'conjugate':
-            if is_ComplexIntervalFieldElement(v):
+            if isinstance(v, ComplexIntervalFieldElement):
                 return v.conjugate()
             else:
                 return v
@@ -8356,13 +8356,13 @@ class ANUnaryExpr(ANDescr):
         self._complex = False
 
         if op == 'real':
-            if is_ComplexIntervalFieldElement(v):
+            if isinstance(v, ComplexIntervalFieldElement):
                 return v.real()
             else:
                 return v
 
         if op == 'imag':
-            if is_ComplexIntervalFieldElement(v):
+            if isinstance(v, ComplexIntervalFieldElement):
                 return v.imag()
             else:
                 return RealIntervalField(prec)(0)
@@ -8371,7 +8371,7 @@ class ANUnaryExpr(ANDescr):
             return abs(v)
 
         if op == 'norm':
-            if is_ComplexIntervalFieldElement(v):
+            if isinstance(v, ComplexIntervalFieldElement):
                 return v.norm()
             else:
                 return v.square()
@@ -8612,7 +8612,7 @@ class ANBinaryExpr(ANDescr):
         lv = self._left._interval_fast(prec)
         rv = self._right._interval_fast(prec)
 
-        if not (is_ComplexIntervalFieldElement(lv) or is_ComplexIntervalFieldElement(rv)):
+        if not (isinstance(lv, ComplexIntervalFieldElement) or isinstance(rv, ComplexIntervalFieldElement)):
             self._complex = False
 
         return op(lv, rv)
