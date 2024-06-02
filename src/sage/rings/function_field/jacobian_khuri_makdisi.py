@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Jacobians in Khuri-Makdisi model
 

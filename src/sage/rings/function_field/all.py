@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from sage.rings.function_field.all__sagemath_categories import *
 
 from sage.misc.lazy_import import lazy_import
