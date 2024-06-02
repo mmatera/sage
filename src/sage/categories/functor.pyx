@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Functors
 
@@ -179,9 +180,9 @@ cdef class Functor(SageObject):
             Finite Field of size 2
 
         """
-        if not category.is_Category(domain):
+        if not isinstance(domain, category.Category):
             raise TypeError("domain (=%s) must be a category" % domain)
-        if not category.is_Category(codomain):
+        if not isinstance(codomain, category.Category):
             raise TypeError("codomain (=%s) must be a category" % codomain)
         self.__domain = domain
         self.__codomain = codomain
@@ -660,7 +661,7 @@ def ForgetfulFunctor(domain, codomain):
 
     INPUT:
 
-    ``C``, ``D`` - two categories
+    ``C``, ``D`` -- two categories
 
     OUTPUT:
 

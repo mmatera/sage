@@ -34,8 +34,8 @@ from sage.schemes.elliptic_curves.all import *
 
 from sage.schemes.plane_quartics.all import *
 
-from sage.schemes.toric.all import *
+from sage.schemes.generic.all import *
 
-from sage.schemes.cyclic_covers.all import *
+from sage.schemes.toric.all import *
 
 from sage.schemes.berkovich.all import *
